@@ -3917,5 +3917,63 @@
     "status": "platinum",
     "lineage_confidence": "curated",
     "subcomponents": []
+  },
+  "correlated-multivariate-error-propagation": {
+    "title": "Correlated Multivariate Uncertainty Propagation",
+    "equation": "\\sigma_f^2 = \\sum_{i,j} \\frac{\\partial f}{\\partial x_i}\\frac{\\partial f}{\\partial x_j}\\mathrm{Cov}(x_i, x_j)",
+    "category": "mathematical-methods",
+    "record_type": "equation",
+    "parent_formula_id": "monte-carlo-standard-error-scaling",
+    "derivation_type": "THEORETICAL_DERIVATION",
+    "description": "Computes the first-order propagated variance $\\sigma_f^2$ of a smooth function $f(x_1,\\dots,x_m)$ of correlated measured variables $x_i$ from its partial derivatives $\\frac{\\partial f}{\\partial x_i}$ and the input covariance matrix $\\mathrm{Cov}(x_i, x_j)$.",
+    "conceptual_definition": "Linear error propagation maps the local covariance ellipsoid of experimental input variables through the Jacobian of a derived physical observable.",
+    "intuitive_summary": "The squared uncertainty of a calculated quantity combines how sensitive the formula is to each input with both the individual uncertainties and how pairs of inputs fluctuate together.",
+    "interpretation": "Diagonal terms ($i = j$) recover standard quadrature addition of independent uncertainties, whereas off-diagonal covariance terms ($i \\ne j$) can either increase or partially cancel the net variance depending on the relative signs of the sensitivities and correlations.",
+    "symmetry_origin": "Follows from the bilinearity of statistical covariance applied to the first-order multivariate Taylor expansion $\\delta f \\approx \\sum_i \\frac{\\partial f}{\\partial x_i}\\delta x_i$.",
+    "limits_and_boundary": "Accurate when input uncertainties are small relative to the curvature scale of $f$; strongly nonlinear functions or asymmetric distributions require second-order Hessian terms or Monte Carlo propagation.",
+    "semantic_variables": {
+      "\\sigma_f^2": {
+        "name": "Propagated Variance",
+        "type": "variable",
+        "unit": "1",
+        "description": "Variance of the derived observable $f$ induced by fluctuations in the measured inputs."
+      },
+      "f": {
+        "name": "Derived Observable Function",
+        "type": "variable",
+        "unit": "1",
+        "description": "Differentiable physical function mapping measured inputs $x_i$ to a target quantity."
+      },
+      "x_i": {
+        "name": "Measured Input Variable",
+        "type": "variable",
+        "unit": "1",
+        "description": "The $i$-th experimentally measured input quantity."
+      },
+      "x_j": {
+        "name": "Paired Input Variable",
+        "type": "variable",
+        "unit": "1",
+        "description": "The $j$-th experimentally measured input quantity paired with $x_i$ in the covariance sum."
+      },
+      "\\mathrm{Cov}(x_i, x_j)": {
+        "name": "Input Covariance Matrix Element",
+        "type": "parameter",
+        "unit": "1",
+        "description": "Statistical covariance $\\mathbb{E}[(x_i - \\mu_i)(x_j - \\mu_j)]$ quantifying joint fluctuations between $x_i$ and $x_j$."
+      }
+    },
+    "cas_validation": {
+      "status": "HOMOGENEOUS",
+      "is_homogeneous": true,
+      "quantity": "Propagated Variance",
+      "dimension_latex": "[1]",
+      "verified_at": 1795400000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": [
+      "weighted-least-squares-chi-squared"
+    ]
   }
 }

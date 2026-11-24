@@ -1,0 +1,2318 @@
+{
+  "domain": "mathematical-methods",
+  "ledger_path": "docs/new_expansion_phase_5.md",
+  "pillar": {
+    "title": "9. Experimental Methods, Signal Processing & Detectors",
+    "narrative": "Multivariate error propagation and chi-squared/maximum-likelihood estimation, Bayesian inference and model selection in physics, signal processing with power spectral densities and matched filtering, particle detector Bethe-Bloch energy loss and electromagnetic calorimetry, and cryogenic dilution refrigeration with scanning probe microscopy.",
+    "slugs": [
+      "error-propagation-chi-squared-inference",
+      "bayesian-inference-experimental-physics",
+      "signal-noise-power-spectral-density",
+      "particle-detectors-bethe-bloch-calorimetry",
+      "cryogenics-scanning-probe-microscopy"
+    ]
+  },
+  "allow_short_tokens": [],
+  "verified_date": "2026-11-23",
+  "subtopics": {
+    "error-propagation-chi-squared-inference": {
+      "title": "Error Propagation, Chi-Squared Fitting and Maximum Likelihood Estimation",
+      "hero_equation": "\\chi^2(\\boldsymbol{\\theta}) = \\sum_{i=1}^N \\left[\\frac{y_i - f(x_i; \\boldsymbol{\\theta})}{\\sigma_i}\\right]^2",
+      "formula_ids": [
+        "correlated-multivariate-error-propagation",
+        "weighted-least-squares-chi-squared",
+        "reduced-chi-squared-goodness-of-fit",
+        "generalized-covariance-chi-squared",
+        "maximum-log-likelihood-score-equation",
+        "fisher-information-matrix-element",
+        "cramer-rao-variance-lower-bound"
+      ],
+      "content": "<p>Quantitative measurements in experimental physics invariably fluctuate around true physical parameters because finite detector resolution, thermal noise constrained by the <a href=\"/physics/subtopic/fluctuation-dissipation-theorem\" class=\"subtopic-link\"><strong>Fluctuation-Dissipation Theorem</strong></a>, and discrete counting statistics introduce irreducible stochastic scatter. When a derived physical observable <em>f</em>(<em>x</em><sub>1</sub>, &hellip;, <em>x<sub>m</sub></em>) depends smoothly on measured inputs <em>x<sub>i</sub></em> whose joint statistical fluctuations remain small compared to their scale of local nonlinearity, first-order Taylor expansion maps the input covariance matrix Cov(<em>x<sub>i</sub></em>, <em>x<sub>j</sub></em>) through the Jacobian gradient directly into the propagated variance \\( \\sigma_f^2 = \\sum_{i,j} \\frac{\\partial f}{\\partial x_i}\\frac{\\partial f}{\\partial x_j}\\mathrm{Cov}(x_i, x_j) \\). Off-diagonal terms capture positive or negative correlations that can either amplify or partially cancel combined uncertainties, collapsing to standard quadrature addition only when input channels are strictly independent. Extracting unknown model parameters <strong>&theta;</strong> from <em>N</em> independent measurements <em>y<sub>i</sub></em> with known Gaussian standard deviations <em>&sigma;<sub>i</sub></em> then invokes the weighted least-squares objective pioneered by Carl Friedrich Gauss (1809) for orbital mechanics and systematized by Philip Bevington and D. Keith Robinson (2003), minimizing the inverse-variance weighted sum of squared residuals \\( \\chi^2(\\boldsymbol{\\theta}) = \\sum_{i=1}^N \\left[\\frac{y_i - f(x_i; \\boldsymbol{\\theta})}{\\sigma_i}\\right]^2 \\).</p><p>Minimizing \\( \\chi^2(\\boldsymbol{\\theta}) = \\sum_{i=1}^N \\left[\\frac{y_i - f(x_i; \\boldsymbol{\\theta})}{\\sigma_i}\\right]^2 \\) for models linear in the <em>p</em> adjustable parameters reduces to solving symmetric normal equations governed by <a href=\"/physics/subtopic/linear-operators\" class=\"subtopic-link\"><strong>Linear Operators</strong></a>, projecting the weighted data vector orthogonally onto the subspace spanned by the theoretical basis functions and guaranteeing the minimum-variance linear unbiased estimate under the Gauss&ndash;Markov theorem. When data arise from discrete nuclear or photonic event counts governed by Poisson statistics, as in <a href=\"/physics/subtopic/radioactive-decay-alpha-beta-gamma\" class=\"subtopic-link\"><strong>Radioactive Decay</strong></a>, the counting standard deviation scales as &radic;<em>n<sub>i</sub></em> and approaches Gaussian behavior at high bin occupancy. Once the optimal parameter vector is determined, Karl Pearson (1900) proved that the minimum statistic follows a universal sampling distribution parameterized solely by the statistical degrees of freedom <em>&nu;</em> = <em>N</em> &minus; <em>p</em>, motivating the reduced goodness indicator \\( \\chi^2_\\nu = \\frac{\\chi^2}{N - p} \\). Values near unity signify statistical consistency between model and residuals; values substantially above unity signal unaccounted physical structure, non-Gaussian outliers, or underestimated uncertainties, whereas values far below unity reveal overestimated noise bars or overfitting of random scatter.</p><p>Real experimental datasets frequently violate statistical independence because shared calibration constants, detector channel crosstalk, and band-limited instrumental drift couple distinct observations into a dense symmetric covariance matrix <strong>C</strong>. Incorporating these cross-bin correlations generalizes the quadratic objective to the Mahalanobis metric \\( \\chi^2(\\boldsymbol{\\theta}) = (\\mathbf{y} - \\mathbf{f}(\\boldsymbol{\\theta}))^T \\mathbf{C}^{-1} (\\mathbf{y} - \\mathbf{f}(\\boldsymbol{\\theta})) \\), weighting residuals along the principal noise axes of the instrument while down-weighting redundant correlated modes. Solving the associated <a href=\"/physics/subtopic/eigenvalue-problems\" class=\"subtopic-link\"><strong>Eigenvalue Problems</strong></a> for <strong>C</strong> diagonalizes the precision matrix into orthogonal whitened modes via spectral or Cholesky decomposition, while for stationary colored time-series noise in <a href=\"/physics/subtopic/ligo\" class=\"subtopic-link\"><strong>LIGO Gravitational-Wave Interferometry</strong></a>, transforming via <a href=\"/physics/subtopic/fourier-transforms\" class=\"subtopic-link\"><strong>Fourier Transforms</strong></a> converts a dense Toeplitz covariance matrix into a diagonal noise power spectral density. Because inverting an ill-conditioned or simulation-estimated <strong>C</strong> amplifies finite-sample calibration fluctuations, propagating systematic covariance cleanly through \\( \\sigma_f^2 = \\sum_{i,j} \\frac{\\partial f}{\\partial x_i}\\frac{\\partial f}{\\partial x_j}\\mathrm{Cov}(x_i, x_j) \\) requires careful regularization and explicit separation of statistical and systematic nuisance parameters.</p><p>Whenever observations exhibit low-count Poisson discreteness, heavy-tailed noise, or censored detector thresholds, quadratic Gaussian approximations bias parameter recovery and must be replaced by the full likelihood function <em>L</em>(<strong>&theta;</strong>) encoding the exact joint probability density of the observed dataset given <strong>&theta;</strong>. Ronald Fisher (1922) formulated maximum likelihood estimation by locating stationary extrema of the monotone logarithm through the score equation \\( \\frac{\\partial \\ln \\mathcal{L}(\\boldsymbol{\\theta})}{\\partial \\theta_k} = 0 \\), turning products of independent event probabilities into tractable additive sums while preserving reparameterization equivariance. For multivariate Gaussian noise with fixed covariance, &minus;2 ln <em>L</em>(<strong>&theta;</strong>) reproduces \\( \\chi^2(\\boldsymbol{\\theta}) = (\\mathbf{y} - \\mathbf{f}(\\boldsymbol{\\theta}))^T \\mathbf{C}^{-1} (\\mathbf{y} - \\mathbf{f}(\\boldsymbol{\\theta})) \\) up to an additive normalization constant, confirming that weighted least squares is a special case of likelihood inference. Maximizing log-likelihood is equivalently minimizing empirical Kullback&ndash;Leibler divergence in <a href=\"/physics/subtopic/shannon-entropy-jaynes-maxent\" class=\"subtopic-link\"><strong>Shannon Entropy and Jaynes's Maximum Entropy Principle</strong></a>, while applying <a href=\"/physics/subtopic/asymptotic-methods-saddle-point\" class=\"subtopic-link\"><strong>Asymptotic Methods and Saddle-Point Integrals</strong></a> yields Samuel Wilks's (1938) theorem that nested log-likelihood ratios follow an asymptotic chi-squared distribution.</p><p>Achievable precision for any statistical estimator is governed locally by the expected curvature of the log-likelihood surface around the true physical parameter vector. Taking the negative expectation value of the log-likelihood hessian defines the Fisher information matrix \\( \\mathcal{I}_{jk}(\\boldsymbol{\\theta}) = -\\mathbb{E}\\!\\left[\\frac{\\partial^2 \\ln \\mathcal{L}}{\\partial \\theta_j \\partial \\theta_k}\\right] \\), which measures how sharply experimental data constrain simultaneous shifts along coordinates <em>&theta;<sub>j</sub></em> and <em>&theta;<sub>k</sub></em>, equals the covariance of the score vector under regularity conditions, and endows parameter space with a natural Riemannian metric in <a href=\"/physics/subtopic/information-theory\" class=\"subtopic-link\"><strong>Information Theory</strong></a>. Independently proved by Calyampudi Radhakrishna Rao (1945) and Harald Cram&eacute;r (1946) via the Cauchy&ndash;Schwarz inequality, the variance of any unbiased estimator cannot fall below the inverse Fisher curvature, obeying the fundamental Cram&eacute;r&ndash;Rao lower bound \\( \\mathrm{Var}(\\hat{\\theta}) \\ge \\frac{1}{\\mathcal{I}(\\theta)} \\). In the large-sample asymptotic regime, the root of \\( \\frac{\\partial \\ln \\mathcal{L}(\\boldsymbol{\\theta})}{\\partial \\theta_k} = 0 \\) is consistent, asymptotically normal, and statistically efficient, saturating this precision bound with parameter covariance equal to the inverse Fisher matrix.</p><p>In high-dimensional nonlinear inverse problems&mdash;such as cosmological parameter inference from microwave background spectra, collider signal extraction, or multi-exponential decay spectroscopy&mdash;likelihood surfaces frequently exhibit curved parameter degeneracies, physical boundary constraints, and secondary local maxima where quadratic hessian approximations break down. While the local Fisher matrix \\( \\mathcal{I}_{jk}(\\boldsymbol{\\theta}) = -\\mathbb{E}\\!\\left[\\frac{\\partial^2 \\ln \\mathcal{L}}{\\partial \\theta_j \\partial \\theta_k}\\right] \\) remains indispensable for rapid experimental forecasting, optimal survey design, and sensitivity budgets benchmarked against \\( \\mathrm{Var}(\\hat{\\theta}) \\ge \\frac{1}{\\mathcal{I}(\\theta)} \\), rigorous uncertainty quantification explores the full non-Gaussian posterior distribution via <a href=\"/physics/subtopic/monte-carlo-metropolis-sampling\" class=\"subtopic-link\"><strong>Monte Carlo and Metropolis Sampling</strong></a>. Combining posterior predictive checks and profile likelihood confidence intervals with calibrated goodness diagnostics such as \\( \\chi^2_\\nu = \\frac{\\chi^2}{N - p} \\) ensures that reported parameter uncertainties faithfully capture both microscopic statistical scatter and macroscopic model adequacy across modern precision physics.</p>",
+      "citations": [
+        {
+          "doi": "",
+          "title": "Theoria Motus Corporum Coelestium in Sectionibus Conicis Solem Ambientium",
+          "authors": [
+            "Carl Friedrich Gauss"
+          ],
+          "year": 1809,
+          "journal": "Perthes und Besser, Hamburg",
+          "url": "https://archive.org/details/theoriamotuscorp00gausuoft"
+        },
+        {
+          "doi": "10.1080/14786440009463897",
+          "title": "On the criterion that a given system of deviations from the probable in the case of a correlated system of variables is such that it can be reasonably supposed to have arisen from random sampling",
+          "authors": [
+            "Karl Pearson"
+          ],
+          "year": 1900,
+          "journal": "Philosophical Magazine",
+          "url": "https://doi.org/10.1080/14786440009463897"
+        },
+        {
+          "doi": "10.1098/rsta.1922.0009",
+          "title": "On the mathematical foundations of theoretical statistics",
+          "authors": [
+            "Ronald A. Fisher"
+          ],
+          "year": 1922,
+          "journal": "Philosophical Transactions of the Royal Society of London. Series A",
+          "url": "https://doi.org/10.1098/rsta.1922.0009"
+        },
+        {
+          "doi": "10.1214/aoms/1177732360",
+          "title": "The Large-Sample Distribution of the Likelihood Ratio for Testing Composite Hypotheses",
+          "authors": [
+            "Samuel S. Wilks"
+          ],
+          "year": 1938,
+          "journal": "The Annals of Mathematical Statistics",
+          "url": "https://doi.org/10.1214/aoms/1177732360"
+        },
+        {
+          "doi": "10.1515/9781400883868",
+          "title": "Mathematical Methods of Statistics",
+          "authors": [
+            "Harald Cramér"
+          ],
+          "year": 1946,
+          "journal": "Princeton University Press",
+          "url": "https://doi.org/10.1515/9781400883868"
+        },
+        {
+          "doi": "",
+          "title": "Data Reduction and Error Analysis for the Physical Sciences (3rd ed.)",
+          "authors": [
+            "Philip R. Bevington",
+            "D. Keith Robinson"
+          ],
+          "year": 2003,
+          "journal": "McGraw-Hill",
+          "url": "https://www.mheducation.com/highered/product/data-reduction-error-analysis-physical-sciences-bevington-robinson/M9780072472271.html"
+        }
+      ],
+      "keywords": [
+        "covariance",
+        "residuals",
+        "goodness",
+        "likelihood",
+        "estimator",
+        "curvature",
+        "asymptotic",
+        "hessian",
+        "unbiased",
+        "fisher"
+      ],
+      "incoming_links": [
+        {
+          "from_slug": "monte-carlo-metropolis-sampling",
+          "sentence": " Beyond stochastic posterior exploration, local quadratic uncertainty propagation, goodness-of-fit diagnostics, and Fisher information bounds are formalized in <a href=\"/physics/subtopic/error-propagation-chi-squared-inference\" class=\"subtopic-link\"><strong>Error Propagation, Chi-Squared Fitting and Maximum Likelihood Estimation</strong></a>."
+        },
+        {
+          "from_slug": "asymptotic-methods-saddle-point",
+          "sentence": " Applying Laplace and saddle-point expansions to large-sample log-likelihood surfaces directly underpins Wilks's likelihood-ratio theorem and asymptotic parameter inference in <a href=\"/physics/subtopic/error-propagation-chi-squared-inference\" class=\"subtopic-link\"><strong>Error Propagation, Chi-Squared Fitting and Maximum Likelihood Estimation</strong></a>."
+        }
+      ]
+    },
+    "bayesian-inference-experimental-physics": {
+      "title": "Bayesian Inference, Model Selection and Markov Chain Monte Carlo in Physics",
+      "hero_equation": "P(\\boldsymbol{\\theta} \\mid D, M) = \\frac{P(D \\mid \\boldsymbol{\\theta}, M)\\,P(\\boldsymbol{\\theta} \\mid M)}{P(D \\mid M)}",
+      "formula_ids": [
+        "bayes-posterior-probability-theorem",
+        "bayesian-marginal-likelihood-evidence",
+        "bayes-factor-model-comparison-ratio",
+        "jeffreys-reparameterization-invariant-prior",
+        "nuisance-parameter-posterior-marginalization",
+        "bayesian-information-criterion-score",
+        "laplace-gaussian-evidence-approximation"
+      ],
+      "content": "<p>Reconstructing latent physical parameters from noisy detector records requires inverting a forward measurement apparatus through conditional probability rather than point inversion. Given an experimental dataset <em>D</em> and a competing physical hypothesis <em>M</em> parameterized by continuous quantities <strong>&theta;</strong>, Thomas Bayes (1763) and Pierre-Simon Laplace established the logical updating rule relating the prior plausibility <em>P</em>(<strong>&theta;</strong> | <em>M</em>) and the instrumental likelihood <em>P</em>(<em>D</em> | <strong>&theta;</strong>, <em>M</em>) to the updated posterior density \\( P(\\boldsymbol{\\theta} \\mid D, M) = \\frac{P(D \\mid \\boldsymbol{\\theta}, M)\\,P(\\boldsymbol{\\theta} \\mid M)}{P(D \\mid M)} \\). Whereas frequentist estimators average over hypothetical unobserved repetitions of an experiment, this inferential architecture conditions strictly on the realized measurement, treating probability as a quantitative measure of incomplete knowledge formalized by Edwin Jaynes (2003) in direct correspondence with <a href=\"/physics/subtopic/shannon-entropy-jaynes-maxent\" class=\"subtopic-link\"><strong>Shannon Entropy, Kullback-Leibler Divergence and Jaynes's Maximum Entropy Principle</strong></a>. Normalization of the posterior distribution over the entire parameter manifold defines the marginal likelihood, or Bayesian evidence, \\( Z = P(D \\mid M) = \\int P(D \\mid \\boldsymbol{\\theta}, M)\\,P(\\boldsymbol{\\theta} \\mid M)\\,d\\boldsymbol{\\theta} \\), which plays the exact mathematical role of a partition integral in statistical mechanics.</p><p>Specifying an objective prior distribution <em>P</em>(<strong>&theta;</strong> | <em>M</em>) before incorporating experimental data must avoid artifacts introduced by arbitrary coordinate choices, such as switching between a decay rate and a mean lifetime or between mass and inverse mass. Harold Jeffreys (1946) resolved this parameterization ambiguity by constructing a reparameterization-invariant measure directly from the Fisher information matrix <strong>I</strong>(<strong>&theta;</strong>), whose entries measure the expected curvature of the log-likelihood surface, yielding the Jeffreys prior \\( P_J(\\boldsymbol{\\theta}) \\propto \\sqrt{\\det \\mathcal{I}(\\boldsymbol{\\theta})} \\). Because the determinant of the Fisher metric transforms as the squared Jacobian determinant under smooth bijective coordinate maps, this volume element guarantees identical posterior inferences across any invertible reparameterization of \\( P(\\boldsymbol{\\theta} \\mid D, M) = \\frac{P(D \\mid \\boldsymbol{\\theta}, M)\\,P(\\boldsymbol{\\theta} \\mid M)}{P(D \\mid M)} \\). Geometrically, the Fisher matrix induces a Riemannian metric on the manifold of probability densities whose infinitesimal distance matches the local quadratic expansion of relative divergence in <a href=\"/physics/subtopic/information-theory\" class=\"subtopic-link\"><strong>Information Theory</strong></a>, uniting objective prior assignment with maximum-entropy state estimation.</p><p>High-precision experiments in astrophysics, cosmology, and collider instrumentation routinely involve dozens of calibration offsets, background amplitudes, and instrumental noise parameters <strong>&eta;</strong> alongside a small subset of physically decisive quantities such as <em>&theta;</em><sub>1</sub>. Rather than fixing uncertain calibration constants at biased point estimates, probabilistic marginalization propagates full systematic uncertainty into the target parameter by integrating the joint posterior over all nuisance dimensions via \\( P(\\theta_1 \\mid D) = \\int P(\\theta_1, \\boldsymbol{\\eta} \\mid D)\\,d\\boldsymbol{\\eta} \\). In multi-dimensional spaces where quadrature grids suffer exponential scaling failure, direct sampling of the unnormalized posterior proceeds through ergodic random walks governed by <a href=\"/physics/subtopic/monte-carlo-metropolis-sampling\" class=\"subtopic-link\"><strong>Monte Carlo Integration and Metropolis-Hastings Sampling</strong></a>, while gradient-informed Hamiltonian and Langevin samplers evolve trajectories across the negative log-posterior energy landscape in exact analogy with <a href=\"/physics/subtopic/stochastic-calculus-fokker-planck\" class=\"subtopic-link\"><strong>Stochastic Differential Equations and the Fokker-Planck Equation</strong></a>. Identifying the negative log-posterior with an effective potential energy maps posterior sampling directly onto thermal equilibrium governed by the <a href=\"/physics/subtopic/boltzmann-factor\" class=\"subtopic-link\"><strong>Boltzmann Factor</strong></a>, while specialized nested sampling introduced by John Skilling (2006) transforms the high-dimensional evidence integral \\( Z = P(D \\mid M) = \\int P(D \\mid \\boldsymbol{\\theta}, M)\\,P(\\boldsymbol{\\theta} \\mid M)\\,d\\boldsymbol{\\theta} \\) into a tractable one-dimensional quadrature over prior volume.</p><p>Discriminating between rival physical theories that possess different numbers of free parameters—such as testing general relativity against modified gravity or assessing dark-energy equations of state—cannot rely on maximum likelihood alone because nested models with extra freedom always achieve superior raw fits. Taking the ratio of marginal likelihoods for competing hypotheses <em>M</em><sub>1</sub> and <em>M</em><sub>2</sub> yields the Bayes factor \\( B_{12} = \\frac{P(D \\mid M_1)}{P(D \\mid M_2)} \\), which multiplies the prior odds to produce posterior model odds and automatically enforces a quantitative Occam penalty. When a complex model spreads its prior probability mass across a wide parameter volume where the likelihood is negligible, the integral \\( Z = P(D \\mid M) = \\int P(D \\mid \\boldsymbol{\\theta}, M)\\,P(\\boldsymbol{\\theta} \\mid M)\\,d\\boldsymbol{\\theta} \\) shrinks proportionally to the ratio of posterior volume to prior volume. As reviewed for cosmological parameter estimation by Roberto Trotta (2008), logarithmic Jeffreys thresholds categorize decisive support while linking the Occam volume compression directly to phase-space reduction in <a href=\"/physics/subtopic/statistical-entropy\" class=\"subtopic-link\"><strong>Statistical Entropy</strong></a>.</p><p>When high signal-to-noise experimental data concentrate the posterior sharply around a unique unimodal maximum <strong>&theta;</strong>&#770; with peak likelihood <em>L</em>&#770; across <em>k</em> continuous parameters, expanding the log-integrand to second order in parameter displacements approximates the evidence integral as a multivariate Gaussian controlled by the negative log-likelihood Hessian matrix <strong>H</strong>. Applying the saddle-point methodology of <a href=\"/physics/subtopic/asymptotic-methods-saddle-point\" class=\"subtopic-link\"><strong>Asymptotic Expansions, Saddle-Point and WKB Methods</strong></a> produces the Laplace Gaussian approximation \\( Z \\approx \\hat{\\mathcal{L}}\\,P(\\hat{\\boldsymbol{\\theta}})(2\\pi)^{k/2}(\\det \\mathbf{H})^{-1/2} \\), in which the inverse square root of the Hessian determinant explicitly quantifies the posterior covariance volume against the prior density. Because the eigenvalues of the symmetric positive-definite Hessian operator govern principal error ellipsoids through the spectral decomposition of <a href=\"/physics/subtopic/linear-operators\" class=\"subtopic-link\"><strong>Linear Operators and Hilbert Space</strong></a>, its determinant scales asymptotically as <em>N<sup>k</sup></em> for <em>N</em> independent observations. Taking minus twice the logarithm and retaining only leading <em>O</em>(ln <em>N</em>) terms yields Gideon Schwarz's (1978) Bayesian Information Criterion \\( \\mathrm{BIC} = k\\ln N - 2\\ln \\hat{\\mathcal{L}} \\), furnishing a rapid asymptotic model-comparison score when full evidence integration is computationally prohibitive.</p><p>In contemporary experimental physics, these probabilistic tools operate at the core of gravitational-wave astronomy, cosmic microwave background analysis, and particle-physics discovery pipelines. At <a href=\"/physics/subtopic/ligo\" class=\"subtopic-link\"><strong>LIGO: Laser Interferometer Gravitational-Wave Observatory</strong></a>, stationary colored strain noise is diagonalized in frequency space via <a href=\"/physics/subtopic/fourier-transforms\" class=\"subtopic-link\"><strong>Fourier Transforms</strong></a> to form a Gaussian Whittle likelihood over fifteen compact-binary waveform parameters, including chirp mass, component spins, luminosity distance, and orbital inclination. Parallel-tempered Markov chain and nested samplers evaluate \\( P(\\boldsymbol{\\theta} \\mid D, M) = \\frac{P(D \\mid \\boldsymbol{\\theta}, M)\\,P(\\boldsymbol{\\theta} \\mid M)}{P(D \\mid M)} \\) to extract credible intervals for source masses and sky localization while computing \\( P(\\theta_1 \\mid D) = \\int P(\\theta_1, \\boldsymbol{\\eta} \\mid D)\\,d\\boldsymbol{\\eta} \\) over detector calibration envelopes and coalescence phase. Simultaneously, coherent signal-versus-noise model comparison through \\( B_{12} = \\frac{P(D \\mid M_1)}{P(D \\mid M_2)} \\) separates genuine astrophysical mergers from transient instrumental glitches, establishing Bayesian statistics as the unified language connecting theoretical predictions to finite-precision measurement.</p>",
+      "citations": [
+        {
+          "doi": "10.1098/rstl.1763.0053",
+          "title": "An Essay towards solving a Problem in the Doctrine of Chances",
+          "authors": [
+            "Thomas Bayes"
+          ],
+          "year": 1763,
+          "journal": "Philosophical Transactions of the Royal Society of London",
+          "url": "https://doi.org/10.1098/rstl.1763.0053"
+        },
+        {
+          "doi": "10.1098/rspa.1946.0056",
+          "title": "An invariant form for the prior probability in estimation problems",
+          "authors": [
+            "Harold Jeffreys"
+          ],
+          "year": 1946,
+          "journal": "Proceedings of the Royal Society of London. Series A, Mathematical and Physical Sciences",
+          "url": "https://doi.org/10.1098/rspa.1946.0056"
+        },
+        {
+          "doi": "10.1214/aos/1176344136",
+          "title": "Estimating the Dimension of a Model",
+          "authors": [
+            "Gideon Schwarz"
+          ],
+          "year": 1978,
+          "journal": "The Annals of Statistics",
+          "url": "https://doi.org/10.1214/aos/1176344136"
+        },
+        {
+          "doi": "10.1017/CBO9780511790423",
+          "title": "Probability Theory: The Logic of Science",
+          "authors": [
+            "Edwin T. Jaynes"
+          ],
+          "year": 2003,
+          "journal": "Cambridge University Press",
+          "url": "https://doi.org/10.1017/CBO9780511790423"
+        },
+        {
+          "doi": "10.1214/06-BA127",
+          "title": "Nested sampling for general Bayesian computation",
+          "authors": [
+            "John Skilling"
+          ],
+          "year": 2006,
+          "journal": "Bayesian Analysis",
+          "url": "https://doi.org/10.1214/06-BA127"
+        },
+        {
+          "doi": "10.1080/00107510802066753",
+          "title": "Bayes in the sky: Bayesian inference and model selection in cosmology",
+          "authors": [
+            "Roberto Trotta"
+          ],
+          "year": 2008,
+          "journal": "Contemporary Physics",
+          "url": "https://doi.org/10.1080/00107510802066753"
+        }
+      ],
+      "keywords": [
+        "posterior",
+        "likelihood",
+        "evidence",
+        "prior",
+        "marginalization",
+        "nuisance",
+        "jeffreys",
+        "laplace",
+        "sampling",
+        "hessian"
+      ],
+      "incoming_links": [
+        {
+          "from_slug": "monte-carlo-metropolis-sampling",
+          "sentence": " In modern data analysis and parameter estimation, ergodic Metropolis-Hastings and nested-sampling chains serve as the computational engine for evaluating high-dimensional posterior distributions and marginal evidences in <a href=\"/physics/subtopic/bayesian-inference-experimental-physics\" class=\"subtopic-link\"><strong>Bayesian Inference, Model Selection and Markov Chain Monte Carlo in Physics</strong></a>."
+        },
+        {
+          "from_slug": "stochastic-calculus-fokker-planck",
+          "sentence": " Identifying the negative log-posterior with an effective potential energy maps gradient-based Langevin and Hamiltonian Monte Carlo samplers directly onto overdamped and underdamped diffusion dynamics within <a href=\"/physics/subtopic/bayesian-inference-experimental-physics\" class=\"subtopic-link\"><strong>Bayesian Inference, Model Selection and Markov Chain Monte Carlo in Physics</strong></a>."
+        }
+      ]
+    },
+    "signal-noise-power-spectral-density": {
+      "title": "Signal Processing, Power Spectral Density, Noise Floors and Matched Filtering",
+      "hero_equation": "S_x(\\omega) = \\int_{-\\infty}^{\\infty} R_{xx}(\\tau)\\,e^{-i\\omega\\tau}\\,d\\tau",
+      "formula_ids": [
+        "wiener-khinchin-power-spectral-density",
+        "nyquist-shannon-sampling-criterion",
+        "schottky-shot-noise-spectral-density",
+        "hooge-flicker-noise-power-spectrum",
+        "matched-filter-optimal-snr",
+        "lock-in-phase-sensitive-demodulation",
+        "allan-variance-frequency-stability"
+      ],
+      "content": "<p>Extracting weak physical observables from stochastic time-series measurements requires characterizing temporal correlations across continuous and discrete domains. For a wide-sense stationary random process <em>x</em>(<em>t</em>) whose ensemble moments are invariant under time translation, strict stationarity ensures that the autocorrelation function <em>R<sub>xx</sub></em>(<em>&tau;</em>) = &langle;<em>x</em>(<em>t</em>)<em>x</em>(<em>t</em> + <em>&tau;</em>)&rangle; depends solely on the lag interval <em>&tau;</em>. Because a persistent stochastic trajectory possesses infinite total energy, its direct harmonic decomposition diverges; instead, Norbert Wiener (1930) and Aleksandr Khinchin (1934) established that the distribution of variance across angular frequency <em>&omega;</em> is rigorously defined by the Wiener&ndash;Khinchin power spectral density theorem \\( S_x(\\omega) = \\int_{-\\infty}^{\\infty} R_{xx}(\\tau)\\,e^{-i\\omega\\tau}\\,d\\tau \\). Operating through the reciprocal machinery of <a href=\"/physics/subtopic/fourier-transforms\" class=\"subtopic-link\"><strong>Fourier Transforms</strong></a>, this integral maps short-range temporal memory to broadband flat spectra and long-range oscillatory coherence to sharp spectral peaks. When continuous analog detector voltages are digitized at uniform intervals <em>T<sub>s</sub></em> = 1/<em>f<sub>s</sub></em>, preserving complete spectral fidelity without distortion requires obeying the Nyquist&ndash;Shannon critical sampling criterion \\( f_s \\ge 2 f_{\\max} \\) relative to the highest signal frequency <em>f</em><sub>max</sub>.</p><p>Discretizing a continuous waveform multiplies <em>x</em>(<em>t</em>) by an infinite Dirac comb of impulses spaced by <em>T<sub>s</sub></em>, a generalized distribution formalized within <a href=\"/physics/subtopic/dirac-delta-distributions-theory\" class=\"subtopic-link\"><strong>Dirac Delta Distributions Theory</strong></a>. In the reciprocal frequency domain, time-domain multiplication becomes periodic convolution, replicating the original baseband spectrum at integer multiples of the sampling rate <em>f<sub>s</sub></em>. Whenever the condition \\( f_s \\ge 2 f_{\\max} \\) derived by Claude Shannon (1949) is violated, adjacent spectral replicas overlap and high-frequency energy folds irreversibly into lower frequencies through aliasing, corrupting both deterministic waveforms and calibrated noise floors. Preventing aliasing in experimental acquisition pipelines therefore requires an analog anti-aliasing low-pass filter whose causal impulse response is analyzed via <a href=\"/physics/subtopic/laplace-transforms-causal-response\" class=\"subtopic-link\"><strong>Laplace Transforms and Causal Response</strong></a> and linear <a href=\"/physics/subtopic/green-functions\" class=\"subtopic-link\"><strong>Green Functions</strong></a>. Passing a stationary stochastic process through any linear time-invariant filter with transfer function <em>H</em>(<em>&omega;</em>) reshapes the output variance spectrum strictly as |<em>H</em>(<em>&omega;</em>)|<sup>2</sup> times \\( S_x(\\omega) = \\int_{-\\infty}^{\\infty} R_{xx}(\\tau)\\,e^{-i\\omega\\tau}\\,d\\tau \\), directly paralleling spatial frequency transfer in <a href=\"/physics/subtopic/fourier-optics-spatial-filtering\" class=\"subtopic-link\"><strong>Fourier Optics and Spatial Filtering</strong></a>.</p><p>Fundamental physical detection limits arise from distinct microscopic noise mechanisms that establish irreducible spectral baselines across every measurement bandwidth. Equilibrium thermal agitation of charge carriers inside resistive elements produces Johnson&ndash;Nyquist voltage fluctuations directly tied to macroscopic dissipation through the <a href=\"/physics/subtopic/fluctuation-dissipation-theorem\" class=\"subtopic-link\"><strong>Fluctuation-Dissipation Theorem</strong></a>, exhibiting the same white-noise correlation structure governing <a href=\"/physics/subtopic/brownian-motion-langevin-dynamics\" class=\"subtopic-link\"><strong>Brownian Motion and Langevin Dynamics</strong></a> and continuous <a href=\"/physics/subtopic/stochastic-calculus-fokker-planck\" class=\"subtopic-link\"><strong>Stochastic Calculus and Fokker-Planck Equations</strong></a>. Conversely, whenever discrete charge carriers of elementary charge <em>q</em> cross a potential barrier independently as a Poisson process with mean current <em>I</em>, Walter Schottky (1918) demonstrated that granularity generates frequency-independent shot noise with single-sided current spectral density \\( S_I(f) = 2 q I \\). Below a device-dependent corner frequency, however, solid-state conductors, semiconductors, and thin films universally exhibit excess low-frequency flicker noise whose empirical voltage spectral density obeys the Hooge relation \\( S_V(f) = \\frac{\\alpha_H V^2}{N_c f^\\gamma} \\), scaling inversely with total carrier number <em>N<sub>c</sub></em> and frequency exponent <em>&gamma;</em> near unity with dimensionless Hooge parameter <em>&alpha;<sub>H</sub></em> and bias voltage <em>V</em>.</p><p>Recovering a faint deterministic transient <em>h</em>(<em>t</em>) of known morphology buried deep beneath colored stationary noise requires weighting each spectral component inversely by the background noise variance before coherent integration. Maximizing the ratio of peak filtered signal amplitude to root-mean-square noise via the Cauchy&ndash;Schwarz inequality yields the linear matched filter whose transfer function is proportional to the complex conjugate template spectrum divided by the single-sided noise power spectral density <em>S<sub>n</sub></em>(<em>f</em>). Applying this whitening transformation flattens the colored background prior to correlation and achieves the theoretical optimal matched-filter signal-to-noise ratio \\( \\rho_{\\mathrm{opt}}^2 = 4 \\int_0^\\infty \\frac{|\\tilde{h}(f)|^2}{S_n(f)}\\,df \\), where <em>h&#771;</em>(<em>f</em>) denotes the Fourier transform of the target waveform. Because the denominator <em>S<sub>n</sub></em>(<em>f</em>) is evaluated directly from stationary instrumental autocorrelation via \\( S_x(\\omega) = \\int_{-\\infty}^{\\infty} R_{xx}(\\tau)\\,e^{-i\\omega\\tau}\\,d\\tau \\), narrow spectral lines from suspension violins or power mains are automatically notched out without discarding broadband signal information. This optimal template-bank architecture enabled B. P. Abbott and collaborators (2016) at <a href=\"/physics/subtopic/ligo\" class=\"subtopic-link\"><strong>LIGO</strong></a> to extract binary black-hole gravitational-wave chirps at fractional strain sensitivities near 10<sup>&minus;21</sup>.</p><p>For narrowband continuous-wave measurements plagued by severe low-frequency drift, experimentalists shift the physical observable away from baseband by modulating the excitation at a clean reference frequency <em>f</em><sub>ref</sub> well above the corner of \\( S_V(f) = \\frac{\\alpha_H V^2}{N_c f^\\gamma} \\). A lock-in amplifier performs phase-sensitive demodulation by multiplying the incoming signal <em>V<sub>s</sub></em> cos(2&pi;<em>f</em><sub>ref</sub><em>t</em> + <em>&phi;<sub>s</sub></em>) against an internal local oscillator reference cos(2&pi;<em>f</em><sub>ref</sub><em>t</em> + <em>&phi;</em><sub>ref</sub>), generating sum-frequency components at 2<em>f</em><sub>ref</sub> alongside a direct-current difference term. Passing this mixer product through a steep low-pass filter with narrow equivalent noise bandwidth rejects the double-frequency harmonic and isolates the phase-sensitive demodulated output \\( V_{\\mathrm{out}} = \\frac{1}{2} V_s \\cos\\Delta\\phi \\), where &Delta;<em>&phi;</em> = <em>&phi;<sub>s</sub></em> &minus; <em>&phi;</em><sub>ref</sub> is the relative phase offset. Dual-phase instruments multiply simultaneously against an orthogonal sine reference to recover both in-phase and quadrature components, reconstructing full complex amplitude and phase shifts across precision spectroscopy, scanning probe microscopy, and <a href=\"/physics/subtopic/optical-interferometry-coherence\" class=\"subtopic-link\"><strong>Optical Interferometry and Coherence</strong></a>.</p><p>Characterizing the long-term fractional frequency stability <em>y</em>(<em>t</em>) of an atomic clock or ultra-stable laser oscillator exposes a critical breakdown of classical sample variance whenever flicker or random-walk frequency noise causes the integral of <em>S<sub>y</sub></em>(<em>f</em>) to diverge at zero frequency. To obtain a convergent time-domain stability metric across averaging interval <em>&tau;</em>, David Allan (1966) introduced the two-sample Allan variance \\( \\sigma_y^2(\\tau) = \\frac{1}{2}\\left\\langle (\\bar{y}_{k+1} - \\bar{y}_k)^2 \\right\\rangle \\), computed from adjacent non-overlapping fractional frequency averages <em>y&#772;<sub>k</sub></em>. Differencing consecutive intervals acts as a high-pass filter that suppresses infrared divergences, producing distinct power-law slopes on a log-log stability plot: white frequency noise governed by photon or electron counting statistics like \\( S_I(f) = 2 q I \\) averages down as <em>&tau;</em><sup>&minus;1</sup>, flicker frequency noise flattens into an irreducible stability floor independent of <em>&tau;</em>, and random-walk thermal drift degrades stability linearly with <em>&tau;</em>. Unifying time-domain Allan diagnostics with spectral estimation and optimal filtering \\( \\rho_{\\mathrm{opt}}^2 = 4 \\int_0^\\infty \\frac{|\\tilde{h}(f)|^2}{S_n(f)}\\,df \\) provides a complete quantitative framework for precision metrology, interferometry, and quantum-limited experimental detection.</p>",
+      "citations": [
+        {
+          "doi": "10.1007/BF02546511",
+          "title": "Generalized harmonic analysis",
+          "authors": [
+            "Norbert Wiener"
+          ],
+          "year": 1930,
+          "journal": "Acta Mathematica",
+          "url": "https://doi.org/10.1007/BF02546511"
+        },
+        {
+          "doi": "10.1007/BF01449156",
+          "title": "Korrelationstheorie der stationären stochastischen Prozesse",
+          "authors": [
+            "Aleksandr Y. Khinchin"
+          ],
+          "year": 1934,
+          "journal": "Mathematische Annalen",
+          "url": "https://doi.org/10.1007/BF01449156"
+        },
+        {
+          "doi": "10.1109/JRPROC.1949.232969",
+          "title": "Communication in the Presence of Noise",
+          "authors": [
+            "Claude E. Shannon"
+          ],
+          "year": 1949,
+          "journal": "Proceedings of the IRE",
+          "url": "https://doi.org/10.1109/JRPROC.1949.232969"
+        },
+        {
+          "doi": "10.1002/andp.19183622304",
+          "title": "Über spontane Stromschwankungen in verschiedenen Elektrizitätsleitern",
+          "authors": [
+            "Walter Schottky"
+          ],
+          "year": 1918,
+          "journal": "Annalen der Physik",
+          "url": "https://doi.org/10.1002/andp.19183622304"
+        },
+        {
+          "doi": "10.1109/PROC.1966.4634",
+          "title": "Statistics of Atomic Frequency Standards",
+          "authors": [
+            "David W. Allan"
+          ],
+          "year": 1966,
+          "journal": "Proceedings of the IEEE",
+          "url": "https://doi.org/10.1109/PROC.1966.4634"
+        },
+        {
+          "doi": "10.1103/PhysRevLett.116.061102",
+          "title": "Observation of Gravitational Waves from a Binary Black Hole Merger",
+          "authors": [
+            "B. P. Abbott",
+            "LIGO Scientific Collaboration",
+            "Virgo Collaboration"
+          ],
+          "year": 2016,
+          "journal": "Physical Review Letters",
+          "url": "https://doi.org/10.1103/PhysRevLett.116.061102"
+        }
+      ],
+      "keywords": [
+        "autocorrelation",
+        "aliasing",
+        "bandwidth",
+        "flicker",
+        "demodulation",
+        "quadrature",
+        "interferometry",
+        "stationarity",
+        "whitening",
+        "oscillator"
+      ],
+      "incoming_links": [
+        {
+          "from_slug": "fourier-transforms",
+          "sentence": " Extending harmonic decomposition to stationary random time series and optimal waveform extraction connects spectral analysis directly to the Wiener-Khinchin theorem, sampling limits, and noise-weighted detection developed in <a href=\"/physics/subtopic/signal-noise-power-spectral-density\" class=\"subtopic-link\"><strong>Signal Processing, Power Spectral Density, Noise Floors and Matched Filtering</strong></a>."
+        },
+        {
+          "from_slug": "laplace-transforms-causal-response",
+          "sentence": " In experimental acquisition systems, causal linear filters reshape stationary stochastic fluctuations and suppress aliasing according to the spectral transfer and noise-floor architecture detailed in <a href=\"/physics/subtopic/signal-noise-power-spectral-density\" class=\"subtopic-link\"><strong>Signal Processing, Power Spectral Density, Noise Floors and Matched Filtering</strong></a>."
+        }
+      ]
+    },
+    "particle-detectors-bethe-bloch-calorimetry": {
+      "title": "Particle Detectors, Bethe-Bloch Energy Loss and Electromagnetic Calorimetry",
+      "hero_equation": "-\\left\\langle \\frac{dE}{dx} \\right\\rangle = K z^2 \\frac{Z}{A}\\frac{1}{\\beta^2}\\left[\\frac{1}{2}\\ln\\!\\left(\\frac{2 m_e c^2 \\beta^2 \\gamma^2 T_{\\max}}{I^2}\\right) - \\beta^2\\right]",
+      "formula_ids": [
+        "bethe-bloch-collisional-stopping-power",
+        "bremsstrahlung-radiation-length-attenuation",
+        "electromagnetic-cascade-shower-maximum-depth",
+        "cherenkov-coherent-emission-angle",
+        "highland-multiple-coulomb-scattering-width",
+        "magnetic-spectrometer-tracking-sagitta",
+        "sampling-calorimeter-energy-resolution"
+      ],
+      "content": "<p>Relativistic charged projectiles traversing dense condensed matter transfer kinetic momentum continuously to bound atomic electrons through inelastic Coulomb scattering. Formalized in quantum perturbation theory by Hans Bethe (1930) and refined with the mean atomic excitation potential <em>I</em> by Felix Bloch (1933), the mean ionization stopping power per unit mass thickness for a heavy projectile of charge <em>ze</em>, velocity <em>&beta;c</em>, and Lorentz factor <em>&gamma;</em> moving through a medium of atomic number <em>Z</em> and mass number <em>A</em> obeys \\( -\\left\\langle \\frac{dE}{dx} \\right\\rangle = K z^2 \\frac{Z}{A}\\frac{1}{\\beta^2}\\left[\\frac{1}{2}\\ln\\!\\left(\\frac{2 m_e c^2 \\beta^2 \\gamma^2 T_{\\max}}{I^2}\\right) - \\beta^2\\right] \\), where <em>K</em> = 4&pi;<em>N<sub>A</sub> r<sub>e</sub></em><sup>2</sup> <em>m<sub>e</sub> c</em><sup>2</sup> and <em>T</em><sub>max</sub> is the maximum single-collision kinetic transfer to an electron of mass <em>m<sub>e</sub></em>. Rapid 1/<em>&beta;</em><sup>2</sup> deceleration produces the sharp Bragg peak exploited in hadron therapy and <a href=\"/physics/subtopic/radioactive-decay-alpha-beta-gamma\" class=\"subtopic-link\"><strong>Radioactive Decay: Alpha, Beta, and Gamma</strong></a> spectroscopy, before flattening into a broad minimum-ionizing plateau near <em>&beta;&gamma;</em> &approx; 3. For ultra-relativistic electrons whose low mass permits strong nuclear-field deceleration, radiative bremsstrahlung overtakes collisional ionization above a critical threshold <em>E<sub>c</sub></em>, driving exponential attenuation \\( E(x) = E_0 \\exp\\!\\left(-\\frac{x}{X_0}\\right) \\) over the material radiation length <em>X</em><sub>0</sub>.</p><p>High-energy photons and electrons incident on dense high-<em>Z</em> absorbers initiate self-multiplying electromagnetic cascades through alternating bremsstrahlung emission and electron-positron pair production, both governed by the relativistic cross-sections derived by Hans Bethe and Walter Heitler (1934) from quantum electrodynamic <a href=\"/physics/subtopic/s-matrix\" class=\"subtopic-link\"><strong>S-Matrix Theory</strong></a> amplitudes. Because the pair-production mean free path equals (9/7)<em>X</em><sub>0</sub>, the radiation length <em>X</em><sub>0</sub> appearing in \\( E(x) = E_0 \\exp\\!\\left(-\\frac{x}{X_0}\\right) \\) sets the universal longitudinal scale for shower development across lead, tungsten, and scintillating crystals. As secondary generations double every radiation length until individual energies drop below the critical energy <em>E<sub>c</sub></em>, ionization and the <a href=\"/physics/subtopic/photoelectric-effect\" class=\"subtopic-link\"><strong>Photoelectric Effect</strong></a> quench further multiplication, placing the longitudinal shower maximum in units of <em>t</em> = <em>x</em>/<em>X</em><sub>0</sub> at \\( t_{\\max} = \\ln\\!\\left(\\frac{E_0}{E_c}\\right) + C_0 \\), with <em>C</em><sub>0</sub> = &minus;0.5 for incident electrons and +0.5 for photons. This logarithmic depth scaling allows compact detector architectures to fully contain teraelectronvolt cascades while monitoring radiation fluxes inside <a href=\"/physics/subtopic/nuclear-fission-fusion-reactors\" class=\"subtopic-link\"><strong>Nuclear Fission and Fusion Reactors</strong></a>.</p><p>When a charged particle traverses a transparent dielectric of refractive index <em>n</em> faster than the local phase velocity <em>c</em>/<em>n</em>, induced atomic dipoles polarize asymmetrically along the track and interfere constructively into a conical optical shock wave. Observed experimentally by Pavel Cherenkov (1937) and explained classically through retarded <a href=\"/physics/subtopic/green-functions\" class=\"subtopic-link\"><strong>Green's Functions</strong></a> of Maxwell's equations by Ilya Frank and Igor Tamm, this coherent Cherenkov emission emerges at a polar half-angle fixed purely by kinematics through \\( \\cos\\theta_C = \\frac{1}{\\beta n} \\). Because radiation turns on strictly above the threshold <em>&beta;</em> &gt; 1/<em>n</em> and saturates at arccos(1/<em>n</em>), ring-imaging Cherenkov counters measure velocity directly across aerogels, fluorocarbon gases, and ultrapure water. Combining this velocity constraint with simultaneous ionization sampling from \\( -\\left\\langle \\frac{dE}{dx} \\right\\rangle = K z^2 \\frac{Z}{A}\\frac{1}{\\beta^2}\\left[\\frac{1}{2}\\ln\\!\\left(\\frac{2 m_e c^2 \\beta^2 \\gamma^2 T_{\\max}}{I^2}\\right) - \\beta^2\\right] \\) resolves pions, kaons, and protons cleanly across overlapping momentum bands where either observable alone becomes degenerate. In large-volume water and ice neutrino observatories, arrays of photomultiplier tubes reconstruct the timing and ring geometry of these conical wavefronts to infer both arrival direction and lepton flavor with high angular precision.</p><p>Alongside inelastic energy loss, every charged track undergoes thousands of elastic small-angle deflections from screened nuclear Coulomb potentials, a diffusive angular random walk modeled kinetically by <a href=\"/physics/subtopic/stochastic-calculus-fokker-planck\" class=\"subtopic-link\"><strong>Stochastic Calculus and Fokker-Planck Equations</strong></a>. While Moli&egrave;re's full transport theory captures rare large-angle Rutherford tails, evaluating the central Gaussian core via <a href=\"/physics/subtopic/asymptotic-methods-saddle-point\" class=\"subtopic-link\"><strong>Asymptotic Methods and Saddle-Point Integrals</strong></a> yields the empirical parameterization of Virgil Highland (1975) for the projected root-mean-square scattering angle \\( \\theta_0 = \\frac{13.6\\,\\mathrm{MeV}}{\\beta c p}\\,z\\sqrt{\\frac{x}{X_0}} \\) for a particle of momentum <em>p</em> traversing thickness <em>x</em>. The same radiation length <em>X</em><sub>0</sub> that governs bremsstrahlung attenuation \\( E(x) = E_0 \\exp\\!\\left(-\\frac{x}{X_0}\\right) \\) thus dictates angular broadening, forcing precision vertex trackers built from depleted silicon <a href=\"/physics/subtopic/pn-junction-diode-physics\" class=\"subtopic-link\"><strong>PN-Junction Diode Physics</strong></a> sensors and low-mass carbon-fiber supports to minimize material budgets to a few percent of <em>X</em><sub>0</sub>. Analogous coherent versus incoherent scattering tradeoffs also govern structural beamline instrumentation in <a href=\"/physics/subtopic/x-ray-neutron-diffraction-probes\" class=\"subtopic-link\"><strong>X-Ray and Neutron Diffraction Probes</strong></a>.</p><p>Determining charged-particle transverse momentum <em>p<sub>T</sub></em> relies on immersing layered silicon and gaseous drift chambers inside a uniform magnetic field <em>B</em> aligned parallel to the beam axis. Over a radial lever arm <em>L</em>, the Lorentz force bends the trajectory into a circular arc whose maximum midpoint deviation from the chord&mdash;the tracking sagitta&mdash;obeys \\( s = \\frac{0.3\\,B L^2}{8 p_T} \\), with <em>B</em> in tesla, <em>L</em> in meters, and <em>p<sub>T</sub></em> in GeV/<em>c</em>. Because sagitta scales inversely with <em>p<sub>T</sub></em>, finite spatial hit resolution degrades fractional momentum precision linearly with momentum at high energies, demanding strong superconducting solenoids and extended spectrometer arms. At low transverse momentum, however, multiple Coulomb deflection \\( \\theta_0 = \\frac{13.6\\,\\mathrm{MeV}}{\\beta c p}\\,z\\sqrt{\\frac{x}{X_0}} \\) introduces an irreducible momentum-independent floor in fractional resolution, establishing an optimal balance between hit multiplicity, lever-arm length, and cumulative detector thickness across both inner pixel layers and outer gaseous muon stations.</p><p>Total absorption energy measurement is performed by homogeneous crystal or alternating absorber-sensor sampling calorimeters that convert the entire cascade into scintillation photons or drifted ionization charge. As codified by the Particle Data Group (Workman et al., 2022), three statistically independent error mechanisms combine in quadrature to set the fractional calorimeter energy resolution \\( \\frac{\\sigma_E}{E} = \\frac{a}{\\sqrt{E}} \\oplus \\frac{b}{E} \\oplus c \\). Poisson fluctuations in the number of sampled shower tracks drive the stochastic term <em>a</em>/&radic;<em>E</em>, front-end preamplifier thermal noise and pileup contribute the <em>b</em>/<em>E</em> term, and inter-channel calibration drift, dead material, and longitudinal leakage past \\( t_{\\max} = \\ln\\!\\left(\\frac{E_0}{E_c}\\right) + C_0 \\) fix the asymptotic constant floor <em>c</em>. Modern detector design couples these analytic scaling laws&mdash;including ionization drift from \\( -\\left\\langle \\frac{dE}{dx} \\right\\rangle = K z^2 \\frac{Z}{A}\\frac{1}{\\beta^2}\\left[\\frac{1}{2}\\ln\\!\\left(\\frac{2 m_e c^2 \\beta^2 \\gamma^2 T_{\\max}}{I^2}\\right) - \\beta^2\\right] \\)&mdash;directly into event-by-event transport engines powered by <a href=\"/physics/subtopic/monte-carlo-metropolis-sampling\" class=\"subtopic-link\"><strong>Monte Carlo and Metropolis Sampling</strong></a> to calibrate response matrices across collider experiments.</p>",
+      "citations": [
+        {
+          "doi": "10.1002/andp.19303970303",
+          "title": "Zur Theorie des Durchgangs schneller Korpuskularstrahlen durch Materie",
+          "authors": [
+            "Hans Bethe"
+          ],
+          "year": 1930,
+          "journal": "Annalen der Physik",
+          "url": "https://doi.org/10.1002/andp.19303970303"
+        },
+        {
+          "doi": "10.1002/andp.19334080303",
+          "title": "Zur Bremsung rasch bewegter Teilchen beim Durchgang durch Materie",
+          "authors": [
+            "Felix Bloch"
+          ],
+          "year": 1933,
+          "journal": "Annalen der Physik",
+          "url": "https://doi.org/10.1002/andp.19334080303"
+        },
+        {
+          "doi": "10.1098/rspa.1934.0140",
+          "title": "On the Stopping of Fast Particles and on the Creation of Positive Electrons",
+          "authors": [
+            "Hans Bethe",
+            "Walter Heitler"
+          ],
+          "year": 1934,
+          "journal": "Proceedings of the Royal Society of London. Series A",
+          "url": "https://doi.org/10.1098/rspa.1934.0140"
+        },
+        {
+          "doi": "10.1103/PhysRev.52.378",
+          "title": "Visible Radiation Produced by Electrons Moving in a Medium with Velocities Exceeding that of Light",
+          "authors": [
+            "Pavel A. Cherenkov"
+          ],
+          "year": 1937,
+          "journal": "Physical Review",
+          "url": "https://doi.org/10.1103/PhysRev.52.378"
+        },
+        {
+          "doi": "10.1016/0029-554X(75)90743-0",
+          "title": "Some practical remarks on multiple scattering",
+          "authors": [
+            "Virgil L. Highland"
+          ],
+          "year": 1975,
+          "journal": "Nuclear Instruments and Methods",
+          "url": "https://doi.org/10.1016/0029-554X(75)90743-0"
+        },
+        {
+          "doi": "10.1093/ptep/ptac097",
+          "title": "Review of Particle Physics",
+          "authors": [
+            "R. L. Workman",
+            "Particle Data Group"
+          ],
+          "year": 2022,
+          "journal": "Progress of Theoretical and Experimental Physics",
+          "url": "https://doi.org/10.1093/ptep/ptac097"
+        }
+      ],
+      "keywords": [
+        "ionization",
+        "bremsstrahlung",
+        "cherenkov",
+        "cascade",
+        "scattering",
+        "sagitta",
+        "spectrometer",
+        "stochastic",
+        "calorimeter",
+        "attenuation"
+      ],
+      "incoming_links": [
+        {
+          "from_slug": "monte-carlo-metropolis-sampling",
+          "sentence": " Event-by-event simulation of electromagnetic showers, multiple Coulomb scattering, and sampling calorimeter response matrices applies stochastic transport algorithms directly to the detector physics framework of <a href=\"/physics/subtopic/particle-detectors-bethe-bloch-calorimetry\" class=\"subtopic-link\"><strong>Particle Detectors, Bethe-Bloch Energy Loss and Electromagnetic Calorimetry</strong></a>."
+        },
+        {
+          "from_slug": "s-matrix",
+          "sentence": " Relativistic QED scattering amplitudes for bremsstrahlung radiation and electron-positron pair production translate directly into the macroscopic radiation lengths and cascade profiles analyzed in <a href=\"/physics/subtopic/particle-detectors-bethe-bloch-calorimetry\" class=\"subtopic-link\"><strong>Particle Detectors, Bethe-Bloch Energy Loss and Electromagnetic Calorimetry</strong></a>."
+        }
+      ]
+    },
+    "cryogenics-scanning-probe-microscopy": {
+      "title": "Cryogenic Dilution Refrigeration and Scanning Probe Microscopy",
+      "hero_equation": "\\dot{Q} = 84\\,\\dot{n}_3 T_m^2",
+      "formula_ids": [
+        "dilution-refrigerator-cooling-power",
+        "adiabatic-demagnetization-temperature-scaling",
+        "kapitza-thermal-boundary-resistance",
+        "tersoff-hamann-differential-conductance",
+        "stm-vacuum-tunneling-decay-constant",
+        "fm-afm-cantilever-frequency-shift",
+        "afm-cantilever-thermal-deflection-noise"
+      ],
+      "content": "<p>Below 0.87 kelvin, liquid mixtures of fermionic helium-3 and bosonic helium-4 spontaneously separate into a concentrated helium-3 phase floating atop a superfluid helium-4 background that retains a finite 6.6 percent helium-3 concentration even at absolute zero. Because the bosonic matrix undergoes <a href=\"/physics/subtopic/bose-einstein-condensation\" class=\"subtopic-link\"><strong>Bose-Einstein Condensation</strong></a> into an inert, zero-entropy mechanical vacuum, dissolved helium-3 atoms behave as a weakly interacting degenerate Fermi gas whose molar enthalpy exceeds that of the concentrated phase. Proposed by Heinz London, G. R. Clarke, and Eric Mendoza (1962), continuous circulation of helium-3 atoms across this phase boundary at molar flow rate <em>n&#775;</em><sub>3</sub> absorbs heat in a mixing chamber at temperature <em>T<sub>m</sub></em>. Evaluating the low-temperature Fermi-liquid enthalpy difference via Sommerfeld expansions grounded in <a href=\"/physics/subtopic/asymptotic-methods-saddle-point\" class=\"subtopic-link\"><strong>Asymptotic Methods and Saddle-Point Integrals</strong></a> yields the quadratic cooling power \\( \\dot{Q} = 84\\,\\dot{n}_3 T_m^2 \\) in watts, while practical base temperatures near a few millikelvin remain bounded by counterflow heat-exchanger efficiency and the interfacial acoustic impedance \\( R_K = \\frac{\\Delta T}{\\dot{Q}/A} \\propto T^{-3} \\).</p><p>Reaching microkelvin regimes below the millikelvin floor of helium circulation relies on isentropic demagnetization of localized electronic or nuclear magnetic moments, as systematized by Frank Pobell (2007). Magnetizing a paramagnetic salt pill or copper nuclear stage isothermally in an initial field <em>B<sub>i</sub></em> at temperature <em>T<sub>i</sub></em> aligns spins and rejects magnetic entropy into a precooling dilution bath; thermally isolating the stage via a superconducting heat switch and ramping down to final field <em>B<sub>f</sub></em> preserves total spin entropy, cooling the ensemble against its internal dipolar field <em>b</em> according to \\( T_f = T_i \\frac{\\sqrt{B_f^2 + b^2}}{\\sqrt{B_i^2 + b^2}} \\). Across every sub-kelvin thermal anchor, however, acoustic impedance mismatch between liquid helium and metallic lattices&mdash;discovered by Pyotr Kapitza (1941)&mdash;imposes the steep Kapitza thermal boundary resistance \\( R_K = \\frac{\\Delta T}{\\dot{Q}/A} \\propto T^{-3} \\). Overcoming this cubic divergence requires sintered silver-powder heat exchangers with vast microscopic surface area <em>A</em> to sustain \\( \\dot{Q} = 84\\,\\dot{n}_3 T_m^2 \\), while ultra-low-dissipation noise thermometry and magnetic flux readout leverage <a href=\"/physics/subtopic/squid-superconducting-circuits\" class=\"subtopic-link\"><strong>SQUIDs and Superconducting Circuits</strong></a>.</p><p>Stabilizing condensed matter at millikelvin temperatures suppresses thermal lattice agitation and electronic smearing, creating an ideal vibration-isolated environment for real-space atomic imaging. Pioneered by Gerd Binnig, Heinrich Rohrer, Christoph Gerber, and Edmund Weibel (1982), scanning tunneling microscopy positions an atomically sharp metallic tip within one nanometer of a conducting sample using feedback-controlled piezoelectric actuators so valence electrons traverse the classically forbidden vacuum gap through <a href=\"/physics/subtopic/quantum-tunneling\" class=\"subtopic-link\"><strong>Quantum Tunneling</strong></a>. Evaluating the evanescent wavefunction across a rectangular barrier of effective work function <em>&phi;</em> and electron mass <em>m<sub>e</sub></em> within the <a href=\"/physics/subtopic/wkb-semiclassical-approximation\" class=\"subtopic-link\"><strong>WKB Semiclassical Approximation</strong></a> yields the vacuum inverse decay length \\( \\kappa = \\frac{\\sqrt{2 m_e \\phi}}{\\hbar} \\). Because the tunneling current decays exponentially as exp(&minus;2<em>&kappa;z</em>) with tip-sample separation <em>z</em>, a single-angstrom retraction attenuates current by an order of magnitude, concentrating electron flow through the foremost apex atom to deliver picometer vertical resolution while small bias modulations probe surface electronic states through \\( \\frac{dI}{dV}(V) \\propto \\rho_s(\\mathbf{r}_0, E_F + eV) \\).</p><p>Quantitative interpretation of atomic-scale tunneling spectra rests on the transfer-Hamiltonian perturbation theory of Jerry Tersoff and Donald Hamann (1985). Modeling the probe apex as a spherically symmetric <em>s</em>-wave orbital centered at <strong>r</strong><sub>0</sub> reduces the low-temperature differential conductance directly to the sample's local density of states evaluated at Fermi energy <em>E<sub>F</sub></em> shifted by bias <em>eV</em>, giving \\( \\frac{dI}{dV}(V) \\propto \\rho_s(\\mathbf{r}_0, E_F + eV) \\). In many-body condensed matter theory, this local spectral weight equals minus one over <em>&pi;</em> times the imaginary part of the retarded single-particle propagator constructed via <a href=\"/physics/subtopic/green-functions\" class=\"subtopic-link\"><strong>Green's Functions</strong></a>, while spatial quasiparticle interference ripples mapped across bias voltages transform into momentum-space Fermi contours and scattering vectors through two-dimensional <a href=\"/physics/subtopic/fourier-transforms\" class=\"subtopic-link\"><strong>Fourier Transforms</strong></a>. Operating inside a refrigerator governed by \\( \\dot{Q} = 84\\,\\dot{n}_3 T_m^2 \\) narrows thermal Fermi-edge broadening to microelectronvolts, enabling high-resolution tunneling spectroscopy of superconducting pairing gaps predicted by <a href=\"/physics/subtopic/bcs-theory\" class=\"subtopic-link\"><strong>BCS Theory</strong></a> across vacuum junctions characterized by \\( \\kappa = \\frac{\\sqrt{2 m_e \\phi}}{\\hbar} \\).</p><p>Extending atomic-resolution metrology to electrically insulating surfaces where electron tunneling vanishes, Gerd Binnig, Calvin Quate, and Christoph Gerber (1986) introduced the atomic force microscope, replacing current feedback with optical or piezoelectric deflection readout of a microfabricated elastic cantilever. The cantilever's flexural spring constant <em>k<sub>c</sub></em> and fundamental resonance frequency <em>f</em><sub>0</sub> emerge as discrete normal-mode solutions to Euler&ndash;Bernoulli beam <a href=\"/physics/subtopic/eigenvalue-problems\" class=\"subtopic-link\"><strong>Eigenvalue Problems</strong></a>. In ultra-high-vacuum frequency-modulated operation, short-range chemical bonding, Pauli repulsion, and van der Waals tip-sample forces <em>F<sub>ts</sub></em>(<em>z</em>) modify the effective harmonic restoring stiffness, shifting the oscillation frequency for small oscillation amplitudes according to \\( \\Delta f \\approx -\\frac{f_0}{2 k_c}\\frac{\\partial F_{ts}}{\\partial z} \\). Combining stiff quartz tuning-fork sensors with conductive metallic tips enables simultaneous phase-locked measurement of conservative force gradients and tunneling currents governed by \\( \\kappa = \\frac{\\sqrt{2 m_e \\phi}}{\\hbar} \\), cleanly separating sub-angstrom covalent bond profiles from long-range electrostatic backgrounds.</p><p>Ultimate force and displacement sensitivity in scanning probe metrology is bounded by stochastic thermal agitation of the cantilever coupled to its surrounding heat bath, modeled as a damped harmonic oscillator driven by Gaussian white noise within <a href=\"/physics/subtopic/stochastic-calculus-fokker-planck\" class=\"subtopic-link\"><strong>Stochastic Calculus and the Fokker-Planck Equation</strong></a>. Integrating the resulting Lorentzian deflection power spectral density over all frequencies via <a href=\"/physics/subtopic/fourier-transforms\" class=\"subtopic-link\"><strong>Fourier Transforms</strong></a> recovers the classical equipartition variance \\( \\langle z_{\\mathrm{th}}^2 \\rangle = \\frac{k_B T}{k_c} \\). Lowering the microscope bath temperature <em>T</em> through isentropic demagnetization stages obeying \\( T_f = T_i \\frac{\\sqrt{B_f^2 + b^2}}{\\sqrt{B_i^2 + b^2}} \\) or continuous helium-3 circulation simultaneously suppresses thermal deflection noise, eliminates piezoelectric creep, and sharpens spectroscopic energy resolution. By jointly minimizing thermal cantilever fluctuations while tracking resonance shifts \\( \\Delta f \\approx -\\frac{f_0}{2 k_c}\\frac{\\partial F_{ts}}{\\partial z} \\) and differential tunneling conductance, cryogenic scanning instruments resolve single molecular orbitals, vortex-core bound states, and correlated quantum phases with piconewton force sensitivity and microelectronvolt precision.</p>",
+      "citations": [
+        {
+          "doi": "10.1103/PhysRev.60.354",
+          "title": "Heat Transfer and Superfluidity of Helium II",
+          "authors": [
+            "Pyotr L. Kapitza"
+          ],
+          "year": 1941,
+          "journal": "Physical Review",
+          "url": "https://doi.org/10.1103/PhysRev.60.354"
+        },
+        {
+          "doi": "10.1103/PhysRev.128.1992",
+          "title": "Osmotic Pressure of He3 in Liquid He4, with Proposals for a Refrigerator to Work below 1°K",
+          "authors": [
+            "Heinz London",
+            "G. R. Clarke",
+            "Eric Mendoza"
+          ],
+          "year": 1962,
+          "journal": "Physical Review",
+          "url": "https://doi.org/10.1103/PhysRev.128.1992"
+        },
+        {
+          "doi": "10.1103/PhysRevLett.49.57",
+          "title": "Surface Studies by Scanning Tunneling Microscopy",
+          "authors": [
+            "Gerd Binnig",
+            "Heinrich Rohrer",
+            "Christoph Gerber",
+            "Edmund Weibel"
+          ],
+          "year": 1982,
+          "journal": "Physical Review Letters",
+          "url": "https://doi.org/10.1103/PhysRevLett.49.57"
+        },
+        {
+          "doi": "10.1103/PhysRevB.31.805",
+          "title": "Theory of the scanning tunneling microscope",
+          "authors": [
+            "Jerry Tersoff",
+            "Donald R. Hamann"
+          ],
+          "year": 1985,
+          "journal": "Physical Review B",
+          "url": "https://doi.org/10.1103/PhysRevB.31.805"
+        },
+        {
+          "doi": "10.1103/PhysRevLett.56.930",
+          "title": "Atomic Force Microscope",
+          "authors": [
+            "Gerd Binnig",
+            "Calvin F. Quate",
+            "Christoph Gerber"
+          ],
+          "year": 1986,
+          "journal": "Physical Review Letters",
+          "url": "https://doi.org/10.1103/PhysRevLett.56.930"
+        },
+        {
+          "doi": "10.1007/978-3-540-46360-3",
+          "title": "Matter and Methods at Low Temperatures (3rd ed.)",
+          "authors": [
+            "Frank Pobell"
+          ],
+          "year": 2007,
+          "journal": "Springer-Verlag",
+          "url": "https://doi.org/10.1007/978-3-540-46360-3"
+        }
+      ],
+      "keywords": [
+        "enthalpy",
+        "isentropic",
+        "kapitza",
+        "tunneling",
+        "conductance",
+        "cantilever",
+        "equipartition",
+        "superfluid",
+        "paramagnetic",
+        "spectroscopy"
+      ],
+      "incoming_links": [
+        {
+          "from_slug": "fourier-transforms",
+          "sentence": " Two-dimensional spatial transforms of quasiparticle interference maps and Lorentzian thermal cantilever noise power spectra directly connect spectral analysis to sub-kelvin surface metrology in <a href=\"/physics/subtopic/cryogenics-scanning-probe-microscopy\" class=\"subtopic-link\"><strong>Cryogenic Dilution Refrigeration and Scanning Probe Microscopy</strong></a>."
+        },
+        {
+          "from_slug": "green-functions",
+          "sentence": " In atomic-scale tunneling spectroscopy, the imaginary part of the retarded single-particle propagator directly governs the local density of states imaged by differential conductance in <a href=\"/physics/subtopic/cryogenics-scanning-probe-microscopy\" class=\"subtopic-link\"><strong>Cryogenic Dilution Refrigeration and Scanning Probe Microscopy</strong></a>."
+        }
+      ]
+    }
+  },
+  "formulas": [
+    {
+      "id": "correlated-multivariate-error-propagation",
+      "title": "Correlated Multivariate Uncertainty Propagation",
+      "equation": "\\sigma_f^2 = \\sum_{i,j} \\frac{\\partial f}{\\partial x_i}\\frac{\\partial f}{\\partial x_j}\\mathrm{Cov}(x_i, x_j)",
+      "category": "mathematical-methods",
+      "record_type": "equation",
+      "parent_formula_id": "monte-carlo-standard-error-scaling",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Computes the first-order propagated variance $\\sigma_f^2$ of a smooth function $f(x_1,\\dots,x_m)$ of correlated measured variables $x_i$ from its partial derivatives $\\frac{\\partial f}{\\partial x_i}$ and the input covariance matrix $\\mathrm{Cov}(x_i, x_j)$.",
+      "conceptual_definition": "Linear error propagation maps the local covariance ellipsoid of experimental input variables through the Jacobian of a derived physical observable.",
+      "intuitive_summary": "The squared uncertainty of a calculated quantity combines how sensitive the formula is to each input with both the individual uncertainties and how pairs of inputs fluctuate together.",
+      "interpretation": "Diagonal terms ($i = j$) recover standard quadrature addition of independent uncertainties, whereas off-diagonal covariance terms ($i \\ne j$) can either increase or partially cancel the net variance depending on the relative signs of the sensitivities and correlations.",
+      "symmetry_origin": "Follows from the bilinearity of statistical covariance applied to the first-order multivariate Taylor expansion $\\delta f \\approx \\sum_i \\frac{\\partial f}{\\partial x_i}\\delta x_i$.",
+      "limits_and_boundary": "Accurate when input uncertainties are small relative to the curvature scale of $f$; strongly nonlinear functions or asymmetric distributions require second-order Hessian terms or Monte Carlo propagation.",
+      "semantic_variables": {
+        "\\sigma_f^2": {
+          "name": "Propagated Variance",
+          "type": "variable",
+          "unit": "1",
+          "description": "Variance of the derived observable $f$ induced by fluctuations in the measured inputs."
+        },
+        "f": {
+          "name": "Derived Observable Function",
+          "type": "variable",
+          "unit": "1",
+          "description": "Differentiable physical function mapping measured inputs $x_i$ to a target quantity."
+        },
+        "x_i": {
+          "name": "Measured Input Variable",
+          "type": "variable",
+          "unit": "1",
+          "description": "The $i$-th experimentally measured input quantity."
+        },
+        "x_j": {
+          "name": "Paired Input Variable",
+          "type": "variable",
+          "unit": "1",
+          "description": "The $j$-th experimentally measured input quantity paired with $x_i$ in the covariance sum."
+        },
+        "\\mathrm{Cov}(x_i, x_j)": {
+          "name": "Input Covariance Matrix Element",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Statistical covariance $\\mathbb{E}[(x_i - \\mu_i)(x_j - \\mu_j)]$ quantifying joint fluctuations between $x_i$ and $x_j$."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Propagated Variance",
+        "dimension_latex": "[1]",
+        "verified_at": 1795400000
+      }
+    },
+    {
+      "id": "weighted-least-squares-chi-squared",
+      "title": "Weighted Least-Squares Chi-Squared Statistic",
+      "equation": "\\chi^2(\\boldsymbol{\\theta}) = \\sum_{i=1}^N \\left[\\frac{y_i - f(x_i; \\boldsymbol{\\theta})}{\\sigma_i}\\right]^2",
+      "category": "mathematical-methods",
+      "record_type": "equation",
+      "parent_formula_id": "correlated-multivariate-error-propagation",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Defines the dimensionless weighted least-squares objective $\\chi^2(\\boldsymbol{\\theta})$ as the sum of squared residuals between $N$ independent measurements $y_i$ and model predictions $f(x_i; \\boldsymbol{\\theta})$, each normalized by its measurement standard deviation $\\sigma_i$.",
+      "conceptual_definition": "The chi-squared objective weights every data point inversely by its variance so precise measurements exert stronger pull on fitted physical parameters than noisy measurements.",
+      "intuitive_summary": "Measures the total mismatch between data and model in units of each measurement's error bar, squaring and summing the deviations across all points.",
+      "interpretation": "Minimizing $\\chi^2(\\boldsymbol{\\theta})$ with respect to $\\boldsymbol{\\theta}$ yields the minimum-variance linear unbiased estimator (Gauss-Markov theorem) for linear models and coincides with maximum likelihood estimation under independent Gaussian noise.",
+      "symmetry_origin": "Arises directly from the negative twice log-likelihood of $N$ independent normal random variables with means $f(x_i; \\boldsymbol{\\theta})$ and variances $\\sigma_i^2$.",
+      "limits_and_boundary": "Assumes independent, normally distributed residuals with accurately known variances $\\sigma_i^2$ and negligible uncertainty in the independent coordinates $x_i$.",
+      "semantic_variables": {
+        "\\chi^2(\\boldsymbol{\\theta})": {
+          "name": "Chi-Squared Statistic",
+          "type": "variable",
+          "unit": "1",
+          "description": "Dimensionless sum of variance-weighted squared residuals evaluated at parameter vector $\\boldsymbol{\\theta}$."
+        },
+        "\\boldsymbol{\\theta}": {
+          "name": "Model Parameter Vector",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Vector of $p$ unknown physical parameters adjusted during model fitting."
+        },
+        "N": {
+          "name": "Number of Data Points",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Total number of independent experimental observations in the dataset."
+        },
+        "y_i": {
+          "name": "Observed Data Value",
+          "type": "variable",
+          "unit": "1",
+          "description": "Measured value of the dependent observable at index $i$."
+        },
+        "f(x_i; \\boldsymbol{\\theta})": {
+          "name": "Model Prediction",
+          "type": "variable",
+          "unit": "1",
+          "description": "Theoretical prediction evaluated at independent coordinate $x_i$ and parameter vector $\\boldsymbol{\\theta}$."
+        },
+        "\\sigma_i": {
+          "name": "Measurement Standard Deviation",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Known one-sigma Gaussian uncertainty associated with observation $y_i$."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Dimensionless Statistic",
+        "dimension_latex": "[1]",
+        "verified_at": 1795400000
+      }
+    },
+    {
+      "id": "reduced-chi-squared-goodness-of-fit",
+      "title": "Reduced Chi-Squared Goodness-of-Fit",
+      "equation": "\\chi^2_\\nu = \\frac{\\chi^2}{N - p}",
+      "category": "mathematical-methods",
+      "record_type": "equation",
+      "parent_formula_id": "weighted-least-squares-chi-squared",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Normalizes the minimized chi-squared statistic $\\chi^2$ by the number of statistical degrees of freedom $\\nu = N - p$, where $N$ is the number of data points and $p$ is the number of freely fitted model parameters.",
+      "conceptual_definition": "Reduced chi-squared provides a scale-free diagnostic of whether observed residuals are consistent with the assumed measurement uncertainties.",
+      "intuitive_summary": "Divides the total squared error-bar mismatch by the number of independent constraints left after fitting the model; a good fit sits close to one.",
+      "interpretation": "For a correctly specified linear model with accurate Gaussian uncertainties, $\\mathbb{E}[\\chi^2_\\nu] = 1$ with standard deviation $\\sqrt{2/\\nu}$; $\\chi^2_\\nu \\gg 1$ indicates model inadequacy or underestimated errors, while $\\chi^2_\\nu \\ll 1$ suggests overestimated errors or overfitting.",
+      "symmetry_origin": "Follows from the expectation value $\\mathbb{E}[\\chi^2] = \\nu$ of a Pearson chi-squared random variable with $\\nu = N - p$ independent standard normal degrees of freedom.",
+      "limits_and_boundary": "Strictly exact for linear models with independent Gaussian errors and $N > p$; in nonlinear models or constrained fits, the effective number of degrees of freedom can deviate from $N - p$.",
+      "semantic_variables": {
+        "\\chi^2_\\nu": {
+          "name": "Reduced Chi-Squared",
+          "type": "variable",
+          "unit": "1",
+          "description": "Chi-squared statistic per degree of freedom."
+        },
+        "\\chi^2": {
+          "name": "Minimized Chi-Squared Statistic",
+          "type": "variable",
+          "unit": "1",
+          "description": "Value of the weighted sum of squared residuals at the best-fit parameters."
+        },
+        "N": {
+          "name": "Number of Observations",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Total count of data points entering the fit."
+        },
+        "p": {
+          "name": "Number of Fitted Parameters",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Number of independent model parameters optimized against the data."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Dimensionless Statistic",
+        "dimension_latex": "[1]",
+        "verified_at": 1795400000
+      }
+    },
+    {
+      "id": "generalized-covariance-chi-squared",
+      "title": "Generalized Correlated-Covariance Chi-Squared",
+      "equation": "\\chi^2(\\boldsymbol{\\theta}) = (\\mathbf{y} - \\mathbf{f}(\\boldsymbol{\\theta}))^T \\mathbf{C}^{-1} (\\mathbf{y} - \\mathbf{f}(\\boldsymbol{\\theta}))",
+      "category": "mathematical-methods",
+      "record_type": "equation",
+      "parent_formula_id": "weighted-least-squares-chi-squared",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Generalizes the chi-squared objective to correlated measurements by contracting the residual vector $\\mathbf{y} - \\mathbf{f}(\\boldsymbol{\\theta})$ with the inverse covariance matrix $\\mathbf{C}^{-1}$.",
+      "conceptual_definition": "Measures the squared Mahalanobis distance between the data vector and theoretical prediction in the metric defined by the correlated experimental noise covariance.",
+      "intuitive_summary": "Extends weighted least squares to datasets where errors are correlated across bins by weighting residuals with the inverse covariance matrix instead of individual variances.",
+      "interpretation": "When $\\mathbf{C}$ is diagonal ($C_{ij} = \\sigma_i^2 \\delta_{ij}$), the quadratic form collapses to standard weighted least squares; when off-diagonal correlations are present, $\\mathbf{C}^{-1}$ down-weights redundant correlated modes and isolates independent combinations of measurements.",
+      "symmetry_origin": "Invariant under invertible linear basis transformations of the data space, representing the exact exponent of the multivariate Gaussian likelihood.",
+      "limits_and_boundary": "Requires $\\mathbf{C}$ to be symmetric positive definite and well-conditioned; empirical covariance matrices estimated from finite simulations require Hartlap or Bayesian debiasing corrections upon inversion.",
+      "semantic_variables": {
+        "\\chi^2(\\boldsymbol{\\theta})": {
+          "name": "Generalized Chi-Squared Statistic",
+          "type": "variable",
+          "unit": "1",
+          "description": "Dimensionless Mahalanobis quadratic form quantifying correlated data-model discrepancy."
+        },
+        "\\mathbf{y}": {
+          "name": "Measurement Data Vector",
+          "type": "variable",
+          "unit": "1",
+          "description": "Column vector of $N$ correlated experimental observations."
+        },
+        "\\mathbf{f}(\\boldsymbol{\\theta})": {
+          "name": "Model Prediction Vector",
+          "type": "variable",
+          "unit": "1",
+          "description": "Column vector of $N$ theoretical predictions parameterized by $\\boldsymbol{\\theta}$."
+        },
+        "\\mathbf{C}^{-1}": {
+          "name": "Inverse Covariance Matrix",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Precision matrix obtained by inverting the $N \\times N$ data covariance matrix $\\mathbf{C}$."
+        },
+        "\\boldsymbol{\\theta}": {
+          "name": "Model Parameter Vector",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Vector of unknown model parameters being inferred."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Dimensionless Statistic",
+        "dimension_latex": "[1]",
+        "verified_at": 1795400000
+      }
+    },
+    {
+      "id": "maximum-log-likelihood-score-equation",
+      "title": "Maximum Log-Likelihood Score Equation",
+      "equation": "\\frac{\\partial \\ln \\mathcal{L}(\\boldsymbol{\\theta})}{\\partial \\theta_k} = 0",
+      "category": "mathematical-methods",
+      "record_type": "equation",
+      "parent_formula_id": "shannon-discrete-information-entropy",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Specifies the first-order stationarity condition for the maximum likelihood estimator by setting each component of the score vector $\\frac{\\partial \\ln \\mathcal{L}(\\boldsymbol{\\theta})}{\\partial \\theta_k}$ to zero.",
+      "conceptual_definition": "Selects the parameter vector that maximizes the probability density of the observed dataset under an arbitrary statistical noise model.",
+      "intuitive_summary": "Finds the parameter values that make the actually observed experimental data most probable by locating the peak of the log-likelihood surface.",
+      "interpretation": "Because the logarithm is strictly increasing, maximizing $\\ln \\mathcal{L}(\\boldsymbol{\\theta})$ converts products of independent observation probabilities into tractable sums while preserving the exact location of the maximum; for non-Gaussian Poisson or exponential data, it avoids the bias inherent in Gaussian chi-squared approximations.",
+      "symmetry_origin": "Equivariant under smooth reparameterizations $\\boldsymbol{\\phi} = g(\\boldsymbol{\\theta})$: the maximum likelihood estimate of a transformed parameter is simply $g(\\hat{\\boldsymbol{\\theta}})$.",
+      "limits_and_boundary": "Requires $\\ln \\mathcal{L}(\\boldsymbol{\\theta})$ to be differentiable in the interior of parameter space; maxima occurring on physical boundaries or multimodal likelihoods must be checked via global optimization and negative-definite Hessian verification.",
+      "semantic_variables": {
+        "\\mathcal{L}(\\boldsymbol{\\theta})": {
+          "name": "Likelihood Function",
+          "type": "variable",
+          "unit": "1",
+          "description": "Joint probability or probability density of the observed data viewed as a function of parameters $\\boldsymbol{\\theta}$."
+        },
+        "\\boldsymbol{\\theta}": {
+          "name": "Parameter Vector",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Full vector of unknown model parameters."
+        },
+        "\\theta_k": {
+          "name": "Parameter Component",
+          "type": "parameter",
+          "unit": "1",
+          "description": "The $k$-th scalar component of the parameter vector $\\boldsymbol{\\theta}$."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Score Vector Component",
+        "dimension_latex": "[1]",
+        "verified_at": 1795400000
+      }
+    },
+    {
+      "id": "fisher-information-matrix-element",
+      "title": "Fisher Information Matrix Element",
+      "equation": "\\mathcal{I}_{jk}(\\boldsymbol{\\theta}) = -\\mathbb{E}\\!\\left[\\frac{\\partial^2 \\ln \\mathcal{L}}{\\partial \\theta_j \\partial \\theta_k}\\right]",
+      "category": "mathematical-methods",
+      "record_type": "equation",
+      "parent_formula_id": "maximum-log-likelihood-score-equation",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Defines the $(j,k)$ element of the Fisher information matrix $\\mathcal{I}_{jk}(\\boldsymbol{\\theta})$ as the negative expectation value of the second partial derivative (Hessian) of the log-likelihood $\\ln \\mathcal{L}$ with respect to parameters $\\theta_j$ and $\\theta_k$.",
+      "conceptual_definition": "Quantifies the average amount of statistical information an observable dataset carries about simultaneous variations in model parameters through the curvature of the log-likelihood peak.",
+      "intuitive_summary": "Measures how sharply peaked the log-likelihood surface is on average: a steeper peak means larger Fisher information and tighter constraints on the parameters.",
+      "interpretation": "Under standard regularity conditions, $\\mathcal{I}_{jk}$ equals the covariance of the score vector $\\mathbb{E}[(\\partial_j \\ln \\mathcal{L})(\\partial_k \\ln \\mathcal{L})]$, is symmetric positive semidefinite, and transforms as a covariant metric tensor on the statistical manifold; its inverse approximates the parameter covariance matrix.",
+      "symmetry_origin": "Acts as the unique (up to scale) Riemannian metric on probability distributions invariant under sufficient-statistic Markov morphisms (Chentsov's theorem).",
+      "limits_and_boundary": "Requires interchangeability of differentiation and integration over the data support; fails when the support of the distribution depends on $\\boldsymbol{\\theta}$ or when parameters are strictly degenerate ($\\det \\mathcal{I} = 0$).",
+      "semantic_variables": {
+        "\\mathcal{I}_{jk}(\\boldsymbol{\\theta})": {
+          "name": "Fisher Information Matrix Element",
+          "type": "variable",
+          "unit": "1",
+          "description": "Expected curvature element measuring joint sensitivity of the log-likelihood to parameters $\\theta_j$ and $\\theta_k$."
+        },
+        "\\ln \\mathcal{L}": {
+          "name": "Log-Likelihood",
+          "type": "variable",
+          "unit": "1",
+          "description": "Natural logarithm of the likelihood function evaluated over the random data."
+        },
+        "\\theta_j": {
+          "name": "Row Parameter",
+          "type": "parameter",
+          "unit": "1",
+          "description": "The $j$-th parameter component differentiated in the log-likelihood Hessian."
+        },
+        "\\theta_k": {
+          "name": "Column Parameter",
+          "type": "parameter",
+          "unit": "1",
+          "description": "The $k$-th parameter component differentiated in the log-likelihood Hessian."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Fisher Information",
+        "dimension_latex": "[1]",
+        "verified_at": 1795400000
+      }
+    },
+    {
+      "id": "cramer-rao-variance-lower-bound",
+      "title": "Cramér-Rao Variance Lower Bound",
+      "equation": "\\mathrm{Var}(\\hat{\\theta}) \\ge \\frac{1}{\\mathcal{I}(\\theta)}",
+      "category": "mathematical-methods",
+      "record_type": "equation",
+      "parent_formula_id": "fisher-information-matrix-element",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Establishes the fundamental lower bound on the variance $\\mathrm{Var}(\\hat{\\theta})$ of any unbiased estimator $\\hat{\\theta}$ of an unknown parameter $\\theta$ as the reciprocal of the Fisher information $\\mathcal{I}(\\theta)$.",
+      "conceptual_definition": "Sets the ultimate statistical precision limit achievable by any unbiased data-analysis algorithm given a fixed experimental noise model.",
+      "intuitive_summary": "No unbiased way of estimating a physical parameter from noisy data can ever achieve a smaller variance than one over the Fisher information.",
+      "interpretation": "An unbiased estimator that achieves equality is called efficient and attains minimum variance; in the multivariate case, the covariance matrix $\\mathrm{Cov}(\\hat{\\boldsymbol{\\theta}}) - \\mathcal{I}^{-1}(\\boldsymbol{\\theta})$ is positive semidefinite, providing a benchmark for experimental design and optimal estimator construction.",
+      "symmetry_origin": "Derived directly from the Cauchy-Schwarz inequality applied to the covariance between the unbiased estimator $\\hat{\\theta}$ and the zero-mean score function $\\partial_\\theta \\ln \\mathcal{L}$.",
+      "limits_and_boundary": "Applies strictly to unbiased estimators under standard Fisher regularity conditions; biased estimators (such as ridge or shrinkage estimators) can achieve lower variance at the expense of nonzero bias.",
+      "semantic_variables": {
+        "\\mathrm{Var}(\\hat{\\theta})": {
+          "name": "Estimator Variance",
+          "type": "variable",
+          "unit": "1",
+          "description": "Mean squared statistical scatter $\\mathbb{E}[(\\hat{\\theta} - \\theta)^2]$ of the unbiased estimator $\\hat{\\theta}$."
+        },
+        "\\hat{\\theta}": {
+          "name": "Unbiased Parameter Estimator",
+          "type": "variable",
+          "unit": "1",
+          "description": "Function of the observed data satisfying $\\mathbb{E}[\\hat{\\theta}] = \\theta$."
+        },
+        "\\mathcal{I}(\\theta)": {
+          "name": "Scalar Fisher Information",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Expected negative second derivative of the log-likelihood with respect to $\\theta$."
+        },
+        "\\theta": {
+          "name": "True Physical Parameter",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Underlying unknown scalar parameter being estimated from experimental observations."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Parameter Variance Bound",
+        "dimension_latex": "[1]",
+        "verified_at": 1795400000
+      }
+    },
+    {
+      "id": "bayes-posterior-probability-theorem",
+      "title": "Bayes Posterior Probability Theorem",
+      "equation": "P(\\boldsymbol{\\theta} \\mid D, M) = \\frac{P(D \\mid \\boldsymbol{\\theta}, M)\\,P(\\boldsymbol{\\theta} \\mid M)}{P(D \\mid M)}",
+      "category": "mathematical-methods",
+      "record_type": "equation",
+      "parent_formula_id": "kullback-leibler-relative-entropy",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Relates the posterior probability density $P(\\boldsymbol{\\theta} \\mid D, M)$ of model parameters $\\boldsymbol{\\theta}$ given experimental data $D$ and hypothesis $M$ to the product of the likelihood $P(D \\mid \\boldsymbol{\\theta}, M)$ and prior density $P(\\boldsymbol{\\theta} \\mid M)$, normalized by the marginal likelihood $P(D \\mid M)$.",
+      "conceptual_definition": "Bayes's theorem is the fundamental rule of consistent probabilistic inference, updating prior knowledge about physical parameters in light of newly observed experimental data.",
+      "intuitive_summary": "Your updated belief about a parameter after taking data is proportional to how plausible that parameter was beforehand multiplied by how well it explains the observed measurement.",
+      "interpretation": "For parameter estimation within a fixed model $M$, the denominator $P(D \\mid M)$ is independent of $\\boldsymbol{\\theta}$ and acts purely as a normalization constant, whereas for comparing competing models it becomes the decisive Bayesian evidence.",
+      "symmetry_origin": "Follows directly from the product rule of conditional probability, $P(A, B) = P(A \\mid B)P(B) = P(B \\mid A)P(A)$, and is uniquely selected as the variational minimizer of Kullback-Leibler divergence under data constraints.",
+      "limits_and_boundary": "Applies universally whenever a well-defined forward likelihood $P(D \\mid \\boldsymbol{\\theta}, M)$ and proper (or locally integrable) prior $P(\\boldsymbol{\\theta} \\mid M)$ exist; in the large-sample Bernstein-von Mises limit, the posterior concentrates around the maximum-likelihood estimator independently of smooth non-vanishing priors.",
+      "semantic_variables": {
+        "P(\\boldsymbol{\\theta} \\mid D, M)": {
+          "name": "Posterior Probability Density",
+          "type": "variable",
+          "unit": "1",
+          "description": "Updated probability density over parameters $\\boldsymbol{\\theta}$ conditioned on observed data $D$ and model $M$."
+        },
+        "\\boldsymbol{\\theta}": {
+          "name": "Parameter Vector",
+          "type": "variable",
+          "unit": "1",
+          "description": "Vector of unknown physical or instrumental parameters inferred from measurement."
+        },
+        "D": {
+          "name": "Observed Experimental Data",
+          "type": "variable",
+          "unit": "1",
+          "description": "Realized dataset or measurement record collected by the detector."
+        },
+        "M": {
+          "name": "Physical Model Hypothesis",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Assumed theoretical framework specifying the forward generative relation between $\\boldsymbol{\\theta}$ and $D$."
+        },
+        "P(D \\mid \\boldsymbol{\\theta}, M)": {
+          "name": "Likelihood Function",
+          "type": "variable",
+          "unit": "1",
+          "description": "Sampling probability density of observing data $D$ for fixed parameters $\\boldsymbol{\\theta}$ under model $M$."
+        },
+        "P(\\boldsymbol{\\theta} \\mid M)": {
+          "name": "Prior Probability Density",
+          "type": "variable",
+          "unit": "1",
+          "description": "Probability density encoding pre-data physical constraints and background information on $\\boldsymbol{\\theta}$."
+        },
+        "P(D \\mid M)": {
+          "name": "Marginal Likelihood (Bayesian Evidence)",
+          "type": "variable",
+          "unit": "1",
+          "description": "Normalization constant equal to the prior-averaged likelihood of the observed data under model $M$."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Probability Density Ratio",
+        "dimension_latex": "[1]",
+        "verified_at": 1795380000
+      }
+    },
+    {
+      "id": "bayesian-marginal-likelihood-evidence",
+      "title": "Marginal Likelihood (Bayesian Evidence)",
+      "equation": "Z = P(D \\mid M) = \\int P(D \\mid \\boldsymbol{\\theta}, M)\\,P(\\boldsymbol{\\theta} \\mid M)\\,d\\boldsymbol{\\theta}",
+      "category": "mathematical-methods",
+      "record_type": "equation",
+      "parent_formula_id": "bayes-posterior-probability-theorem",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Defines the Bayesian evidence $Z = P(D \\mid M)$ as the integral of the likelihood $P(D \\mid \\boldsymbol{\\theta}, M)$ weighted by the prior density $P(\\boldsymbol{\\theta} \\mid M)$ over the full parameter space $\\boldsymbol{\\theta}$.",
+      "conceptual_definition": "The marginal likelihood quantifies the overall probability of generating the observed dataset under model $M$ averaged across all a priori plausible parameter configurations.",
+      "intuitive_summary": "Instead of judging a theory only by its single best-fitting parameter point, the evidence averages how well the theory predicts the data across its entire allowed parameter volume, penalizing wasted complexity.",
+      "interpretation": "Mathematically isomorphic to the canonical partition function in statistical physics, $Z$ rewards high peak likelihood while automatically penalizing excessive prior volume through an intrinsic Occam factor.",
+      "symmetry_origin": "Follows from the sum rule of probability and unit normalization $\\int P(\\boldsymbol{\\theta} \\mid D, M)\\,d\\boldsymbol{\\theta} = 1$ applied to Bayes's posterior theorem.",
+      "limits_and_boundary": "Requires a strictly proper normalized prior $P(\\boldsymbol{\\theta} \\mid M)$ to remain finite and well-calibrated; improper flat priors leave $Z$ undefined up to an arbitrary multiplicative constant.",
+      "semantic_variables": {
+        "Z": {
+          "name": "Bayesian Evidence",
+          "type": "variable",
+          "unit": "1",
+          "description": "Shorthand notation for the marginal likelihood $P(D \\mid M)$ of model $M$, analogous to a statistical-mechanical partition function."
+        },
+        "P(D \\mid M)": {
+          "name": "Marginal Likelihood",
+          "type": "variable",
+          "unit": "1",
+          "description": "Prior-averaged probability density of observing dataset $D$ under hypothesis $M$."
+        },
+        "P(D \\mid \\boldsymbol{\\theta}, M)": {
+          "name": "Likelihood Function",
+          "type": "variable",
+          "unit": "1",
+          "description": "Probability density of data $D$ conditioned on specific parameter values $\\boldsymbol{\\theta}$."
+        },
+        "P(\\boldsymbol{\\theta} \\mid M)": {
+          "name": "Prior Probability Density",
+          "type": "variable",
+          "unit": "1",
+          "description": "Normalized prior probability density over the parameter manifold of model $M$."
+        },
+        "\\boldsymbol{\\theta}": {
+          "name": "Parameter Vector",
+          "type": "variable",
+          "unit": "1",
+          "description": "Multi-dimensional integration variable spanning all free parameters of model $M$."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Marginal Probability Density",
+        "dimension_latex": "[1]",
+        "verified_at": 1795380000
+      }
+    },
+    {
+      "id": "bayes-factor-model-comparison-ratio",
+      "title": "Bayes Factor for Model Comparison",
+      "equation": "B_{12} = \\frac{P(D \\mid M_1)}{P(D \\mid M_2)}",
+      "category": "mathematical-methods",
+      "record_type": "equation",
+      "parent_formula_id": "bayesian-marginal-likelihood-evidence",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Defines the Bayes factor $B_{12}$ as the ratio of the marginal likelihoods (Bayesian evidences) $P(D \\mid M_1)$ and $P(D \\mid M_2)$ of two rival physical models $M_1$ and $M_2$ evaluated on the same dataset $D$.",
+      "conceptual_definition": "The Bayes factor measures the exact strength of experimental evidence favoring hypothesis $M_1$ over $M_2$, converting prior model odds into posterior model odds.",
+      "intuitive_summary": "A Bayes factor greater than one means the data are more probable overall under model 1 than under model 2, automatically balancing goodness of fit against model simplicity.",
+      "interpretation": "By Bayes's theorem at the model level, posterior odds satisfy $P(M_1 \\mid D)/P(M_2 \\mid D) = B_{12}\\,P(M_1)/P(M_2)$; values $\\ln B_{12} > 5$ correspond to decisive evidence on the empirical Jeffreys scale.",
+      "symmetry_origin": "Arises from dividing the model-level posterior probabilities of $M_1$ and $M_2$, canceling the universal data normalization $P(D)$.",
+      "limits_and_boundary": "Valid for both nested and non-nested physical hypotheses, provided both models use proper normalized priors on any non-shared parameters and are evaluated on the exact same dataset $D$.",
+      "semantic_variables": {
+        "B_{12}": {
+          "name": "Bayes Factor",
+          "type": "variable",
+          "unit": "1",
+          "description": "Dimensionless evidence ratio quantifying relative data support for model $M_1$ versus model $M_2$."
+        },
+        "P(D \\mid M_1)": {
+          "name": "Evidence of Model 1",
+          "type": "variable",
+          "unit": "1",
+          "description": "Marginal likelihood of observed dataset $D$ under the first competing hypothesis $M_1$."
+        },
+        "P(D \\mid M_2)": {
+          "name": "Evidence of Model 2",
+          "type": "variable",
+          "unit": "1",
+          "description": "Marginal likelihood of observed dataset $D$ under the second competing hypothesis $M_2$."
+        },
+        "D": {
+          "name": "Observed Experimental Data",
+          "type": "variable",
+          "unit": "1",
+          "description": "Common measurement dataset used to compare both hypotheses."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Dimensionless Evidence Ratio",
+        "dimension_latex": "[1]",
+        "verified_at": 1795380000
+      }
+    },
+    {
+      "id": "jeffreys-reparameterization-invariant-prior",
+      "title": "Jeffreys Reparameterization-Invariant Prior",
+      "equation": "P_J(\\boldsymbol{\\theta}) \\propto \\sqrt{\\det \\mathcal{I}(\\boldsymbol{\\theta})}",
+      "category": "mathematical-methods",
+      "record_type": "equation",
+      "parent_formula_id": "kullback-leibler-relative-entropy",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Constructs the non-informative Jeffreys prior density $P_J(\\boldsymbol{\\theta})$ proportional to the square root of the determinant of the Fisher information matrix $\\mathcal{I}_{ij}(\\boldsymbol{\\theta}) = -\\mathbb{E}[\\partial_i \\partial_j \\ln P(D \\mid \\boldsymbol{\\theta})]$.",
+      "conceptual_definition": "Jeffreys's rule defines a canonical objective prior volume element on a statistical manifold that yields identical posterior inferences under arbitrary smooth reparameterizations.",
+      "intuitive_summary": "Places more prior weight where the measurement apparatus is most sensitive to parameter changes, ensuring that changing units or coordinates never alters your physical conclusions.",
+      "interpretation": "In information geometry, $\\mathcal{I}_{ij}(\\boldsymbol{\\theta})$ is the Riemannian metric tensor induced by the local quadratic expansion of Kullback-Leibler divergence, so $\\sqrt{\\det \\mathcal{I}(\\boldsymbol{\\theta})}\\,d\\boldsymbol{\\theta}$ is the invariant Riemannian volume form.",
+      "symmetry_origin": "Follows from diffeomorphism covariance under smooth coordinate transformations $\\boldsymbol{\\phi} = \\boldsymbol{\\phi}(\\boldsymbol{\\theta})$, under which $\\mathcal{I}(\\boldsymbol{\\theta}) = J^T \\mathcal{I}(\\boldsymbol{\\phi}) J$ and $\\sqrt{\\det \\mathcal{I}}$ transforms identically to a probability density.",
+      "limits_and_boundary": "Produces a uniform prior for location parameters and a scale-invariant $1/\\sigma$ prior for scale parameters; in high-dimensional multi-parameter models, reference priors may be preferred to avoid marginalization paradoxes.",
+      "semantic_variables": {
+        "P_J(\\boldsymbol{\\theta})": {
+          "name": "Jeffreys Invariant Prior Density",
+          "type": "variable",
+          "unit": "1",
+          "description": "Coordinate-invariant objective prior probability density over parameters $\\boldsymbol{\\theta}$."
+        },
+        "\\mathcal{I}(\\boldsymbol{\\theta})": {
+          "name": "Fisher Information Matrix",
+          "type": "variable",
+          "unit": "1",
+          "description": "Expected negative Hessian matrix of the log-likelihood measuring local parameter distinguishability."
+        },
+        "\\boldsymbol{\\theta}": {
+          "name": "Parameter Vector",
+          "type": "variable",
+          "unit": "1",
+          "description": "Coordinate vector on the statistical parameter manifold."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Invariant Prior Density",
+        "dimension_latex": "[1]",
+        "verified_at": 1795380000
+      }
+    },
+    {
+      "id": "nuisance-parameter-posterior-marginalization",
+      "title": "Nuisance-Parameter Posterior Marginalization",
+      "equation": "P(\\theta_1 \\mid D) = \\int P(\\theta_1, \\boldsymbol{\\eta} \\mid D)\\,d\\boldsymbol{\\eta}",
+      "category": "mathematical-methods",
+      "record_type": "equation",
+      "parent_formula_id": "bayes-posterior-probability-theorem",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Obtains the marginalized posterior probability density $P(\\theta_1 \\mid D)$ for a physical parameter of interest $\\theta_1$ by integrating the full joint posterior $P(\\theta_1, \\boldsymbol{\\eta} \\mid D)$ over all nuisance parameters $\\boldsymbol{\\eta}$.",
+      "conceptual_definition": "Marginalization rigorously eliminates unwanted calibration, background, and systematic parameters while propagating their full uncertainty and covariance into the inferred physical quantity.",
+      "intuitive_summary": "To find the true uncertainty on one physical parameter, you average the posterior over every plausible value of all the messy calibration and background parameters rather than freezing them at a guess.",
+      "interpretation": "When posterior samples are drawn via Markov chain Monte Carlo, marginalization over $\\boldsymbol{\\eta}$ is achieved effortlessly by projecting the sampled chain onto the $\\theta_1$ coordinate and discarding the nuisance columns.",
+      "symmetry_origin": "Follows directly from the continuous sum rule of probability theory applied to the joint posterior distribution.",
+      "limits_and_boundary": "Requires integrable nuisance priors; strong nonlinear degeneracies between $\\theta_1$ and $\\boldsymbol{\\eta}$ can widen or skew the marginalized posterior relative to conditional slices at fixed $\\boldsymbol{\\eta}$.",
+      "semantic_variables": {
+        "P(\\theta_1 \\mid D)": {
+          "name": "Marginalized Posterior Density",
+          "type": "variable",
+          "unit": "1",
+          "description": "Posterior probability density of the target physical parameter $\\theta_1$ after integrating out nuisance variables."
+        },
+        "\\theta_1": {
+          "name": "Parameter of Interest",
+          "type": "variable",
+          "unit": "1",
+          "description": "Primary physical quantity targeted for scientific inference."
+        },
+        "\\boldsymbol{\\eta}": {
+          "name": "Nuisance Parameter Vector",
+          "type": "variable",
+          "unit": "1",
+          "description": "Vector of calibration, background, or auxiliary parameters required by the forward model but not of primary interest."
+        },
+        "P(\\theta_1, \\boldsymbol{\\eta} \\mid D)": {
+          "name": "Joint Posterior Density",
+          "type": "variable",
+          "unit": "1",
+          "description": "Full multi-dimensional posterior distribution over both target and nuisance parameters."
+        },
+        "D": {
+          "name": "Observed Experimental Data",
+          "type": "variable",
+          "unit": "1",
+          "description": "Experimental measurement record."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Marginalized Probability Density",
+        "dimension_latex": "[1]",
+        "verified_at": 1795380000
+      }
+    },
+    {
+      "id": "bayesian-information-criterion-score",
+      "title": "Bayesian Information Criterion (BIC)",
+      "equation": "\\mathrm{BIC} = k\\ln N - 2\\ln \\hat{\\mathcal{L}}",
+      "category": "mathematical-methods",
+      "record_type": "equation",
+      "parent_formula_id": "saddle-point-steepest-descent-formula",
+      "derivation_type": "SPECIAL_CASE",
+      "description": "Approximates minus twice the log Bayesian evidence in the large-sample limit as $\\mathrm{BIC} = k\\ln N - 2\\ln \\hat{\\mathcal{L}}$, balancing the maximized log-likelihood $\\ln \\hat{\\mathcal{L}}$ against a complexity penalty proportional to the number of free parameters $k$ and the logarithm of the sample size $N$.",
+      "conceptual_definition": "Schwarz's Bayesian Information Criterion provides a rapid, prior-independent asymptotic proxy for Bayesian model comparison when full multi-dimensional evidence integration is impractical.",
+      "intuitive_summary": "Rewards a model for fitting the data well through $-2\\ln \\hat{\\mathcal{L}}$, but charges a tax of $\\ln N$ for every extra free parameter it introduces; the model with the lowest BIC wins.",
+      "interpretation": "In the asymptotic limit $N \\to \\infty$, the Bayes factor between two models satisfies $-2\\ln B_{12} \\approx \\mathrm{BIC}_1 - \\mathrm{BIC}_2$, making BIC asymptotically consistent for selecting the true data-generating model.",
+      "symmetry_origin": "Obtained by taking $-2\\ln Z$ of the Laplace saddle-point evidence approximation, substituting $\\det \\mathbf{H} \\propto N^k$ for $N$ independent observations, and dropping $O(1)$ prior-dependent constants.",
+      "limits_and_boundary": "Valid only for regular, unimodal likelihoods in the large-sample regime $N \\gg k$ with independent observations; fails when parameters hit physical boundaries, models are singular, or prior volume effects dominate.",
+      "semantic_variables": {
+        "\\mathrm{BIC}": {
+          "name": "Bayesian Information Criterion",
+          "type": "variable",
+          "unit": "1",
+          "description": "Dimensionless asymptotic model-selection score; smaller values indicate stronger statistical support."
+        },
+        "k": {
+          "name": "Number of Free Parameters",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Dimensionality of the continuous parameter vector $\\boldsymbol{\\theta}$ estimated from the data."
+        },
+        "N": {
+          "name": "Sample Size",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Number of independent experimental data points or observations."
+        },
+        "\\hat{\\mathcal{L}}": {
+          "name": "Maximized Likelihood",
+          "type": "variable",
+          "unit": "1",
+          "description": "Peak value of the likelihood function $P(D \\mid \\hat{\\boldsymbol{\\theta}}, M)$ attained at the maximum-likelihood estimate."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Dimensionless Information Score",
+        "dimension_latex": "[1]",
+        "verified_at": 1795380000
+      }
+    },
+    {
+      "id": "laplace-gaussian-evidence-approximation",
+      "title": "Laplace Gaussian Approximation to Bayesian Evidence",
+      "equation": "Z \\approx \\hat{\\mathcal{L}}\\,P(\\hat{\\boldsymbol{\\theta}})(2\\pi)^{k/2}(\\det \\mathbf{H})^{-1/2}",
+      "category": "mathematical-methods",
+      "record_type": "equation",
+      "parent_formula_id": "saddle-point-steepest-descent-formula",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Approximates the $k$-dimensional Bayesian evidence integral $Z$ around the posterior mode $\\hat{\\boldsymbol{\\theta}}$ as the product of the peak likelihood $\\hat{\\mathcal{L}}$, the prior density $P(\\hat{\\boldsymbol{\\theta}})$, and the Gaussian covariance volume $(2\\pi)^{k/2}(\\det \\mathbf{H})^{-1/2}$ determined by the negative log-posterior Hessian matrix $\\mathbf{H}$.",
+      "conceptual_definition": "The Laplace approximation applies multivariate saddle-point integration to evaluate the marginal likelihood analytically, explicitly separating goodness of fit from the Occam volume factor.",
+      "intuitive_summary": "Approximates the posterior peak as a multi-dimensional bell curve so the evidence integral equals the peak height times the width of the bell curve relative to the prior.",
+      "interpretation": "Factorizing $Z \\approx \\hat{\\mathcal{L}} \\times \\left[P(\\hat{\\boldsymbol{\\theta}})(2\\pi)^{k/2}(\\det \\mathbf{H})^{-1/2}\\right]$ isolates the maximum likelihood from the dimensionless Occam factor, which measures the fraction of prior volume consistent with the data.",
+      "symmetry_origin": "Derived directly from the second-order Taylor expansion of $\\ln[P(D \\mid \\boldsymbol{\\theta}, M)P(\\boldsymbol{\\theta} \\mid M)]$ at its stationary point $\\hat{\\boldsymbol{\\theta}}$ followed by exact multivariate Gaussian integration.",
+      "limits_and_boundary": "Accurate for sharply peaked, unimodal posteriors far from parameter-space boundaries in high signal-to-noise regimes; breaks down for multi-modal, strongly skewed, or heavy-tailed posteriors where nested sampling is required.",
+      "semantic_variables": {
+        "Z": {
+          "name": "Approximate Bayesian Evidence",
+          "type": "variable",
+          "unit": "1",
+          "description": "Saddle-point approximation to the marginal likelihood $P(D \\mid M)$."
+        },
+        "\\hat{\\mathcal{L}}": {
+          "name": "Peak Likelihood",
+          "type": "variable",
+          "unit": "1",
+          "description": "Likelihood function evaluated at the posterior mode $\\hat{\\boldsymbol{\\theta}}$."
+        },
+        "P(\\hat{\\boldsymbol{\\theta}})": {
+          "name": "Prior Density at Mode",
+          "type": "variable",
+          "unit": "1",
+          "description": "Prior probability density evaluated at the posterior peak $\\hat{\\boldsymbol{\\theta}}$."
+        },
+        "k": {
+          "name": "Parameter Space Dimension",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Number of continuous model parameters integrated over."
+        },
+        "\\mathbf{H}": {
+          "name": "Negative Log-Posterior Hessian Matrix",
+          "type": "variable",
+          "unit": "1",
+          "description": "Symmetric positive-definite $k \\times k$ curvature matrix $H_{ij} = -\\partial_i \\partial_j \\ln[P(D \\mid \\boldsymbol{\\theta}, M)P(\\boldsymbol{\\theta} \\mid M)]|_{\\hat{\\boldsymbol{\\theta}}}$."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Marginal Probability Density",
+        "dimension_latex": "[1]",
+        "verified_at": 1795380000
+      }
+    },
+    {
+      "id": "wiener-khinchin-power-spectral-density",
+      "title": "Wiener-Khinchin Power Spectral Density Theorem",
+      "equation": "S_x(\\omega) = \\int_{-\\infty}^{\\infty} R_{xx}(\\tau)\\,e^{-i\\omega\\tau}\\,d\\tau",
+      "category": "mathematical-methods",
+      "record_type": "equation",
+      "parent_formula_id": "fourier-transform-forward-ident-5ca854f6",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Relates the power spectral density $S_x(\\omega)$ of a wide-sense stationary stochastic process $x(t)$ to the continuous Fourier transform of its temporal autocorrelation function $R_{xx}(\\tau) = \\langle x(t)x(t+\\tau)\\rangle$ over lag time $\\tau$.",
+      "conceptual_definition": "The Wiener-Khinchin theorem establishes an exact duality between time-domain temporal correlations and frequency-domain variance distribution for stationary random processes.",
+      "intuitive_summary": "A noisy signal that stays correlated over long times concentrates its variance at low frequencies, whereas a signal that forgets its past almost instantly spreads its power evenly across all frequencies.",
+      "interpretation": "Because $R_{xx}(\\tau)$ is real and even for real stationary processes, $S_x(\\omega)$ is guaranteed to be real, even, and non-negative, and its integral over all frequencies $\\frac{1}{2\\pi}\\int_{-\\infty}^{\\infty} S_x(\\omega)\\,d\\omega = R_{xx}(0)$ recovers total mean-squared signal power.",
+      "symmetry_origin": "Follows from time-translation invariance (wide-sense stationarity) combined with unitary Fourier harmonic decomposition.",
+      "limits_and_boundary": "Requires wide-sense stationarity and absolute integrability of $R_{xx}(\\tau)$ (or distributional interpretation via Dirac delta lines for embedded periodic components); non-stationary processes require Wigner-Ville or short-time spectral representations.",
+      "semantic_variables": {
+        "S_x(\\omega)": {
+          "name": "Power Spectral Density",
+          "type": "variable",
+          "unit": "V^2*s/rad",
+          "description": "Mean-squared signal variance per unit angular frequency at $\\omega$ (shown for a voltage observable $x$)."
+        },
+        "\\omega": {
+          "name": "Angular Frequency",
+          "type": "variable",
+          "unit": "rad/s",
+          "description": "Harmonic angular frequency coordinate conjugate to lag time $\\tau$."
+        },
+        "R_{xx}(\\tau)": {
+          "name": "Autocorrelation Function",
+          "type": "variable",
+          "unit": "V^2",
+          "description": "Ensemble expectation $\\langle x(t)x(t+\\tau)\\rangle$ measuring temporal correlation across lag $\\tau$."
+        },
+        "\\tau": {
+          "name": "Time Lag",
+          "type": "variable",
+          "unit": "s",
+          "description": "Temporal separation between two evaluations of the stationary process."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Spectral Density (Variance per Angular Frequency)",
+        "dimension_latex": "[X^2 T]",
+        "verified_at": 1795380000
+      }
+    },
+    {
+      "id": "nyquist-shannon-sampling-criterion",
+      "title": "Nyquist-Shannon Critical Sampling Criterion",
+      "equation": "f_s \\ge 2 f_{\\max}",
+      "category": "mathematical-methods",
+      "record_type": "equation",
+      "parent_formula_id": "dirac-delta-fourier-integral",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "States the minimum uniform sampling frequency $f_s$ required to reconstruct a continuous band-limited signal containing no frequency components above $f_{\\max}$ without spectral aliasing.",
+      "conceptual_definition": "The Nyquist-Shannon sampling theorem defines the exact threshold between lossless digital discretization and irreversible high-frequency folding.",
+      "intuitive_summary": "To capture a wave faithfully without confusing fast wiggles for slow ones, you must sample it at least twice per cycle of its fastest oscillation.",
+      "interpretation": "Multiplying a continuous waveform by a Dirac impulse comb of spacing $1/f_s$ replicates its Fourier spectrum every $f_s$; the condition $f_s \\ge 2 f_{\\max}$ guarantees that adjacent spectral copies remain disjoint so an ideal low-pass sinc filter recovers the exact original waveform.",
+      "symmetry_origin": "Arises from the Poisson summation formula and the discrete translation invariance of periodic sampling lattices in conjugate time-frequency domains.",
+      "limits_and_boundary": "Strictly applies to baseband signals band-limited to $|f| < f_{\\max}$ sampled uniformly over infinite duration; real-world finite-duration acquisition requires guard bands, anti-aliasing filters, and windowing to suppress spectral leakage.",
+      "semantic_variables": {
+        "f_s": {
+          "name": "Sampling Frequency",
+          "type": "parameter",
+          "unit": "Hz",
+          "description": "Number of discrete analog-to-digital samples acquired per second."
+        },
+        "f_{\\max}": {
+          "name": "Maximum Signal Frequency",
+          "type": "parameter",
+          "unit": "Hz",
+          "description": "Upper cutoff bandwidth of the band-limited continuous signal."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Frequency",
+        "dimension_latex": "[T^{-1}]",
+        "verified_at": 1795380000
+      }
+    },
+    {
+      "id": "schottky-shot-noise-spectral-density",
+      "title": "Schottky Discrete-Charge Shot Noise Spectrum",
+      "equation": "S_I(f) = 2 q I",
+      "category": "mathematical-methods",
+      "record_type": "equation",
+      "parent_formula_id": "wiener-khinchin-power-spectral-density",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Gives the single-sided current noise power spectral density $S_I(f)$ arising from independent Poissonian arrivals of discrete charge carriers of charge $q$ carrying average direct current $I$.",
+      "conceptual_definition": "Schottky's shot noise formula quantifies the fundamental white-noise floor imposed by the quantization of electric charge or photon arrivals in non-equilibrium transport.",
+      "intuitive_summary": "Because electric current consists of individual electrons rather than a smooth fluid, their random arrival times create a steady, frequency-independent hiss proportional to the average current.",
+      "interpretation": "Integrating $S_I(f)$ over a measurement bandwidth $\\Delta f$ yields mean-squared current fluctuations $\\langle \\delta I^2\\rangle = 2 q I \\Delta f$, establishing the standard quantum limit for photodetection and vacuum-tube or p-n junction current measurements.",
+      "symmetry_origin": "Follows from the Wiener-Khinchin transform of a memoryless stationary Poisson impulse train with independent carrier transit events.",
+      "limits_and_boundary": "Valid for frequencies far below the inverse carrier transit time ($f \\ll \\tau_{\\mathrm{tr}}^{-1}$) and uncorrelated Poissonian transport; Coulomb repulsion or Pauli exclusion in mesoscopic conductors suppresses noise below $2qI$ by a sub-Poissonian Fano factor $F < 1$.",
+      "semantic_variables": {
+        "S_I(f)": {
+          "name": "Single-Sided Current Noise Spectral Density",
+          "type": "variable",
+          "unit": "A^2/Hz",
+          "description": "Mean-squared current fluctuation per unit linear frequency bandwidth."
+        },
+        "q": {
+          "name": "Elementary Charge",
+          "type": "constant",
+          "unit": "C",
+          "description": "Magnitude of the discrete charge carried by each independent particle ($e \\approx 1.602\\times 10^{-19}\\,\\mathrm{C}$)."
+        },
+        "I": {
+          "name": "Mean Electric Current",
+          "type": "variable",
+          "unit": "A",
+          "description": "Time-averaged direct current flowing across the barrier or detector."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Current Spectral Density",
+        "dimension_latex": "[I^2 T]",
+        "verified_at": 1795380000
+      }
+    },
+    {
+      "id": "hooge-flicker-noise-power-spectrum",
+      "title": "Hooge Empirical Flicker Noise Power Spectrum",
+      "equation": "S_V(f) = \\frac{\\alpha_H V^2}{N_c f^\\gamma}",
+      "category": "mathematical-methods",
+      "record_type": "equation",
+      "parent_formula_id": "wiener-khinchin-power-spectral-density",
+      "derivation_type": "SPECIAL_CASE",
+      "description": "Models low-frequency $1/f^\\gamma$ flicker voltage noise spectral density $S_V(f)$ across a biased conductor with direct voltage $V$, total mobile carrier count $N_c$, empirical dimensionless Hooge parameter $\\alpha_H$, and spectral exponent $\\gamma \\approx 1$.",
+      "conceptual_definition": "Hooge's relation captures the ubiquitous low-frequency pink-noise excess observed in solid-state electronics, arising from broad distributions of trapping and mobility fluctuation timescales.",
+      "intuitive_summary": "Slowly fluctuating defects and carrier-mobility traps cause resistance noise that grows stronger at lower frequencies, scaling up with bias voltage and down as the device contains more carriers.",
+      "interpretation": "Superposing independent Lorentzian two-level fluctuators over a wide log-uniform distribution of activation times generates $S_V(f) \\propto 1/f$, which dominates over white thermal and shot noise below the $1/f$ corner frequency and motivates AC modulation techniques.",
+      "symmetry_origin": "Reflects approximate scale invariance across decades of relaxation timescales in disordered condensed-matter ensembles.",
+      "limits_and_boundary": "Empirical scaling law valid over intermediate frequency decades ($0.8 \\lesssim \\gamma \\lesssim 1.4$); strictly $1/f$ behavior must roll off at ultra-low and ultra-high frequencies to keep integrated noise power finite.",
+      "semantic_variables": {
+        "S_V(f)": {
+          "name": "Voltage Noise Power Spectral Density",
+          "type": "variable",
+          "unit": "V^2/Hz",
+          "description": "Mean-squared voltage fluctuation per unit linear frequency at frequency $f$."
+        },
+        "\\alpha_H": {
+          "name": "Hooge Parameter",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Dimensionless material- and quality-dependent constant characterizing bulk flicker noise strength (typically $10^{-6}$ to $10^{-2}$)."
+        },
+        "V": {
+          "name": "Applied Bias Voltage",
+          "type": "variable",
+          "unit": "V",
+          "description": "Mean direct-current voltage drop across the conducting sample."
+        },
+        "N_c": {
+          "name": "Total Number of Mobile Carriers",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Total count of free charge carriers participating in conduction within the active volume."
+        },
+        "f": {
+          "name": "Linear Frequency",
+          "type": "variable",
+          "unit": "Hz",
+          "description": "Fourier frequency at which the flicker noise spectrum is evaluated."
+        },
+        "\\gamma": {
+          "name": "Flicker Spectral Exponent",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Dimensionless power-law slope near unity ($\\gamma \\approx 1$ for pure pink noise)."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Voltage Spectral Density (at gamma = 1)",
+        "dimension_latex": "[M^2 L^4 T^{-5} I^{-2}]",
+        "verified_at": 1795380000
+      }
+    },
+    {
+      "id": "matched-filter-optimal-snr",
+      "title": "Matched-Filter Optimal Signal-to-Noise Ratio",
+      "equation": "\\rho_{\\mathrm{opt}}^2 = 4 \\int_0^\\infty \\frac{|\\tilde{h}(f)|^2}{S_n(f)}\\,df",
+      "category": "mathematical-methods",
+      "record_type": "equation",
+      "parent_formula_id": "parseval-theorem-energy-conservation-ident-c46e59d3",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Determines the maximum achievable squared signal-to-noise ratio $\\rho_{\\mathrm{opt}}^2$ when detecting a known deterministic waveform with Fourier transform $\\tilde{h}(f)$ embedded in stationary additive Gaussian noise of single-sided power spectral density $S_n(f)$.",
+      "conceptual_definition": "The optimal matched-filter SNR defines the theoretical ceiling of linear coherent detection in colored stationary noise via noise-weighted inner products.",
+      "intuitive_summary": "By dividing out the noise floor at every frequency before correlating with the expected signal template, a matched filter extracts every bit of signal energy from quiet frequency bands while automatically ignoring noisy bands.",
+      "interpretation": "Derived from the Cauchy-Schwarz inequality on the noise-weighted inner product $(a|b) = 4\\,\\mathrm{Re}\\int_0^\\infty \\frac{\\tilde{a}^*(f)\\tilde{b}(f)}{S_n(f)}\\,df$, the equality is saturated exclusively by the whitened matched filter $\\tilde{K}(f) \\propto \\tilde{h}(f)/S_n(f)$, central to radar and LIGO gravitational-wave detection.",
+      "symmetry_origin": "Follows from Parseval's inner-product isometry and Hilbert-space Cauchy-Schwarz optimality under the positive-definite metric $S_n^{-1}(f)$.",
+      "limits_and_boundary": "Optimal for additive stationary Gaussian noise and an accurately known template $\\tilde{h}(f)$; non-Gaussian glitches or waveform parameter mismatches degrade sensitivity and require veto chisquare tests and template banks.",
+      "semantic_variables": {
+        "\\rho_{\\mathrm{opt}}": {
+          "name": "Optimal Signal-to-Noise Ratio",
+          "type": "variable",
+          "unit": "1",
+          "description": "Dimensionless ratio of peak matched-filter output amplitude to root-mean-square noise."
+        },
+        "\\tilde{h}(f)": {
+          "name": "Signal Fourier Transform",
+          "type": "variable",
+          "unit": "s",
+          "description": "Frequency-domain complex amplitude of the target waveform (unit shown for dimensionless strain $h(t)$)."
+        },
+        "S_n(f)": {
+          "name": "Single-Sided Noise Power Spectral Density",
+          "type": "variable",
+          "unit": "Hz^-1",
+          "description": "Background instrumental noise variance per unit linear frequency (unit shown for dimensionless strain)."
+        },
+        "f": {
+          "name": "Linear Frequency",
+          "type": "variable",
+          "unit": "Hz",
+          "description": "Positive linear frequency integration variable."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Dimensionless",
+        "dimension_latex": "[1]",
+        "verified_at": 1795380000
+      }
+    },
+    {
+      "id": "lock-in-phase-sensitive-demodulation",
+      "title": "Lock-In Phase-Sensitive Demodulated Output",
+      "equation": "V_{\\mathrm{out}} = \\frac{1}{2} V_s \\cos\\Delta\\phi",
+      "category": "mathematical-methods",
+      "record_type": "equation",
+      "parent_formula_id": "fourier-transform-forward-ident-5ca854f6",
+      "derivation_type": "SPECIAL_CASE",
+      "description": "Gives the low-pass-filtered direct-current output voltage $V_{\\mathrm{out}}$ of a phase-sensitive lock-in amplifier demodulating a sinusoidal input of amplitude $V_s$ against a unit-amplitude coherent reference shifted by phase offset $\\Delta\\phi$.",
+      "conceptual_definition": "Phase-sensitive demodulation translates a narrowband carrier signal down to DC while rejecting all out-of-band noise and incoherent interference outside the low-pass filter bandwidth.",
+      "intuitive_summary": "Multiplying a modulated signal by a synchronized reference wave shifts the target signal to a steady DC voltage proportional to $\\cos\\Delta\\phi$, while noise at other frequencies averages away to zero.",
+      "interpretation": "Using the trigonometric product identity $\\cos(\\omega_{\\mathrm{ref}}t + \\phi_s)\\cos(\\omega_{\\mathrm{ref}}t + \\phi_{\\mathrm{ref}}) = \\frac{1}{2}\\cos\\Delta\\phi + \\frac{1}{2}\\cos(2\\omega_{\\mathrm{ref}}t + \\phi_s + \\phi_{\\mathrm{ref}})$, low-pass filtering removes the $2\\omega_{\\mathrm{ref}}$ harmonic; pairing with a $90^\\circ$-shifted reference recovers the quadrature output $\\frac{1}{2}V_s\\sin\\Delta\\phi$.",
+      "symmetry_origin": "Follows from harmonic orthogonality of sinusoidal basis functions over integer cycles under synchronous frequency mixing.",
+      "limits_and_boundary": "Assumes a pure sinusoidal reference (square-wave switching introduces odd-harmonic responses weighted by $1/n$) and a low-pass cutoff frequency well below $2 f_{\\mathrm{ref}}$ so the sum-frequency ripple is fully attenuated.",
+      "semantic_variables": {
+        "V_{\\mathrm{out}}": {
+          "name": "Demodulated DC Output Voltage",
+          "type": "variable",
+          "unit": "V",
+          "description": "Filtered in-phase direct-current voltage proportional to the synchronous signal component."
+        },
+        "V_s": {
+          "name": "Modulated Signal Amplitude",
+          "type": "variable",
+          "unit": "V",
+          "description": "Peak voltage amplitude of the incoming sinusoidal carrier signal."
+        },
+        "\\Delta\\phi": {
+          "name": "Signal-Reference Phase Difference",
+          "type": "variable",
+          "unit": "rad",
+          "description": "Relative phase angle $\\phi_s - \\phi_{\\mathrm{ref}}$ between the input signal and internal reference oscillator."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Electric Potential (Voltage)",
+        "dimension_latex": "[M L^2 T^{-3} I^{-1}]",
+        "verified_at": 1795380000
+      }
+    },
+    {
+      "id": "allan-variance-frequency-stability",
+      "title": "Two-Sample Allan Variance Frequency Stability",
+      "equation": "\\sigma_y^2(\\tau) = \\frac{1}{2}\\left\\langle (\\bar{y}_{k+1} - \\bar{y}_k)^2 \\right\\rangle",
+      "category": "mathematical-methods",
+      "record_type": "equation",
+      "parent_formula_id": "wiener-khinchin-power-spectral-density",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Defines the two-sample Allan variance $\\sigma_y^2(\\tau)$ as half the mean-squared difference between adjacent non-overlapping fractional frequency averages $\\bar{y}_k$ and $\\bar{y}_{k+1}$ evaluated over averaging time $\\tau$.",
+      "conceptual_definition": "The Allan variance is the standard time-domain metrology diagnostic for oscillator and clock stability, remaining finite even in the presence of non-stationary flicker and random-walk frequency noise.",
+      "intuitive_summary": "Instead of comparing every frequency measurement to a long-term average that may drift forever, the Allan variance compares each time slice only to its immediate neighbor, cleanly separating fast random noise from slow drift.",
+      "interpretation": "In the frequency domain, $\\sigma_y^2(\\tau) = 2\\int_0^\\infty S_y(f)\\frac{\\sin^4(\\pi f\\tau)}{(\\pi f\\tau)^2}\\,df$; the $f^2$ transfer zero at DC regularizes $1/f$ and $1/f^2$ divergences so log-log slopes of $\\sigma_y(\\tau)$ uniquely identify white, flicker, and random-walk noise regimes.",
+      "symmetry_origin": "Constructed from first-order discrete time differencing of consecutive boxcar averages, yielding a translation-invariant two-sample estimator with zero sensitivity to constant frequency offsets.",
+      "limits_and_boundary": "Converges for power-law frequency noise $S_y(f) \\propto f^\\alpha$ with $\\alpha \\ge -2$ (down to random-walk frequency noise); linear frequency drift produces $\\sigma_y(\\tau) \\propto \\tau$ and requires the Hadamard variance for drift-immune estimation.",
+      "semantic_variables": {
+        "\\sigma_y^2(\\tau)": {
+          "name": "Two-Sample Allan Variance",
+          "type": "variable",
+          "unit": "1",
+          "description": "Dimensionless mean-squared fractional frequency instability at averaging interval $\\tau$."
+        },
+        "\\tau": {
+          "name": "Averaging Gate Time",
+          "type": "parameter",
+          "unit": "s",
+          "description": "Duration of each contiguous non-overlapping measurement interval."
+        },
+        "\\bar{y}_k": {
+          "name": "k-th Fractional Frequency Average",
+          "type": "variable",
+          "unit": "1",
+          "description": "Time-averaged dimensionless fractional frequency offset $\\Delta\\nu/\\nu_0$ over the $k$-th interval of length $\\tau$."
+        },
+        "\\bar{y}_{k+1}": {
+          "name": "(k+1)-th Fractional Frequency Average",
+          "type": "variable",
+          "unit": "1",
+          "description": "Time-averaged dimensionless fractional frequency offset over the immediately following interval."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Dimensionless",
+        "dimension_latex": "[1]",
+        "verified_at": 1795380000
+      }
+    },
+    {
+      "id": "bethe-bloch-collisional-stopping-power",
+      "title": "Bethe-Bloch Collisional Stopping Power",
+      "equation": "-\\left\\langle \\frac{dE}{dx} \\right\\rangle = K z^2 \\frac{Z}{A}\\frac{1}{\\beta^2}\\left[\\frac{1}{2}\\ln\\!\\left(\\frac{2 m_e c^2 \\beta^2 \\gamma^2 T_{\\max}}{I^2}\\right) - \\beta^2\\right]",
+      "category": "mathematical-methods",
+      "record_type": "equation",
+      "parent_formula_id": "greens-function-integral-solution-ident-46642bfc",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Gives the mean collisional energy loss per unit mass thickness $-\\left\\langle \\frac{dE}{dx} \\right\\rangle$ for a moderately relativistic heavy charged particle of charge $ze$ and speed $\\beta c$ ionizing a medium of atomic number $Z$, atomic mass $A$, and mean excitation energy $I$.",
+      "conceptual_definition": "The Bethe-Bloch formula quantifies how charged particles slower than radiative thresholds decelerate via inelastic Coulomb scattering off bound atomic electrons.",
+      "intuitive_summary": "A fast charged particle drags on atomic electrons as it passes through matter; slower particles linger longer and lose much more energy per centimeter, while relativistic particles settle into a nearly constant minimum-ionizing rate.",
+      "interpretation": "The leading $1/\\beta^2$ factor creates the sharp Bragg peak near the end of a particle's range, whereas the logarithmic factor produces a shallow minimum near $\\beta\\gamma \\approx 3$ followed by a slow relativistic rise eventually tamed by dielectric density-effect screening.",
+      "symmetry_origin": "Derived from first-order Born-approximation Coulomb scattering and the Thomas-Reiche-Kuhn dipole oscillator sum rule for bound atomic electrons.",
+      "limits_and_boundary": "Accurate to within a few percent for heavy charged particles ($M \\gg m_e$) over $0.1 \\lesssim \\beta\\gamma \\lesssim 1000$; electrons require Mott exchange corrections and radiative bremsstrahlung terms, while ultra-high $\\beta\\gamma$ requires Fermi density-effect corrections.",
+      "semantic_variables": {
+        "\\left\\langle \\frac{dE}{dx} \\right\\rangle": {
+          "name": "Mean Mass Stopping Power",
+          "type": "variable",
+          "unit": "MeV*cm^2/g",
+          "description": "Average energy lost by the incident charged particle per unit mass thickness traversed."
+        },
+        "K": {
+          "name": "Bethe-Bloch Constant",
+          "type": "constant",
+          "unit": "MeV*cm^2/mol",
+          "description": "Universal stopping-power constant $4\\pi N_A r_e^2 m_e c^2 \\approx 0.307075\\,\\mathrm{MeV\\,cm^2/mol}$."
+        },
+        "z": {
+          "name": "Projectile Charge Number",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Electric charge of the incident particle in units of the elementary charge $e$."
+        },
+        "Z": {
+          "name": "Absorber Atomic Number",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Number of protons (and bound electrons) per atom of the absorbing medium."
+        },
+        "A": {
+          "name": "Absorber Atomic Mass",
+          "type": "parameter",
+          "unit": "g/mol",
+          "description": "Molar mass of the absorbing medium."
+        },
+        "\\beta": {
+          "name": "Relativistic Velocity Ratio",
+          "type": "variable",
+          "unit": "1",
+          "description": "Ratio $v/c$ of the projectile speed to the vacuum speed of light."
+        },
+        "\\gamma": {
+          "name": "Lorentz Factor",
+          "type": "variable",
+          "unit": "1",
+          "description": "Relativistic time-dilation factor $(1 - \\beta^2)^{-1/2}$."
+        },
+        "m_e": {
+          "name": "Electron Rest Mass",
+          "type": "constant",
+          "unit": "kg",
+          "description": "Rest mass of the struck atomic electron ($m_e c^2 \\approx 0.511\\,\\mathrm{MeV}$)."
+        },
+        "c": {
+          "name": "Speed of Light",
+          "type": "constant",
+          "unit": "m/s",
+          "description": "Vacuum speed of light."
+        },
+        "T_{\\max}": {
+          "name": "Maximum Single-Collision Energy Transfer",
+          "type": "variable",
+          "unit": "MeV",
+          "description": "Largest kinetic energy that can be imparted to a free electron in a single head-on collision."
+        },
+        "I": {
+          "name": "Mean Excitation Potential",
+          "type": "parameter",
+          "unit": "eV",
+          "description": "Logarithmic average ionization and excitation energy of the absorber atoms."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Mass Stopping Power",
+        "dimension_latex": "[M L^2 T^{-2} / (M L^{-2})]",
+        "verified_at": 1795380000
+      }
+    },
+    {
+      "id": "bremsstrahlung-radiation-length-attenuation",
+      "title": "Bremsstrahlung Exponential Radiation-Length Attenuation",
+      "equation": "E(x) = E_0 \\exp\\!\\left(-\\frac{x}{X_0}\\right)",
+      "category": "mathematical-methods",
+      "record_type": "equation",
+      "parent_formula_id": "bethe-bloch-collisional-stopping-power",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Describes the exponential decay of mean electron energy $E(x)$ with absorber depth $x$ due to high-energy bremsstrahlung radiation, characterized by the material radiation length $X_0$.",
+      "conceptual_definition": "Defines the radiation length $X_0$ as the characteristic distance over which a high-energy electron loses all but $1/e$ of its initial energy $E_0$ to radiative photon emission.",
+      "intuitive_summary": "A high-energy electron deflected by heavy atomic nuclei radiates away a fixed fraction of its remaining energy per radiation length, causing its energy to drop exponentially.",
+      "interpretation": "Because radiative energy loss scales linearly with $E$ in the complete-screening regime ($-dE/dx = E/X_0$), high-energy electrons lose energy far faster than heavy muons or protons, whose bremsstrahlung rate is suppressed by $m^{-2}$.",
+      "symmetry_origin": "Follows from integrating the scale-invariant Bethe-Heitler complete-screening differential bremsstrahlung cross-section over photon energies.",
+      "limits_and_boundary": "Valid for ultra-relativistic electrons and positrons well above the critical energy ($E \\gg E_c$) where radiative losses dominate over Bethe-Bloch ionization and before Landau-Pomeranchuk-Migdal suppression sets in at multi-TeV energies.",
+      "semantic_variables": {
+        "E(x)": {
+          "name": "Mean Electron Energy at Depth x",
+          "type": "variable",
+          "unit": "GeV",
+          "description": "Expected remaining energy of the primary electron after traversing thickness $x$."
+        },
+        "E_0": {
+          "name": "Incident Electron Energy",
+          "type": "parameter",
+          "unit": "GeV",
+          "description": "Initial kinetic plus rest energy of the electron entering the absorber at $x = 0$."
+        },
+        "x": {
+          "name": "Absorber Depth",
+          "type": "variable",
+          "unit": "g/cm^2",
+          "description": "Mass thickness (or linear length) of material traversed by the electron."
+        },
+        "X_0": {
+          "name": "Radiation Length",
+          "type": "parameter",
+          "unit": "g/cm^2",
+          "description": "Material-dependent characteristic length scaling approximately as $A / (Z^2 \\ln(183 Z^{-1/3}))$."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Energy",
+        "dimension_latex": "[M L^2 T^{-2}]",
+        "verified_at": 1795380000
+      }
+    },
+    {
+      "id": "electromagnetic-cascade-shower-maximum-depth",
+      "title": "Electromagnetic Cascade Shower Maximum Depth",
+      "equation": "t_{\\max} = \\ln\\!\\left(\\frac{E_0}{E_c}\\right) + C_0",
+      "category": "mathematical-methods",
+      "record_type": "equation",
+      "parent_formula_id": "bremsstrahlung-radiation-length-attenuation",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Gives the longitudinal depth $t_{\\max} = x_{\\max}/X_0$ in radiation lengths where an electromagnetic cascade initiated by energy $E_0$ reaches maximum particle multiplicity before ionization below critical energy $E_c$ terminates multiplication.",
+      "conceptual_definition": "Predicts the peak depth of an electromagnetic shower inside a calorimeter as a logarithmic function of incident energy.",
+      "intuitive_summary": "Because each shower generation roughly doubles the number of electrons and photons and halves their energy per radiation length, reaching the stopping threshold takes a number of steps proportional to $\\ln(E_0/E_c)$.",
+      "interpretation": "The logarithmic growth of $t_{\\max}$ with $E_0$ explains why electromagnetic calorimeters can contain multi-TeV electrons within only 20 to 25 radiation lengths without growing proportionally in physical size.",
+      "symmetry_origin": "Derived from the Heitler binary branching cascade model and refined by Rossi-Greisen Mellin-transform shower transport equations.",
+      "limits_and_boundary": "Applies to pure electromagnetic showers with $E_0 \\gg E_c$; the offset $C_0 = -0.5$ for incident electrons and $C_0 = +0.5$ for incident photons due to the initial pair-production conversion depth.",
+      "semantic_variables": {
+        "t_{\\max}": {
+          "name": "Shower Maximum Depth",
+          "type": "variable",
+          "unit": "1",
+          "description": "Longitudinal depth $x_{\\max}/X_0$ of peak energy deposition in dimensionless units of radiation length."
+        },
+        "E_0": {
+          "name": "Incident Shower Energy",
+          "type": "parameter",
+          "unit": "GeV",
+          "description": "Initial energy of the primary electron or photon entering the calorimeter."
+        },
+        "E_c": {
+          "name": "Critical Energy",
+          "type": "parameter",
+          "unit": "MeV",
+          "description": "Threshold energy at which an electron's collisional ionization rate equals its radiative bremsstrahlung rate."
+        },
+        "C_0": {
+          "name": "Primary-Species Depth Offset",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Dimensionless offset equal to $-0.5$ for incident electrons and $+0.5$ for incident photons."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Dimensionless Depth",
+        "dimension_latex": "[1]",
+        "verified_at": 1795380000
+      }
+    },
+    {
+      "id": "cherenkov-coherent-emission-angle",
+      "title": "Cherenkov Coherent Emission Angle",
+      "equation": "\\cos\\theta_C = \\frac{1}{\\beta n}",
+      "category": "mathematical-methods",
+      "record_type": "equation",
+      "parent_formula_id": "greens-function-integral-solution-ident-46642bfc",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Determines the polar emission angle $\\theta_C$ of coherent Cherenkov light radiated by a charged particle moving at speed $\\beta c$ through a transparent dielectric of refractive index $n$.",
+      "conceptual_definition": "Relates the opening angle of the optical Mach cone emitted by a superluminal charge in a dielectric directly to its relativistic velocity $\\beta$.",
+      "intuitive_summary": "Just as a supersonic jet creates a V-shaped acoustic shock cone, a charge outrunning light inside glass or water trails a glowing cone whose angle directly measures the particle's speed.",
+      "interpretation": "Real emission angles exist strictly above the threshold $\\beta > 1/n$; measuring $\\theta_C$ in ring-imaging Cherenkov detectors provides high-precision particle identification when paired with magnetic momentum measurements.",
+      "symmetry_origin": "Follows from Huygens wavefront phase-matching and cylindrical translation invariance along a uniform rectilinear charge trajectory in a dispersive linear dielectric.",
+      "limits_and_boundary": "Valid for $\\beta n > 1$ in a non-absorbing, locally isotropic dielectric over optical wavelengths where $n(\\omega) > 1$; finite track length introduces diffraction broadening of the ring angle.",
+      "semantic_variables": {
+        "\\theta_C": {
+          "name": "Cherenkov Emission Angle",
+          "type": "variable",
+          "unit": "rad",
+          "description": "Polar angle between the particle velocity vector and the emitted photon wavevector."
+        },
+        "\\beta": {
+          "name": "Relativistic Velocity Ratio",
+          "type": "variable",
+          "unit": "1",
+          "description": "Ratio $v/c$ of the charged particle's speed to the vacuum speed of light."
+        },
+        "n": {
+          "name": "Medium Refractive Index",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Phase refractive index of the dielectric radiator at the detected optical frequency."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Dimensionless Cosine",
+        "dimension_latex": "[1]",
+        "verified_at": 1795380000
+      }
+    },
+    {
+      "id": "highland-multiple-coulomb-scattering-width",
+      "title": "Highland Multiple Coulomb Scattering Width",
+      "equation": "\\theta_0 = \\frac{13.6\\,\\mathrm{MeV}}{\\beta c p}\\,z\\sqrt{\\frac{x}{X_0}}",
+      "category": "mathematical-methods",
+      "record_type": "equation",
+      "parent_formula_id": "saddle-point-steepest-descent-formula",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Approximates the root-mean-square width $\\theta_0$ of the central Gaussian core of the projected planar angular distribution after a particle of charge $ze$, speed $\\beta c$, and momentum $p$ undergoes multiple small-angle Coulomb scatterings across thickness $x/X_0$.",
+      "conceptual_definition": "Quantifies the random-walk angular deflection accumulated by a charged track passing through detector material.",
+      "intuitive_summary": "Thousands of tiny nudges from atomic nuclei jitter a track's direction like a random walk, spreading the angle proportional to the square root of material thickness and inversely proportional to momentum.",
+      "interpretation": "Because $\\theta_0$ scales inversely with $\\beta c p$, multiple scattering dominates tracking uncertainty for low-momentum particles and sets a strict material-budget ceiling for vertex detectors.",
+      "symmetry_origin": "Arises from central-limit Gaussian approximation to Moliere's small-angle azimuthally symmetric Coulomb transport distribution.",
+      "limits_and_boundary": "Accurate to roughly 11 percent over $10^{-3} < x/X_0 < 100$ (with a logarithmic $[1 + 0.038\\ln(x/X_0)]$ refinement for precision fits); excludes the non-Gaussian single-scattering Rutherford tails beyond $3\\theta_0$.",
+      "semantic_variables": {
+        "\\theta_0": {
+          "name": "Projected RMS Scattering Angle",
+          "type": "variable",
+          "unit": "rad",
+          "description": "Standard deviation of the Gaussian core of the projected deflection angle in a single plane."
+        },
+        "\\beta": {
+          "name": "Relativistic Velocity Ratio",
+          "type": "variable",
+          "unit": "1",
+          "description": "Ratio $v/c$ of the particle speed to the vacuum speed of light."
+        },
+        "c": {
+          "name": "Speed of Light",
+          "type": "constant",
+          "unit": "m/s",
+          "description": "Vacuum speed of light converting momentum $p$ to energy units $cp$."
+        },
+        "p": {
+          "name": "Particle Momentum",
+          "type": "variable",
+          "unit": "MeV/c",
+          "description": "Magnitude of the relativistic three-momentum of the traversing particle."
+        },
+        "z": {
+          "name": "Projectile Charge Number",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Charge of the incident particle in units of the elementary charge $e$."
+        },
+        "x": {
+          "name": "Traversed Material Thickness",
+          "type": "variable",
+          "unit": "cm",
+          "description": "Path length of the particle through the scattering medium."
+        },
+        "X_0": {
+          "name": "Radiation Length",
+          "type": "parameter",
+          "unit": "cm",
+          "description": "Radiation length of the scattering medium in matching length or mass-thickness units."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Plane Angle",
+        "dimension_latex": "[1]",
+        "verified_at": 1795380000
+      }
+    },
+    {
+      "id": "magnetic-spectrometer-tracking-sagitta",
+      "title": "Magnetic Spectrometer Tracking Sagitta",
+      "equation": "s = \\frac{0.3\\,B L^2}{8 p_T}",
+      "category": "mathematical-methods",
+      "record_type": "equation",
+      "parent_formula_id": "highland-multiple-coulomb-scattering-width",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Relates the midpoint arc deviation (sagitta) $s$ of a singly charged particle track in a uniform transverse magnetic field $B$ over lever arm $L$ to its transverse momentum $p_T$.",
+      "conceptual_definition": "Converts the measurable geometric curvature of a charged trajectory inside a magnetic spectrometer directly into transverse momentum.",
+      "intuitive_summary": "A stronger magnet or longer tracking arm bends a charged particle's path further from a straight line, while stiffer high-momentum tracks bend less and yield a smaller sagitta.",
+      "interpretation": "Because $s \\propto B L^2 / p_T$, fractional momentum uncertainty $\\sigma_{p_T}/p_T = \\sigma_s/s$ grows linearly with $p_T$, motivating multi-tesla superconducting magnets and large detector radii at high-energy colliders.",
+      "symmetry_origin": "Follows from circular cyclotron motion under the magnetic Lorentz force ($p_T = 0.3\\,B R$) combined with the small-angle chord-sagitta theorem $s \\approx L^2/(8R)$.",
+      "limits_and_boundary": "Valid for singly charged particles ($|z|=1$) in a uniform field $B$ (in tesla) over projected path length $L$ (in meters) with $p_T$ in GeV/$c$, assuming small bending angles ($L \\ll 2R$).",
+      "semantic_variables": {
+        "s": {
+          "name": "Track Sagitta",
+          "type": "variable",
+          "unit": "m",
+          "description": "Maximum perpendicular distance between the curved circular trajectory and the straight chord connecting its endpoints."
+        },
+        "B": {
+          "name": "Magnetic Field Strength",
+          "type": "parameter",
+          "unit": "T",
+          "description": "Uniform magnetic flux density perpendicular to the bending plane."
+        },
+        "L": {
+          "name": "Spectrometer Lever Arm",
+          "type": "parameter",
+          "unit": "m",
+          "description": "Projected chord length of the measured track segment inside the magnetic field."
+        },
+        "p_T": {
+          "name": "Transverse Momentum",
+          "type": "variable",
+          "unit": "GeV/c",
+          "description": "Component of the particle's relativistic momentum perpendicular to the magnetic field axis."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Length",
+        "dimension_latex": "[L]",
+        "verified_at": 1795380000
+      }
+    },
+    {
+      "id": "sampling-calorimeter-energy-resolution",
+      "title": "Sampling Calorimeter Fractional Energy Resolution",
+      "equation": "\\frac{\\sigma_E}{E} = \\frac{a}{\\sqrt{E}} \\oplus \\frac{b}{E} \\oplus c",
+      "category": "mathematical-methods",
+      "record_type": "equation",
+      "parent_formula_id": "monte-carlo-standard-error-scaling",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Parameterizes the relative energy resolution $\\sigma_E/E$ of an electromagnetic or hadronic calorimeter as the quadrature sum ($\\oplus$) of a stochastic sampling term $a/\\sqrt{E}$, an electronic noise term $b/E$, and a systematic constant floor $c$.",
+      "conceptual_definition": "Decomposes calorimeter measurement precision into three physically distinct statistical and instrumental error regimes across energy.",
+      "intuitive_summary": "Calorimeters become fractionally more accurate at higher energies because larger showers contain more statistically independent tracks, until electronic noise fades and calibration imperfections set a hard floor.",
+      "interpretation": "Unlike magnetic spectrometers whose fractional resolution degrades linearly with momentum, calorimeter precision improves as $E^{-1/2}$ across intermediate energies before saturating at the constant term $c$, making calorimetry indispensable at multi-hundred-GeV scales.",
+      "symmetry_origin": "Follows from error propagation of statistically independent Gaussian variance components: Poisson shower track counting ($N \\propto E$), energy-independent readout noise, and multiplicative calibration nonuniformities.",
+      "limits_and_boundary": "Standard parameterization for well-contained showers with $E$ expressed in GeV; $a$ carries units of $\\mathrm{GeV}^{1/2}$, $b$ carries units of $\\mathrm{GeV}$, and $c$ is dimensionless.",
+      "semantic_variables": {
+        "\\sigma_E": {
+          "name": "Energy Measurement Standard Deviation",
+          "type": "variable",
+          "unit": "GeV",
+          "description": "Root-mean-square uncertainty of the reconstructed shower energy."
+        },
+        "E": {
+          "name": "Incident Particle Energy",
+          "type": "variable",
+          "unit": "GeV",
+          "description": "Total energy deposited by the primary particle in the calorimeter."
+        },
+        "a": {
+          "name": "Stochastic Resolution Coefficient",
+          "type": "parameter",
+          "unit": "GeV^(1/2)",
+          "description": "Coefficient governing Poisson sampling and photostatistics fluctuations scaling as $E^{-1/2}$."
+        },
+        "b": {
+          "name": "Electronic Noise Coefficient",
+          "type": "parameter",
+          "unit": "GeV",
+          "description": "Energy-equivalent root-mean-square electronic readout noise and pileup contribution."
+        },
+        "c": {
+          "name": "Constant Resolution Floor",
+          "type": "parameter",
+          "unit": "1",
+          "description": "Dimensionless systematic floor from channel inter-calibration, mechanical nonuniformity, and longitudinal shower leakage."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Dimensionless Relative Uncertainty",
+        "dimension_latex": "[1]",
+        "verified_at": 1795380000
+      }
+    },
+    {
+      "id": "dilution-refrigerator-cooling-power",
+      "title": "Helium-3/Helium-4 Dilution Refrigerator Cooling Power",
+      "equation": "\\dot{Q} = 84\\,\\dot{n}_3 T_m^2",
+      "category": "mathematical-methods",
+      "record_type": "equation",
+      "parent_formula_id": "saddle-point-steepest-descent-formula",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Quantifies the steady-state cooling power $\\dot{Q}$ (in watts) of a continuous $^3\\mathrm{He}/^4\\mathrm{He}$ dilution refrigerator mixing chamber at temperature $T_m$ (in kelvin) for a molar $^3\\mathrm{He}$ circulation rate $\\dot{n}_3$ (in $\\mathrm{mol\\,s^{-1}}$), arising from the molar enthalpy difference $H_d(T_m) - H_c(T_m) \\approx 84\\,T_m^2\\,\\mathrm{J\\,mol^{-1}}$ across the phase boundary.",
+      "conceptual_definition": "Gives the fundamental thermodynamic cooling capacity of a dilution refrigerator driven by transferring fermionic $^3\\mathrm{He}$ atoms from the concentrated phase into the dilute superfluid $^4\\mathrm{He}$-rich phase.",
+      "intuitive_summary": "Pumping helium-3 atoms from a concentrated liquid into a dilute superfluid helium-4 mixture acts like evaporation that never runs out of vapor pressure, absorbing heat proportional to flow rate and the square of temperature.",
+      "interpretation": "Because the dilute phase retains a finite $6.6\\%$ solubility of $^3\\mathrm{He}$ even as $T_m \\to 0$, cooling power decreases only algebraically as $T_m^2$ rather than exponentially like evaporative cryostats, enabling continuous operation down to a few millikelvin.",
+      "symmetry_origin": "Follows from the low-temperature Sommerfeld expansion of two degenerate Fermi liquids with distinct Fermi temperatures ($T_{F,c} > T_{F,d}$) in osmotic equilibrium inside a Bose-condensed $^4\\mathrm{He}$ superfluid background.",
+      "limits_and_boundary": "Valid in the degenerate Fermi-liquid regime ($T_m \\lesssim 40\\,\\mathrm{mK}$) assuming ideal counterflow heat exchange so incoming concentrated $^3\\mathrm{He}$ enters the mixing chamber at $T_m$; viscous heating and Kapitza resistance limit the achievable minimum temperature.",
+      "semantic_variables": {
+        "\\dot{Q}": {
+          "name": "Mixing Chamber Cooling Power",
+          "type": "variable",
+          "unit": "W",
+          "description": "Rate of thermal energy absorbed at the mixing chamber stage."
+        },
+        "\\dot{n}_3": {
+          "name": "Helium-3 Molar Circulation Rate",
+          "type": "parameter",
+          "unit": "mol/s",
+          "description": "Molar flux of $^3\\mathrm{He}$ atoms crossing from the concentrated phase into the dilute phase."
+        },
+        "T_m": {
+          "name": "Mixing Chamber Temperature",
+          "type": "variable",
+          "unit": "K",
+          "description": "Absolute thermodynamic temperature of the $^3\\mathrm{He}/^4\\mathrm{He}$ phase boundary inside the mixing chamber."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Thermal Cooling Power",
+        "dimension_latex": "[M L^2 T^{-3}]",
+        "verified_at": 1795380000
+      }
+    },
+    {
+      "id": "adiabatic-demagnetization-temperature-scaling",
+      "title": "Adiabatic Demagnetization Isentropic Temperature Scaling",
+      "equation": "T_f = T_i \\frac{\\sqrt{B_f^2 + b^2}}{\\sqrt{B_i^2 + b^2}}",
+      "category": "mathematical-methods",
+      "record_type": "equation",
+      "parent_formula_id": "dilution-refrigerator-cooling-power",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Determines the final temperature $T_f$ achieved by isentropically demagnetizing a paramagnetic or nuclear spin system from initial temperature $T_i$ and applied magnetic field $B_i$ to final field $B_f$ in the presence of an effective internal dipolar and exchange field $b$.",
+      "conceptual_definition": "Expresses entropy conservation of a weakly interacting spin ensemble whose thermodynamic entropy depends solely on the ratio of total effective magnetic field $\\sqrt{B^2 + b^2}$ to absolute temperature $T$.",
+      "intuitive_summary": "Reducing the external magnetic field on thermally isolated spins forces their temperature to drop in lockstep so spin disorder stays constant, bottoming out only when the tiny internal magnetic field between neighboring spins takes over.",
+      "interpretation": "In the ideal limit $B_f \\gg b$, temperature scales linearly as $T_f = T_i (B_f / B_i)$; as $B_f \\to 0$, the internal local field $b$ prevents reaching absolute zero and sets the minimum base temperature $T_{\\min} = T_i b / \\sqrt{B_i^2 + b^2}$.",
+      "symmetry_origin": "Derived from the dimensionless scaling argument $\\mu B_{\\mathrm{eff}} / (k_B T)$ of the Brillouin paramagnetic partition function along an adiabatic isentrope ($dS = 0$).",
+      "limits_and_boundary": "Applies to reversible, thermally isolated demagnetization where lattice heat capacity is negligible compared to spin heat capacity and eddy-current heating is suppressed; breaks down below the spontaneous spin-ordering temperature.",
+      "semantic_variables": {
+        "T_f": {
+          "name": "Final Spin Temperature",
+          "type": "variable",
+          "unit": "K",
+          "description": "Absolute temperature reached after adiabatic field reduction."
+        },
+        "T_i": {
+          "name": "Initial Precooling Temperature",
+          "type": "parameter",
+          "unit": "K",
+          "description": "Starting temperature of the magnetized spin stage before thermal isolation."
+        },
+        "B_f": {
+          "name": "Final Applied Magnetic Field",
+          "type": "parameter",
+          "unit": "T",
+          "description": "External magnetic flux density remaining at the end of demagnetization."
+        },
+        "B_i": {
+          "name": "Initial Applied Magnetic Field",
+          "type": "parameter",
+          "unit": "T",
+          "description": "Initial external magnetizing flux density applied during isothermal heat rejection."
+        },
+        "b": {
+          "name": "Effective Internal Local Field",
+          "type": "parameter",
+          "unit": "T",
+          "description": "Root-mean-square intrinsic dipolar and exchange magnetic field generated by neighboring spins."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Absolute Temperature",
+        "dimension_latex": "[\\Theta]",
+        "verified_at": 1795380000
+      }
+    },
+    {
+      "id": "kapitza-thermal-boundary-resistance",
+      "title": "Kapitza Acoustic Interfacial Thermal Resistance",
+      "equation": "R_K = \\frac{\\Delta T}{\\dot{Q}/A} \\propto T^{-3}",
+      "category": "mathematical-methods",
+      "record_type": "equation",
+      "parent_formula_id": "dilution-refrigerator-cooling-power",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Defines the Kapitza interfacial thermal resistance $R_K$ as the ratio of the discontinuous temperature jump $\\Delta T$ across a solid-liquid or solid-solid boundary to the areal heat flux $\\dot{Q}/A$, scaling inversely with the cube of absolute temperature $T^{-3}$ in the acoustic mismatch model.",
+      "conceptual_definition": "Measures the thermal impedance caused by strong reflection of acoustic phonons at an interface between two media with mismatched mass densities and sound speeds.",
+      "intuitive_summary": "Heat crossing from a cold metal into liquid helium hits an acoustic bottleneck because sound waves mostly bounce off the boundary, creating a sharp temperature step that worsens dramatically as temperature drops.",
+      "interpretation": "Because the phonon specific heat scales as $T^3$ at low temperatures, the interfacial thermal conductance $G_K = R_K^{-1}$ vanishes as $T^3$, forcing sub-kelvin heat exchangers to use porous sintered metal powders with huge surface area $A$.",
+      "symmetry_origin": "Follows from Snell's law acoustic transmission coefficients integrated over three-dimensional Debye phonon phase space obeying Planck-Bose occupation statistics.",
+      "limits_and_boundary": "Valid in the small temperature-drop linear-response regime ($\\Delta T \\ll T$) well below the Debye temperature; surface roughness, adsorbed helium layers, and magnetic coupling can enhance conductance beyond pure acoustic mismatch predictions.",
+      "semantic_variables": {
+        "R_K": {
+          "name": "Kapitza Thermal Boundary Resistance",
+          "type": "variable",
+          "unit": "K*m^2/W",
+          "description": "Areal thermal impedance across the material interface."
+        },
+        "\\Delta T": {
+          "name": "Interfacial Temperature Jump",
+          "type": "variable",
+          "unit": "K",
+          "description": "Discontinuous temperature difference across the boundary under steady heat flow."
+        },
+        "\\dot{Q}": {
+          "name": "Interfacial Heat Current",
+          "type": "variable",
+          "unit": "W",
+          "description": "Total thermal power transmitted across the boundary."
+        },
+        "A": {
+          "name": "Effective Interfacial Area",
+          "type": "parameter",
+          "unit": "m^2",
+          "description": "Microscopic contact surface area separating the two thermal media."
+        },
+        "T": {
+          "name": "Mean Interface Temperature",
+          "type": "variable",
+          "unit": "K",
+          "description": "Absolute thermodynamic temperature of the boundary region."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Thermal Boundary Resistance",
+        "dimension_latex": "[M^{-1} T^3 \\Theta]",
+        "verified_at": 1795380000
+      }
+    },
+    {
+      "id": "tersoff-hamann-differential-conductance",
+      "title": "Tersoff-Hamann Differential Tunneling Conductance",
+      "equation": "\\frac{dI}{dV}(V) \\propto \\rho_s(\\mathbf{r}_0, E_F + eV)",
+      "category": "mathematical-methods",
+      "record_type": "equation",
+      "parent_formula_id": "wkb-barrier-transmission-probability",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Relates the voltage derivative of the scanning tunneling current $\\frac{dI}{dV}(V)$ at bias voltage $V$ directly to the sample's local electronic density of states $\\rho_s(\\mathbf{r}_0, E_F + eV)$ evaluated at the tip apex center $\\mathbf{r}_0$ and energy $E_F + eV$.",
+      "conceptual_definition": "Establishes scanning tunneling spectroscopy as a direct real-space and energy-resolved probe of surface electronic wavefunctions and quasiparticle spectral weight.",
+      "intuitive_summary": "Sweeping the bias voltage on a sharp metallic tip reveals how many electronic states exist at each energy right underneath the tip, turning electrical conductance into a local quantum map.",
+      "interpretation": "In the zero-temperature limit, the Fermi-Dirac derivative becomes a Dirac delta function so $\\frac{dI}{dV}$ isolates states at energy $E_F + eV$; at finite temperature $T$, spectral features are convolved with a thermal broadening kernel of width $\\approx 3.5\\,k_B T$.",
+      "symmetry_origin": "Derived from Bardeen's time-dependent tunneling matrix element assuming a rotationally invariant $s$-wave tip wavefunction with energy-independent tip density of states.",
+      "limits_and_boundary": "Valid in the weak-tunneling regime where tip and sample wavefunctions overlap perturbatively and bias voltage $|eV|$ remains small compared to the vacuum work function $\\phi$; $p$-wave or $d$-wave tip orbitals introduce lateral derivative weights.",
+      "semantic_variables": {
+        "\\frac{dI}{dV}": {
+          "name": "Differential Tunneling Conductance",
+          "type": "variable",
+          "unit": "S",
+          "description": "Derivative of tunneling current $I$ with respect to tip-sample bias voltage $V$."
+        },
+        "V": {
+          "name": "Tip-Sample Bias Voltage",
+          "type": "variable",
+          "unit": "V",
+          "description": "Applied electrostatic potential difference shifting the sample Fermi level relative to the tip."
+        },
+        "\\rho_s": {
+          "name": "Sample Local Density of States",
+          "type": "variable",
+          "unit": "J^-1*m^-3",
+          "description": "Probability density of sample electronic eigenstates per unit energy at tip apex position $\\mathbf{r}_0$."
+        },
+        "\\mathbf{r}_0": {
+          "name": "Tip Apex Center Position",
+          "type": "variable",
+          "unit": "m",
+          "description": "Three-dimensional coordinate of the center of curvature of the scanning tip apex."
+        },
+        "E_F": {
+          "name": "Fermi Energy",
+          "type": "parameter",
+          "unit": "J",
+          "description": "Equilibrium chemical potential of the conducting sample."
+        },
+        "e": {
+          "name": "Elementary Charge",
+          "type": "constant",
+          "unit": "C",
+          "description": "Magnitude of the electric charge carried by a single electron."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Differential Electrical Conductance",
+        "dimension_latex": "[M^{-1} L^{-2} T^3 I^2]",
+        "verified_at": 1795380000
+      }
+    },
+    {
+      "id": "stm-vacuum-tunneling-decay-constant",
+      "title": "Vacuum Tunneling Inverse Decay Length",
+      "equation": "\\kappa = \\frac{\\sqrt{2 m_e \\phi}}{\\hbar}",
+      "category": "mathematical-methods",
+      "record_type": "equation",
+      "parent_formula_id": "wkb-eikonal-phase-ansatz",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Gives the exponential spatial decay constant $\\kappa$ of an electron wavefunction penetrating a classically forbidden vacuum barrier of effective work function $\\phi$ for an electron of mass $m_e$ with reduced Planck constant $\\hbar$.",
+      "conceptual_definition": "Sets the characteristic sub-angstrom length scale governing the exponential attenuation of tunneling probability $T(z) \\propto e^{-2\\kappa z}$ across a vacuum gap.",
+      "intuitive_summary": "A higher work function barrier makes the electron wavefunction die off faster in empty space, which is why moving an STM tip by a single atom width changes the tunneling current by a factor of ten.",
+      "interpretation": "For a typical metallic work function $\\phi \\approx 4\\,\\mathrm{eV}$, $\\kappa \\approx 1.0\\,\\text{\\AA}^{-1}$, so $2\\kappa \\approx 2.0\\,\\text{\\AA}^{-1}$ and the current drops by roughly $e^2 \\approx 7.4$ per angstrom of retraction, concentrating current almost entirely through the foremost apex atom.",
+      "symmetry_origin": "Follows directly from the imaginary wavevector solution $k = i\\kappa$ of the one-dimensional time-independent Schrödinger equation in a constant potential region $U_0 - E = \\phi$.",
+      "limits_and_boundary": "Valid for low bias ($|eV| \\ll \\phi$) and negligible lateral surface wavevector ($k_\\parallel = 0$); states with nonzero parallel momentum decay more rapidly as $\\sqrt{\\kappa^2 + k_\\parallel^2}$, and image-charge rounding slightly lowers the effective barrier.",
+      "semantic_variables": {
+        "\\kappa": {
+          "name": "Vacuum Tunneling Inverse Decay Length",
+          "type": "variable",
+          "unit": "m^-1",
+          "description": "Exponential attenuation rate of the evanescent electron wavefunction inside the vacuum gap."
+        },
+        "m_e": {
+          "name": "Electron Rest Mass",
+          "type": "constant",
+          "unit": "kg",
+          "description": "Inertial mass of an electron tunneling through vacuum."
+        },
+        "\\phi": {
+          "name": "Effective Vacuum Barrier Height",
+          "type": "parameter",
+          "unit": "J",
+          "description": "Average work function energy separating the Fermi level from the vacuum level."
+        },
+        "\\hbar": {
+          "name": "Reduced Planck Constant",
+          "type": "constant",
+          "unit": "J*s",
+          "description": "Fundamental quantum of action $h / (2\\pi)$."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Inverse Length (Decay Constant)",
+        "dimension_latex": "[L^{-1}]",
+        "verified_at": 1795380000
+      }
+    },
+    {
+      "id": "fm-afm-cantilever-frequency-shift",
+      "title": "Frequency-Modulated AFM Cantilever Resonance Shift",
+      "equation": "\\Delta f \\approx -\\frac{f_0}{2 k_c}\\frac{\\partial F_{ts}}{\\partial z}",
+      "category": "mathematical-methods",
+      "record_type": "equation",
+      "parent_formula_id": "fourier-transform-forward-ident-5ca854f6",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Approximates the resonance frequency shift $\\Delta f$ of a frequency-modulated atomic force microscope cantilever of unperturbed eigenfrequency $f_0$ and flexural spring constant $k_c$ subjected to a small vertical tip-sample force gradient $\\frac{\\partial F_{ts}}{\\partial z}$.",
+      "conceptual_definition": "Converts microscopic interatomic force gradients into a high-precision frequency measurement by linearizing the effective harmonic stiffness $k_{\\mathrm{eff}} = k_c - \\partial F_{ts}/\\partial z$.",
+      "intuitive_summary": "Attractive surface forces soften the cantilever spring and lower its oscillation frequency, whereas repulsive atomic forces stiffen it and push the pitch upward.",
+      "interpretation": "Because phase-locked loops measure frequency shifts to millihertz precision even in high-Q vacuum cantilevers, $\\Delta f$ enables non-contact atomic resolution on insulators without snapping the tip into contact.",
+      "symmetry_origin": "Follows from first-order Taylor expansion of the harmonic oscillator eigenfrequency $f = \\frac{1}{2\\pi}\\sqrt{(k_c + k_{ts})/m_{\\mathrm{eff}}}$ for $|k_{ts}| \\ll k_c$.",
+      "limits_and_boundary": "Strict small-amplitude limit where oscillation amplitude $A$ is much smaller than the decay length of $F_{ts}(z)$; for larger amplitudes, $\\Delta f$ becomes a weighted integral over the oscillation cycle via the Sader-Jarvis deconvolution formula.",
+      "semantic_variables": {
+        "\\Delta f": {
+          "name": "Cantilever Resonance Frequency Shift",
+          "type": "variable",
+          "unit": "Hz",
+          "description": "Change in fundamental oscillation frequency induced by tip-sample interaction forces."
+        },
+        "f_0": {
+          "name": "Unperturbed Cantilever Eigenfrequency",
+          "type": "parameter",
+          "unit": "Hz",
+          "description": "Free-space fundamental flexural resonance frequency far from the sample."
+        },
+        "k_c": {
+          "name": "Cantilever Flexural Spring Constant",
+          "type": "parameter",
+          "unit": "N/m",
+          "description": "Elastic restoring stiffness of the cantilever tip in the vertical direction."
+        },
+        "\\frac{\\partial F_{ts}}{\\partial z}": {
+          "name": "Vertical Tip-Sample Force Gradient",
+          "type": "variable",
+          "unit": "N/m",
+          "description": "Spatial derivative of the normal tip-sample interaction force $F_{ts}$ with respect to tip height $z$."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Resonance Frequency Shift",
+        "dimension_latex": "[T^{-1}]",
+        "verified_at": 1795380000
+      }
+    },
+    {
+      "id": "afm-cantilever-thermal-deflection-noise",
+      "title": "AFM Cantilever Equipartition Thermal Noise",
+      "equation": "\\langle z_{\\mathrm{th}}^2 \\rangle = \\frac{k_B T}{k_c}",
+      "category": "mathematical-methods",
+      "record_type": "equation",
+      "parent_formula_id": "fm-afm-cantilever-frequency-shift",
+      "derivation_type": "THEORETICAL_DERIVATION",
+      "description": "Gives the equilibrium mean-squared vertical thermal displacement $\\langle z_{\\mathrm{th}}^2 \\rangle$ of an atomic force microscope cantilever with spring constant $k_c$ in thermal equilibrium with a heat bath at temperature $T$, with Boltzmann constant $k_B$.",
+      "conceptual_definition": "Establishes the fundamental classical Brownian deflection noise floor of a harmonic force sensor and provides a standard calibration route for cantilever stiffness.",
+      "intuitive_summary": "Thermal energy constantly jiggles a microscopic cantilever like a tiny spring in a warm bath; stiffer springs and colder temperatures both shrink this unavoidable quiver.",
+      "interpretation": "Integrating the thermal Lorentzian power spectral density over all frequencies yields $k_B T / k_c$ independent of damping or quality factor $Q$, while cooling from $300\\,\\mathrm{K}$ to $30\\,\\mathrm{mK}$ reduces root-mean-square deflection noise by a factor of $100$.",
+      "symmetry_origin": "Follows directly from the classical equipartition theorem equating average quadratic elastic potential energy $\\frac{1}{2} k_c \\langle z_{\\mathrm{th}}^2 \\rangle$ to $\\frac{1}{2} k_B T$ per harmonic degree of freedom.",
+      "limits_and_boundary": "Valid in the classical thermal regime ($k_B T \\gg \\hbar \\omega_0$) for the fundamental flexural mode; at ultralow temperatures where $k_B T \\lesssim \\hbar \\omega_0$, zero-point quantum fluctuations $\\hbar / (2 m_{\\mathrm{eff}} \\omega_0)$ supersede the classical floor.",
+      "semantic_variables": {
+        "\\langle z_{\\mathrm{th}}^2 \\rangle": {
+          "name": "Mean-Squared Thermal Deflection",
+          "type": "variable",
+          "unit": "m^2",
+          "description": "Ensemble variance of the cantilever tip's vertical Brownian displacement."
+        },
+        "k_B": {
+          "name": "Boltzmann Constant",
+          "type": "constant",
+          "unit": "J/K",
+          "description": "Proportionality constant relating absolute temperature to thermal energy."
+        },
+        "T": {
+          "name": "Absolute Bath Temperature",
+          "type": "variable",
+          "unit": "K",
+          "description": "Thermodynamic temperature of the cantilever and its surrounding thermal reservoir."
+        },
+        "k_c": {
+          "name": "Cantilever Flexural Spring Constant",
+          "type": "parameter",
+          "unit": "N/m",
+          "description": "Elastic restoring stiffness governing vertical cantilever deflection."
+        }
+      },
+      "cas_validation": {
+        "status": "HOMOGENEOUS",
+        "is_homogeneous": true,
+        "quantity": "Mean-Squared Thermal Displacement",
+        "dimension_latex": "[L^2]",
+        "verified_at": 1795380000
+      }
+    }
+  ]
+}

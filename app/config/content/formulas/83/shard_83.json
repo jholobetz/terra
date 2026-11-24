@@ -3289,5 +3289,105 @@
     "subcomponents": [
       "shockley-ideal-diode-equation"
     ]
+  },
+  "lock-in-phase-sensitive-demodulation": {
+    "title": "Lock-In Phase-Sensitive Demodulated Output",
+    "equation": "V_{\\mathrm{out}} = \\frac{1}{2} V_s \\cos\\Delta\\phi",
+    "category": "mathematical-methods",
+    "record_type": "equation",
+    "parent_formula_id": "fourier-transform-forward-ident-5ca854f6",
+    "derivation_type": "SPECIAL_CASE",
+    "description": "Gives the low-pass-filtered direct-current output voltage $V_{\\mathrm{out}}$ of a phase-sensitive lock-in amplifier demodulating a sinusoidal input of amplitude $V_s$ against a unit-amplitude coherent reference shifted by phase offset $\\Delta\\phi$.",
+    "conceptual_definition": "Phase-sensitive demodulation translates a narrowband carrier signal down to DC while rejecting all out-of-band noise and incoherent interference outside the low-pass filter bandwidth.",
+    "intuitive_summary": "Multiplying a modulated signal by a synchronized reference wave shifts the target signal to a steady DC voltage proportional to $\\cos\\Delta\\phi$, while noise at other frequencies averages away to zero.",
+    "interpretation": "Using the trigonometric product identity $\\cos(\\omega_{\\mathrm{ref}}t + \\phi_s)\\cos(\\omega_{\\mathrm{ref}}t + \\phi_{\\mathrm{ref}}) = \\frac{1}{2}\\cos\\Delta\\phi + \\frac{1}{2}\\cos(2\\omega_{\\mathrm{ref}}t + \\phi_s + \\phi_{\\mathrm{ref}})$, low-pass filtering removes the $2\\omega_{\\mathrm{ref}}$ harmonic; pairing with a $90^\\circ$-shifted reference recovers the quadrature output $\\frac{1}{2}V_s\\sin\\Delta\\phi$.",
+    "symmetry_origin": "Follows from harmonic orthogonality of sinusoidal basis functions over integer cycles under synchronous frequency mixing.",
+    "limits_and_boundary": "Assumes a pure sinusoidal reference (square-wave switching introduces odd-harmonic responses weighted by $1/n$) and a low-pass cutoff frequency well below $2 f_{\\mathrm{ref}}$ so the sum-frequency ripple is fully attenuated.",
+    "semantic_variables": {
+      "V_{\\mathrm{out}}": {
+        "name": "Demodulated DC Output Voltage",
+        "type": "variable",
+        "unit": "V",
+        "description": "Filtered in-phase direct-current voltage proportional to the synchronous signal component."
+      },
+      "V_s": {
+        "name": "Modulated Signal Amplitude",
+        "type": "variable",
+        "unit": "V",
+        "description": "Peak voltage amplitude of the incoming sinusoidal carrier signal."
+      },
+      "\\Delta\\phi": {
+        "name": "Signal-Reference Phase Difference",
+        "type": "variable",
+        "unit": "rad",
+        "description": "Relative phase angle $\\phi_s - \\phi_{\\mathrm{ref}}$ between the input signal and internal reference oscillator."
+      }
+    },
+    "cas_validation": {
+      "status": "HOMOGENEOUS",
+      "is_homogeneous": true,
+      "quantity": "Electric Potential (Voltage)",
+      "dimension_latex": "[M L^2 T^{-3} I^{-1}]",
+      "verified_at": 1795380000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": []
+  },
+  "kapitza-thermal-boundary-resistance": {
+    "title": "Kapitza Acoustic Interfacial Thermal Resistance",
+    "equation": "R_K = \\frac{\\Delta T}{\\dot{Q}/A} \\propto T^{-3}",
+    "category": "mathematical-methods",
+    "record_type": "equation",
+    "parent_formula_id": "dilution-refrigerator-cooling-power",
+    "derivation_type": "THEORETICAL_DERIVATION",
+    "description": "Defines the Kapitza interfacial thermal resistance $R_K$ as the ratio of the discontinuous temperature jump $\\Delta T$ across a solid-liquid or solid-solid boundary to the areal heat flux $\\dot{Q}/A$, scaling inversely with the cube of absolute temperature $T^{-3}$ in the acoustic mismatch model.",
+    "conceptual_definition": "Measures the thermal impedance caused by strong reflection of acoustic phonons at an interface between two media with mismatched mass densities and sound speeds.",
+    "intuitive_summary": "Heat crossing from a cold metal into liquid helium hits an acoustic bottleneck because sound waves mostly bounce off the boundary, creating a sharp temperature step that worsens dramatically as temperature drops.",
+    "interpretation": "Because the phonon specific heat scales as $T^3$ at low temperatures, the interfacial thermal conductance $G_K = R_K^{-1}$ vanishes as $T^3$, forcing sub-kelvin heat exchangers to use porous sintered metal powders with huge surface area $A$.",
+    "symmetry_origin": "Follows from Snell's law acoustic transmission coefficients integrated over three-dimensional Debye phonon phase space obeying Planck-Bose occupation statistics.",
+    "limits_and_boundary": "Valid in the small temperature-drop linear-response regime ($\\Delta T \\ll T$) well below the Debye temperature; surface roughness, adsorbed helium layers, and magnetic coupling can enhance conductance beyond pure acoustic mismatch predictions.",
+    "semantic_variables": {
+      "R_K": {
+        "name": "Kapitza Thermal Boundary Resistance",
+        "type": "variable",
+        "unit": "K*m^2/W",
+        "description": "Areal thermal impedance across the material interface."
+      },
+      "\\Delta T": {
+        "name": "Interfacial Temperature Jump",
+        "type": "variable",
+        "unit": "K",
+        "description": "Discontinuous temperature difference across the boundary under steady heat flow."
+      },
+      "\\dot{Q}": {
+        "name": "Interfacial Heat Current",
+        "type": "variable",
+        "unit": "W",
+        "description": "Total thermal power transmitted across the boundary."
+      },
+      "A": {
+        "name": "Effective Interfacial Area",
+        "type": "parameter",
+        "unit": "m^2",
+        "description": "Microscopic contact surface area separating the two thermal media."
+      },
+      "T": {
+        "name": "Mean Interface Temperature",
+        "type": "variable",
+        "unit": "K",
+        "description": "Absolute thermodynamic temperature of the boundary region."
+      }
+    },
+    "cas_validation": {
+      "status": "HOMOGENEOUS",
+      "is_homogeneous": true,
+      "quantity": "Thermal Boundary Resistance",
+      "dimension_latex": "[M^{-1} T^3 \\Theta]",
+      "verified_at": 1795380000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": []
   }
 }

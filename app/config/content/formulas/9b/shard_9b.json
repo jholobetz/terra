@@ -2972,5 +2972,55 @@
     "status": "platinum",
     "lineage_confidence": "curated",
     "subcomponents": []
+  },
+  "allan-variance-frequency-stability": {
+    "title": "Two-Sample Allan Variance Frequency Stability",
+    "equation": "\\sigma_y^2(\\tau) = \\frac{1}{2}\\left\\langle (\\bar{y}_{k+1} - \\bar{y}_k)^2 \\right\\rangle",
+    "category": "mathematical-methods",
+    "record_type": "equation",
+    "parent_formula_id": "wiener-khinchin-power-spectral-density",
+    "derivation_type": "THEORETICAL_DERIVATION",
+    "description": "Defines the two-sample Allan variance $\\sigma_y^2(\\tau)$ as half the mean-squared difference between adjacent non-overlapping fractional frequency averages $\\bar{y}_k$ and $\\bar{y}_{k+1}$ evaluated over averaging time $\\tau$.",
+    "conceptual_definition": "The Allan variance is the standard time-domain metrology diagnostic for oscillator and clock stability, remaining finite even in the presence of non-stationary flicker and random-walk frequency noise.",
+    "intuitive_summary": "Instead of comparing every frequency measurement to a long-term average that may drift forever, the Allan variance compares each time slice only to its immediate neighbor, cleanly separating fast random noise from slow drift.",
+    "interpretation": "In the frequency domain, $\\sigma_y^2(\\tau) = 2\\int_0^\\infty S_y(f)\\frac{\\sin^4(\\pi f\\tau)}{(\\pi f\\tau)^2}\\,df$; the $f^2$ transfer zero at DC regularizes $1/f$ and $1/f^2$ divergences so log-log slopes of $\\sigma_y(\\tau)$ uniquely identify white, flicker, and random-walk noise regimes.",
+    "symmetry_origin": "Constructed from first-order discrete time differencing of consecutive boxcar averages, yielding a translation-invariant two-sample estimator with zero sensitivity to constant frequency offsets.",
+    "limits_and_boundary": "Converges for power-law frequency noise $S_y(f) \\propto f^\\alpha$ with $\\alpha \\ge -2$ (down to random-walk frequency noise); linear frequency drift produces $\\sigma_y(\\tau) \\propto \\tau$ and requires the Hadamard variance for drift-immune estimation.",
+    "semantic_variables": {
+      "\\sigma_y^2(\\tau)": {
+        "name": "Two-Sample Allan Variance",
+        "type": "variable",
+        "unit": "1",
+        "description": "Dimensionless mean-squared fractional frequency instability at averaging interval $\\tau$."
+      },
+      "\\tau": {
+        "name": "Averaging Gate Time",
+        "type": "parameter",
+        "unit": "s",
+        "description": "Duration of each contiguous non-overlapping measurement interval."
+      },
+      "\\bar{y}_k": {
+        "name": "k-th Fractional Frequency Average",
+        "type": "variable",
+        "unit": "1",
+        "description": "Time-averaged dimensionless fractional frequency offset $\\Delta\\nu/\\nu_0$ over the $k$-th interval of length $\\tau$."
+      },
+      "\\bar{y}_{k+1}": {
+        "name": "(k+1)-th Fractional Frequency Average",
+        "type": "variable",
+        "unit": "1",
+        "description": "Time-averaged dimensionless fractional frequency offset over the immediately following interval."
+      }
+    },
+    "cas_validation": {
+      "status": "HOMOGENEOUS",
+      "is_homogeneous": true,
+      "quantity": "Dimensionless",
+      "dimension_latex": "[1]",
+      "verified_at": 1795380000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": []
   }
 }

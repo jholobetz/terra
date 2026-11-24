@@ -1,6 +1,6 @@
 # Phase 5 Thin-Hub Expansion Ledger
 
-Running index of all newly authored Platinum subtopics added during the Phase 5 curriculum completion campaign (`+115` subtopics live across 23 batches, bringing the encyclopedia from `1,584 → 1,699` Platinum subtopics).
+Running index of all newly authored Platinum subtopics added during the Phase 5 curriculum completion campaign (`+120` subtopics live across 24 batches, bringing the encyclopedia from `1,584 → 1,704` Platinum subtopics).
 
 > **Note:** Live links (`https://physicslab.ca/...`) become active on production after running `cd /srv/www/terra && bash scripts/update_prod.sh`.
 
@@ -325,3 +325,17 @@ Running index of all newly authored Platinum subtopics added during the Phase 5 
 | 113 | Percolation Theory, Cluster Scaling and Critical Connectivity | http://localhost:8000/physics/subtopic/percolation-theory-critical-connectivity | https://physicslab.ca/physics/subtopic/percolation-theory-critical-connectivity |
 | 114 | Spin Glasses, Quenched Disorder and Replica Symmetry Breaking | http://localhost:8000/physics/subtopic/spin-glasses-replica-symmetry-breaking | https://physicslab.ca/physics/subtopic/spin-glasses-replica-symmetry-breaking |
 | 115 | Shannon Entropy, Kullback-Leibler Divergence and Jaynes's Maximum Entropy Principle | http://localhost:8000/physics/subtopic/shannon-entropy-jaynes-maxent | https://physicslab.ca/physics/subtopic/shannon-entropy-jaynes-maxent |
+
+---
+
+## Batch 24 — `mathematical-methods` · *9. Experimental Methods, Signal Processing & Detectors*
+* **Date:** 2026-11-23 (`mathematical-methods`: `43 → 48`)
+* **Hub Overview:** [Local](http://localhost:8000/physics/topic/mathematical-methods) · [Live](https://physicslab.ca/physics/topic/mathematical-methods)
+
+| # | Subtopic Title | Local Link | Live Link |
+| :---: | :--- | :--- | :--- |
+| 116 | Error Propagation, Chi-Squared Fitting and Maximum Likelihood Estimation | http://localhost:8000/physics/subtopic/error-propagation-chi-squared-inference | https://physicslab.ca/physics/subtopic/error-propagation-chi-squared-inference |
+| 117 | Bayesian Inference, Model Selection and Markov Chain Monte Carlo in Physics | http://localhost:8000/physics/subtopic/bayesian-inference-experimental-physics | https://physicslab.ca/physics/subtopic/bayesian-inference-experimental-physics |
+| 118 | Signal Processing, Power Spectral Density, Noise Floors and Matched Filtering | http://localhost:8000/physics/subtopic/signal-noise-power-spectral-density | https://physicslab.ca/physics/subtopic/signal-noise-power-spectral-density |
+| 119 | Particle Detectors, Bethe-Bloch Energy Loss and Electromagnetic Calorimetry | http://localhost:8000/physics/subtopic/particle-detectors-bethe-bloch-calorimetry | https://physicslab.ca/physics/subtopic/particle-detectors-bethe-bloch-calorimetry |
+| 120 | Cryogenic Dilution Refrigeration and Scanning Probe Microscopy | http://localhost:8000/physics/subtopic/cryogenics-scanning-probe-microscopy | https://physicslab.ca/physics/subtopic/cryogenics-scanning-probe-microscopy |

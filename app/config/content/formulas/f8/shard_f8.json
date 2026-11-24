@@ -3611,5 +3611,61 @@
     "subcomponents": [
       "photovoltaic-power-conversion-efficiency"
     ]
+  },
+  "generalized-covariance-chi-squared": {
+    "title": "Generalized Correlated-Covariance Chi-Squared",
+    "equation": "\\chi^2(\\boldsymbol{\\theta}) = (\\mathbf{y} - \\mathbf{f}(\\boldsymbol{\\theta}))^T \\mathbf{C}^{-1} (\\mathbf{y} - \\mathbf{f}(\\boldsymbol{\\theta}))",
+    "category": "mathematical-methods",
+    "record_type": "equation",
+    "parent_formula_id": "weighted-least-squares-chi-squared",
+    "derivation_type": "THEORETICAL_DERIVATION",
+    "description": "Generalizes the chi-squared objective to correlated measurements by contracting the residual vector $\\mathbf{y} - \\mathbf{f}(\\boldsymbol{\\theta})$ with the inverse covariance matrix $\\mathbf{C}^{-1}$.",
+    "conceptual_definition": "Measures the squared Mahalanobis distance between the data vector and theoretical prediction in the metric defined by the correlated experimental noise covariance.",
+    "intuitive_summary": "Extends weighted least squares to datasets where errors are correlated across bins by weighting residuals with the inverse covariance matrix instead of individual variances.",
+    "interpretation": "When $\\mathbf{C}$ is diagonal ($C_{ij} = \\sigma_i^2 \\delta_{ij}$), the quadratic form collapses to standard weighted least squares; when off-diagonal correlations are present, $\\mathbf{C}^{-1}$ down-weights redundant correlated modes and isolates independent combinations of measurements.",
+    "symmetry_origin": "Invariant under invertible linear basis transformations of the data space, representing the exact exponent of the multivariate Gaussian likelihood.",
+    "limits_and_boundary": "Requires $\\mathbf{C}$ to be symmetric positive definite and well-conditioned; empirical covariance matrices estimated from finite simulations require Hartlap or Bayesian debiasing corrections upon inversion.",
+    "semantic_variables": {
+      "\\chi^2(\\boldsymbol{\\theta})": {
+        "name": "Generalized Chi-Squared Statistic",
+        "type": "variable",
+        "unit": "1",
+        "description": "Dimensionless Mahalanobis quadratic form quantifying correlated data-model discrepancy."
+      },
+      "\\mathbf{y}": {
+        "name": "Measurement Data Vector",
+        "type": "variable",
+        "unit": "1",
+        "description": "Column vector of $N$ correlated experimental observations."
+      },
+      "\\mathbf{f}(\\boldsymbol{\\theta})": {
+        "name": "Model Prediction Vector",
+        "type": "variable",
+        "unit": "1",
+        "description": "Column vector of $N$ theoretical predictions parameterized by $\\boldsymbol{\\theta}$."
+      },
+      "\\mathbf{C}^{-1}": {
+        "name": "Inverse Covariance Matrix",
+        "type": "parameter",
+        "unit": "1",
+        "description": "Precision matrix obtained by inverting the $N \\times N$ data covariance matrix $\\mathbf{C}$."
+      },
+      "\\boldsymbol{\\theta}": {
+        "name": "Model Parameter Vector",
+        "type": "parameter",
+        "unit": "1",
+        "description": "Vector of unknown model parameters being inferred."
+      }
+    },
+    "cas_validation": {
+      "status": "HOMOGENEOUS",
+      "is_homogeneous": true,
+      "quantity": "Dimensionless Statistic",
+      "dimension_latex": "[1]",
+      "verified_at": 1795400000
+    },
+    "status": "platinum",
+    "lineage_confidence": "curated",
+    "subcomponents": []
   }
 }

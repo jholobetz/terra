@@ -1,6 +1,6 @@
-# 🎛️ Cosmic Instrument — Workbench UI Theme & Template
+# 🎛️ Cosmic Instrument — Universal UI Theme & Template
 
-> **Status**: Active Opt-In Design Standard (Per-Tool Adoption — Never Mass-Applied Blindly)  
+> **Status**: Active Opt-In Design Standard (Per-Tool & Per-Simulation Adoption — Never Mass-Applied Blindly)  
 > **Created**: 2026-11-26  
 > **Opt-In Stylesheet**: [`public/css/workbench_theme.css`](../public/css/workbench_theme.css) *(load per route via `'extra_css' => ['workbench_theme.css']`)*  
 > **Companion Doc**: [`docs/optics.md`](optics.md) *(Audience & Academic Credibility)*
@@ -9,7 +9,7 @@
 
 ## 1. Design Philosophy
 
-Every interactive workbench in Physics Lab (and future Chemistry / Mathematics Lab manifolds) should feel like a **precision desktop scientific instrument**, not a marketing landing page:
+Every interactive workbench and simulation in Physics Lab (and future Chemistry / Mathematics Lab manifolds) should feel like a **precision desktop scientific instrument**, not a marketing landing page:
 
 1. **Above-the-Fold Immediacy**: Keep the header compact (~52 px) so the live canvas, symbolic transformation, or comparison grid appears right at the top of a laptop screen.
 2. **Live-on-Load, Result-First**: Never greet the visitor with an empty placeholder wall. Auto-compute or auto-select the flagship preset on load, and put the primary result (`L ⟹ H`, `Form A ⟺ Form B`, or live simulation) at the top of the right stage.
@@ -119,7 +119,7 @@ function typesetWorkbenchMath(elements) {
 
 ## 5. Per-Tool Upgrade Checklist
 
-Before marking any individual workbench complete, verify all 6 gates:
+Before marking any individual workbench or simulation complete, verify all 6 gates:
 - [ ] **Compact Header**: Left-aligned `1.65rem` `<h1>`, single-line tagline underneath, no decorative header badge clutter.
 - [ ] **Overflow Safety**: `minmax(0, 1fr)` + `min-width: 0` on right stage; `overflow-x: auto` on math wells and tables.
 - [ ] **Live-on-Load**: Flagship preset runs automatically on load (no blank placeholder wall).
@@ -129,16 +129,42 @@ Before marking any individual workbench complete, verify all 6 gates:
 
 ---
 
-## 6. Workbench Adoption Tracker (One Tool at a Time)
+## 6. Universal Adoption Tracker (One Tool at a Time)
 
-| Tool / Route | Status | Notes |
-| :--- | :---: | :--- |
-| `/physics/lab-tools` | ✅ Aligned (`f7049f7a8`) | Compact header + sticky split-rail System Crucible + 5-tab Prism strip |
-| `/physics/anthropic-tuner` | ✅ Aligned (`c3e3509e7`) | Compact header + 3 tiled scale viewports + 2-line Universe Dials + live context readout |
-| `/physics/notation-toggle` | ✅ Aligned (`a1368b8dc`) | Physics Rosetta Stone + Side-by-Side Compare (`⟺`) + Translation Key + 5 laws |
-| `/physics/legendre-transformer` | ✅ Aligned (`b45272bf5`) | Auto-compute on load + `L ⟹ H` hero card + numbered 3-step SymPy CAS pipeline |
-| `/physics/noethers-vault` | ✅ Aligned (`dbd8e9790`) | Compact header + Noether mapping ribbon + 1-click Break/Restore toggle + fixed LaTeX |
-| `/physics/correspondence-workspace` | ⬜ Queued | Next individual workbench candidate |
-| `/physics/universe-graph` | ⬜ Queued | Individual review |
-| `/physics/equation-explainer` | ⬜ Queued | Individual review |
-| `/physics/simulations/*` | ⬜ Queued | Individual review |
+### A. Lab Tools, Workbenches & Registries (`10` Active Routes)
+
+| # | Tool / Registry | Route | Status | Notes |
+| :-: | :--- | :--- | :---: | :--- |
+| 1 | **Unified Physics Laboratory (Cockpit)** | `/physics/lab-tools` | ✅ Aligned (`f7049f7a8`) | Compact header + sticky split-rail System Crucible + 5-tab Prism strip |
+| 2 | **Symbolic Legendre Transformer (SymPy CAS)** | `/physics/legendre-transformer` | ✅ Aligned (`b45272bf5`) | Auto-compute on load + `L ⟹ H` hero card + numbered 3-step SymPy CAS pipeline |
+| 3 | **Noether's Vault (Symmetry → Conservation)** | `/physics/noethers-vault` | ✅ Aligned (`dbd8e9790`) | Compact header + Noether mapping ribbon + 1-click Break/Restore toggle + fixed LaTeX |
+| 4 | **The Physics Rosetta Stone (Notation Toggle)** | `/physics/notation-toggle` | ✅ Aligned (`a1368b8dc`) | Side-by-Side Compare (`⟺`) + Translation Key + Copy LaTeX + 5 laws |
+| 5 | **Anthropic Constant Tuner** | `/physics/anthropic-tuner` | ✅ Aligned (`c3e3509e7`) | Compact header + 3 tiled scale viewports + 2-line Universe Dials + live context readout |
+| 6 | **Classical-to-Quantum Correspondence Workspace** | `/physics/correspondence-workspace` | ⬜ Queued | Next individual workbench candidate |
+| 7 | **Equation Explainer & Dissection Suite** | `/physics/equation-explainer` | ⬜ Queued | Individual review |
+| 8 | **Universe Derivation Graph (Lineage Map)** | `/physics/universe-graph` | ⬜ Queued | Individual review |
+| 9 | **Fundamental Physical Constants (CODATA 2022)** | `/physics/constants` | ⬜ Reference Page | 24 CODATA 2022 constants (single source of truth) |
+| 10 | **Symbols & Manifold Lexicon** | `/physics/symbols` | ⬜ Reference Page | 371+ symbols + CODATA 2022 overlay |
+
+### B. Interactive Physics Simulations (`17` Simulations + Gallery)
+
+| # | Simulation | Domain | Route | Status |
+| :-: | :--- | :--- | :--- | :---: |
+| 0 | **Simulations Gallery Hub** | Hub | `/physics/simulations` | ⬜ Queued |
+| 1 | **Chaotic Damped-Driven Pendulum** *(Elevated RK4 + Poincaré)* | Classical & Chaos | `/physics/simulations/pendulum` | ⬜ Queued |
+| 2 | **Newton's Orbital Cannon (Projectile Motion)** *(Elevated)* | Classical & Chaos | `/physics/simulations/projectile-motion` | ⬜ Queued |
+| 3 | **Double Pendulum** | Classical & Chaos | `/physics/simulations/double-pendulum` | ⬜ Queued |
+| 4 | **N-Body Orbital Mechanics** | Classical & Chaos | `/physics/simulations/n-body-orbit` | ⬜ Queued |
+| 5 | **Relativistic Kerr Black Hole Raytracer** *(60fps WebGL2 GPU)* | Relativity & Astro | `/physics/simulations/relativistic-black-hole` | ⬜ Queued |
+| 6 | **Spacetime Relativity (Minkowski Diagrams)** | Relativity & Astro | `/physics/simulations/spacetime-relativity` | ⬜ Queued |
+| 7 | **Gravitational Lensing** | Relativity & Astro | `/physics/simulations/gravitational-lensing` | ⬜ Queued |
+| 8 | **Curved Spacetime Geodesic Tracer** | Relativity & Astro | `/physics/simulations/geodesic-tracer` | ⬜ Queued |
+| 9 | **Wavefunction Quantum Tunneling** | Quantum | `/physics/simulations/wavefunction-tunneling` | ⬜ Queued |
+| 10 | **Feynman Path Integral** | Quantum | `/physics/simulations/path-integral` | ⬜ Queued |
+| 11 | **Bell's Inequality & Quantum Entanglement** | Quantum | `/physics/simulations/bells-inequality` | ⬜ Queued |
+| 12 | **Electric Field Lines & Equipotentials** | E&M & Waves | `/physics/simulations/electric-field` | ⬜ Queued |
+| 13 | **Gauss's Law Flux Sandbox** | E&M & Waves | `/physics/simulations/gauss-law` | ⬜ Queued |
+| 14 | **Wave Superposition & Interference** | E&M & Waves | `/physics/simulations/wave-superposition` | ⬜ Queued |
+| 15 | **Brownian Motion (Langevin Stochastic)** | Thermo & Fluids | `/physics/simulations/brownian-motion` | ⬜ Queued |
+| 16 | **Maxwell's Demon (Entropy & Information)** | Thermo & Fluids | `/physics/simulations/maxwells-demon` | ⬜ Queued |
+| 17 | **Kármán Vortex Street (Fluid Dynamics)** | Thermo & Fluids | `/physics/simulations/vortex-street` | ⬜ Queued |

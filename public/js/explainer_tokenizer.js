@@ -38,7 +38,7 @@ const ExplainerTokenizer = {
             };
         }
         
-        if (/Y\s*\/\s*2|\frac\{\s*Y\s*\}\{\s*2\s*\}/.test(latex)) {
+        if (/Y\s*\/\s*2|\\frac\{\s*Y\s*\}\{\s*2\s*\}/.test(latex)) {
             overrides['Y'] = { 
                 name: 'Weak Hypercharge', 
                 type: 'variable', 

@@ -8,7 +8,7 @@
         <!-- Left Column: Symmetries Directory -->
         <div class="vault-panel-left">
             <div class="glass-card list-card">
-                <h3>Symmetries &amp; Generators</h3>
+                <h2>Symmetries &amp; Generators</h2>
                 <p class="ref-sub">Select a continuous symmetry transformation to inspect its infinitesimal generator and conserved physical current.</p>
                 <div class="symmetry-list" id="symmetry-list">
                     <!-- JS Populated -->
@@ -32,7 +32,7 @@
                 <!-- Simulation & Interactive Playground -->
                 <div class="playground-section">
                     <div class="playground-header">
-                        <h4>Interactive Symmetry Sandbox</h4>
+                        <h3>Interactive Symmetry Sandbox</h3>
                         <span class="sandbox-badge">Real-time Numerical Solver</span>
                     </div>
                     <div class="playground-layout">
@@ -82,7 +82,7 @@
 
                 <!-- Mathematical Derivation Flows -->
                 <div class="derivation-section">
-                    <h4>Euler-Lagrange Derivation Flow</h4>
+                    <h3>Euler-Lagrange Derivation Flow</h3>
                     <p class="ref-sub">Applying an infinitesimal shift \( \delta \phi \) to the fields in the action functional \( S[\phi] \):</p>
                     <div class="derivation-box">
                         <div id="derivation-math" class="math-render-field">
@@ -90,7 +90,7 @@
                         </div>
                     </div>
                     <div class="derivation-text-desc">
-                        <h5>Physical Mechanism</h5>
+                        <h4>Physical Mechanism</h4>
                         <p id="derivation-description">Detailed step breakdown of coordinate shifts.</p>
                     </div>
                 </div>
@@ -154,7 +154,7 @@
     overflow-y: auto;
 }
 
-.list-card h3 {
+.list-card h2 {
     margin: 0 0 8px 0;
     font-family: 'Space Grotesk', sans-serif;
     color: #ffffff;
@@ -282,7 +282,7 @@
     padding-bottom: 10px;
 }
 
-.playground-header h4 {
+.playground-header h3 {
     margin: 0;
     font-size: 1rem;
     color: #ffffff;
@@ -496,7 +496,7 @@
 }
 
 /* Derivation Section */
-.derivation-section h4 {
+.derivation-section h3 {
     margin: 0 0 4px 0;
     font-size: 1.1rem;
     color: #ffffff;
@@ -514,7 +514,7 @@
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
 }
 
-.derivation-text-desc h5 {
+.derivation-text-desc h4 {
     margin: 0 0 6px 0;
     font-size: 0.88rem;
     color: #ffffff;

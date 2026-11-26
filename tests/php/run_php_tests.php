@@ -440,9 +440,12 @@ $runner->run('PhysicsServiceTest', 'testLazyNotationLoadingAndSlimSchema', funct
     $contentBefore = $svc->getPhysicsContent();
     $t->assertSame(0, count($contentBefore['notation']), 'notation must not be eagerly loaded by getPhysicsContent()');
 
-    // 2. On-demand getNotation() loads all 348 entries with clean descriptions and zero dead HTML bloat
+    // 2. On-demand getNotation() loads all notation.json entries with clean descriptions and zero dead HTML bloat
+    $diskNotation = json_decode(file_get_contents(PROJECT_ROOT . '/app/config/content/notation.json'), true);
+    $expectedCount = count($diskNotation);
     $notation = $svc->getNotation();
-    $t->assertSame(348, count($notation), 'Must load all 348 notation entries');
+    $t->assertTrue($expectedCount >= 371, 'notation.json floor must be at least 371 entries');
+    $t->assertSame($expectedCount, count($notation), "Must load all {$expectedCount} notation entries");
     $t->assertTrue(isset($notation['h-bar']['value']), 'Fundamental constants must preserve CODATA values');
     foreach ($notation as $slug => $entry) {
         $t->assertFalse(isset($entry['content']), "Dead content field must not exist on {$slug}");
@@ -451,7 +454,7 @@ $runner->run('PhysicsServiceTest', 'testLazyNotationLoadingAndSlimSchema', funct
     }
 
     // 3. Hydrates physicsContent['notation'] and resets cleanly on clearCache()
-    $t->assertSame(348, count($svc->getPhysicsContent()['notation']));
+    $t->assertSame($expectedCount, count($svc->getPhysicsContent()['notation']));
     $svc->clearCache();
     $t->assertSame(0, count($svc->getPhysicsContent()['notation']));
 });

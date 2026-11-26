@@ -295,8 +295,13 @@ function loadSymmetry(id) {
     document.getElementById("derivation-math").innerHTML = stepsHtml;
 
     // Typeset MathJax
-    if (window.MathJax) {
-        MathJax.typesetPromise();
+    const derivEl = document.getElementById("derivation-math");
+    if (derivEl) {
+        if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
+            window.MathJax.typesetPromise([derivEl]).catch(err => console.warn("MathJax typeset error:", err));
+        } else if (typeof window.ensureMathJax === "function") {
+            window.ensureMathJax().then(mj => mj && mj.typesetPromise && mj.typesetPromise([derivEl])).catch(() => {});
+        }
     }
 
     // Render Sliders

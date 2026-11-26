@@ -8,7 +8,7 @@
         <!-- Left Column: Universe Constant Dials -->
         <div class="tuner-panel-left">
             <div class="glass-card list-card">
-                <h3>Universe Dials</h3>
+                <h2>Universe Dials</h2>
                 <p class="ref-sub">Adjust these sliders to vary the fundamental constants of nature relative to our standard universe value.</p>
                 
                 <div class="preset-buttons" style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px;">
@@ -45,7 +45,7 @@
                 <!-- Simulation & Interactive Playground -->
                 <div class="playground-section">
                     <div class="playground-header">
-                        <h4>Scale Visualizer (Atomic, Planetary, Stellar)</h4>
+                        <h3>Scale Visualizer (Atomic, Planetary, Stellar)</h3>
                         <span class="sandbox-badge">Multi-Scale Solver</span>
                     </div>
                     <!-- Canvas Container -->
@@ -56,10 +56,10 @@
 
                 <!-- Recalculated Scaling Parameters Table -->
                 <div class="parameters-section" style="margin-bottom: 25px;">
-                    <h4 style="margin: 0 0 12px 0; font-family: 'Space Grotesk', sans-serif; color: #ffffff; font-size: 1.1rem; display: flex; align-items: center; gap: 6px;">
+                    <h3 style="margin: 0 0 12px 0; font-family: 'Space Grotesk', sans-serif; color: #ffffff; font-size: 1.1rem; display: flex; align-items: center; gap: 6px;">
                         <span style="display:inline-block; width:4px; height:14px; background:var(--accent-astrophysics); border-radius:2px;"></span>
                         Recalculated Scaling Metrics
-                    </h4>
+                    </h3>
                     <div class="table-wrapper">
                         <table class="glossary-table">
                             <thead>
@@ -79,10 +79,10 @@
 
                 <!-- Anthropic Warnings Console -->
                 <div class="warnings-console-section" id="warnings-console-box">
-                    <h4 style="margin: 0 0 10px 0; font-family: 'Space Grotesk', sans-serif; color: #ffffff; font-size: 1.1rem; display: flex; align-items: center; gap: 6px;">
+                    <h3 style="margin: 0 0 10px 0; font-family: 'Space Grotesk', sans-serif; color: #ffffff; font-size: 1.1rem; display: flex; align-items: center; gap: 6px;">
                         <span style="display:inline-block; width:4px; height:14px; background:#ef4444; border-radius:2px;"></span>
                         Anthropic Boundaries Console
-                    </h4>
+                    </h3>
                     <div class="console-box" id="console-output">
                         <!-- JS Populated Warning Messages -->
                     </div>
@@ -147,7 +147,7 @@
     overflow-y: auto;
 }
 
-.list-card h3 {
+.list-card h2 {
     margin: 0 0 8px 0;
     font-family: 'Space Grotesk', sans-serif;
     color: #ffffff;
@@ -271,7 +271,7 @@
     padding-bottom: 10px;
 }
 
-.playground-header h4 {
+.playground-header h3 {
     margin: 0;
     font-size: 1rem;
     color: #ffffff;

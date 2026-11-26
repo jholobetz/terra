@@ -183,8 +183,14 @@ function setMode(mode, updateURL = true) {
         renderSliders(SLIDERS_PHASE);
     }
 
-    if (window.MathJax) {
-        MathJax.typesetPromise();
+    const mathTargets = [
+        document.getElementById("math-formula-1"),
+        document.getElementById("math-formula-2")
+    ].filter(Boolean);
+    if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
+        window.MathJax.typesetPromise(mathTargets).catch(err => console.warn("MathJax typeset error:", err));
+    } else if (typeof window.ensureMathJax === "function") {
+        window.ensureMathJax().then(mj => mj && mj.typesetPromise && mj.typesetPromise(mathTargets)).catch(() => {});
     }
 
     resetSimulation();

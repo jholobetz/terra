@@ -50,11 +50,11 @@
                 <div class="insight-section">
                     <div class="insight-grid">
                         <div class="insight-card">
-                            <h4>Physical Interpretation &amp; Insight</h4>
+                            <h3>Physical Interpretation &amp; Insight</h3>
                             <p id="active-rep-insight">Select a representation to view its physical description.</p>
                         </div>
                         <div class="insight-card">
-                            <h4>Formulation Utility</h4>
+                            <h3>Formulation Utility</h3>
                             <p id="active-rep-utility">Explanation of why and when this formulation is used by physicists.</p>
                         </div>
                     </div>
@@ -62,7 +62,7 @@
 
                 <!-- Semantic Glossary Table -->
                 <div class="glossary-section" id="glossary-section">
-                    <h4>Semantic Variable Glossary</h4>
+                    <h3>Semantic Variable Glossary</h3>
                     <p class="ref-sub">Click variable names to link directly to their definitions in the Constants &amp; Symbols Registry.</p>
                     <div class="table-wrapper">
                         <table class="glossary-table">
@@ -344,7 +344,7 @@
     padding: 20px;
 }
 
-.insight-card h4 {
+.insight-card h3 {
     margin: 0 0 10px 0;
     font-size: 0.9rem;
     color: #ffffff;
@@ -362,7 +362,7 @@
 }
 
 /* Glossary Section */
-.glossary-section h4 {
+.glossary-section h3 {
     margin: 0 0 6px 0;
     font-size: 1rem;
     color: #ffffff;

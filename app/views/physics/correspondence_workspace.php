@@ -8,7 +8,7 @@
         <!-- Left Column: Simulation Modes & Config -->
         <div class="workspace-panel-left">
             <div class="glass-card list-card">
-                <h3>Simulation Modes</h3>
+                <h2>Simulation Modes</h2>
                 <p class="ref-sub">Choose a correspondence playground to analyze trajectory alignments and divergences.</p>
                 
                 <div class="mode-select-box">
@@ -23,7 +23,7 @@
                 </div>
 
                 <div class="potential-select-section" id="potential-selector-box">
-                    <h4 style="margin: 20px 0 10px 0; font-family: 'Space Grotesk', sans-serif; color: #ffffff; font-size: 0.95rem;">Potential Landscape V(x)</h4>
+                    <h3 style="margin: 20px 0 10px 0; font-family: 'Space Grotesk', sans-serif; color: #ffffff; font-size: 0.95rem;">Potential Landscape V(x)</h3>
                     <div class="potential-list">
                         <button class="pot-btn active" data-pot="harmonic">Harmonic Oscillator</button>
                         <button class="pot-btn" data-pot="double_well">Anharmonic Double Well</button>
@@ -49,7 +49,7 @@
                 <!-- Simulation Block -->
                 <div class="playground-section">
                     <div class="playground-header">
-                        <h4>Real-Time Correspondence Sandbox</h4>
+                        <h3>Real-Time Correspondence Sandbox</h3>
                         <span class="sandbox-badge">Symplectic Integrator</span>
                     </div>
                     <div class="playground-layout">
@@ -79,7 +79,7 @@
                 <div class="math-details-section">
                     <div class="insight-grid">
                         <div class="insight-card">
-                            <h4 id="math-box-title-1">Ehrenfest's Equations</h4>
+                            <h3 id="math-box-title-1">Ehrenfest's Equations</h3>
                             <div id="math-formula-1" class="math-render-field-small">
                                 \[ \frac{d}{dt}\langle \hat{x} \rangle = \frac{\langle \hat{p} \rangle}{m} \]
                                 \[ \frac{d}{dt}\langle \hat{p} \rangle = -\langle V'(\hat{x}) \rangle \]
@@ -89,7 +89,7 @@
                             </p>
                         </div>
                         <div class="insight-card">
-                            <h4 id="math-box-title-2">Classical Convergence limit</h4>
+                            <h3 id="math-box-title-2">Classical Convergence limit</h3>
                             <div id="math-formula-2" class="math-render-field-small">
                                 \[ \lim_{\hbar \to 0} \langle \hat{x} \rangle(t) = x_{\text{class}}(t) \]
                             </div>
@@ -159,7 +159,7 @@
     overflow-y: auto;
 }
 
-.list-card h3 {
+.list-card h2 {
     margin: 0 0 8px 0;
     font-family: 'Space Grotesk', sans-serif;
     color: #ffffff;
@@ -315,7 +315,7 @@
     padding-bottom: 10px;
 }
 
-.playground-header h4 {
+.playground-header h3 {
     margin: 0;
     font-size: 1rem;
     color: #ffffff;
@@ -463,7 +463,7 @@
     padding: 20px;
 }
 
-.insight-card h4 {
+.insight-card h3 {
     margin: 0 0 10px 0;
     font-size: 0.9rem;
     color: #ffffff;

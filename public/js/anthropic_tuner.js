@@ -254,8 +254,10 @@ function updateTable(metrics) {
         tbody.appendChild(tr);
     });
 
-    if (window.MathJax) {
-        MathJax.typesetPromise();
+    if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
+        window.MathJax.typesetPromise([tbody]).catch(err => console.warn("MathJax typeset error:", err));
+    } else if (typeof window.ensureMathJax === "function") {
+        window.ensureMathJax().then(mj => mj && mj.typesetPromise && mj.typesetPromise([tbody])).catch(() => {});
     }
 }
 

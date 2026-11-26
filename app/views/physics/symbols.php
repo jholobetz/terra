@@ -80,7 +80,7 @@ foreach ($notation as $item) {
             <section class="notation-card" data-type="<?= htmlspecialchars($type) ?>" data-symbol="<?= htmlspecialchars($symbol) ?>" id="<?= htmlspecialchars($slug) ?>" style="background: #112240; border: 1px solid #233554; border-radius: 12px; padding: 25px; transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; position: relative;">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; gap: 15px;">
                     <div>
-                        <h3 style="margin: 0; font-size: 1.25rem; color: #fff;"><?= htmlspecialchars($name) ?></h3>
+                        <h2 style="margin: 0; font-size: 1.25rem; color: #fff;"><?= htmlspecialchars($name) ?></h2>
                         <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-color); font-weight: bold; margin-top: 4px; display: inline-block;">
                             <?= htmlspecialchars(str_replace('-', ' ', $type)) ?>
                         </span>

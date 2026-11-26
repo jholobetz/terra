@@ -54,7 +54,7 @@ const THEORIES = [
                 utility: "Fundamental in relativistic mechanics, accelerator physics, and particle physics. Expresses electrodynamics in a form that remains invariant under arbitrary coordinate changes (general covariance).",
                 glossary: [
                     { symbol: "F^{\\mu\\nu}", name: "Electromagnetic Field Tensor", dimension: "\\mathsf{M}\\cdot\\mathsf{T}^{-2}\\cdot\\mathsf{I}^{-1}", link: "/physics/symbols#electromagnetic-tensor" },
-                    { symbol: "J^\\nu", name: "Four-Current Density Vector", dimension: "\\mathsf{L}^{-2}\\cdot\\mathsf{I}", link: "/physics/symbols#four-current" },
+                    { symbol: "J^\\nu", name: "Four-Current Density Vector", dimension: "\\mathsf{L}^{-2}\\cdot\\mathsf{I}", link: "/physics/symbols#four-current-density" },
                     { symbol: "\\partial_\\mu", name: "Four-Gradient Operator", dimension: "\\mathsf{L}^{-1}", link: "/physics/symbols#four-gradient" },
                     { symbol: "\\mu_0", name: "Vacuum Permeability Constant", dimension: "\\mathsf{M}\\cdot\\mathsf{L}\\cdot\\mathsf{T}^{-2}\\cdot\\mathsf{I}^{-2}", link: "/physics/constants#mu-0" }
                 ]
@@ -96,7 +96,7 @@ const THEORIES = [
                     { symbol: "T_{\\mu\\nu}", name: "Stress-Energy Tensor", dimension: "\\mathsf{M}\\cdot\\mathsf{L}^{-1}\\cdot\\mathsf{T}^{-2}", link: "/physics/symbols#stress-energy-tensor" },
                     { symbol: "G", name: "Newtonian Gravitational Constant", dimension: "\\mathsf{M}^{-1}\\cdot\\mathsf{L}^{3}\\cdot\\mathsf{T}^{-2}", link: "/physics/constants#G" },
                     { symbol: "c", name: "Speed of Light", dimension: "\\mathsf{L}\\cdot\\mathsf{T}^{-1}", link: "/physics/constants#c" },
-                    { symbol: "\\Lambda", name: "Cosmological Constant", dimension: "\\mathsf{L}^{-2}", link: "/physics/symbols#cosmological-constant" }
+                    { symbol: "\\Lambda", name: "Cosmological Constant", dimension: "\\mathsf{L}^{-2}", link: "/physics/symbols#cosmological-constant-lambda" }
                 ]
             },
             {
@@ -106,12 +106,12 @@ const THEORIES = [
                 insight: "Formulates general relativity through the Principle of Least Action. Taking the variational derivative of \\(S\\) with respect to the inverse metric \\(g^{\\mu\\nu}\\) yields the complete Einstein Field Equations.",
                 utility: "Crucial for studying quantum gravity, string theory, and cosmological field modifications. Provides a unified starting point to couple gravity to other fundamental forces.",
                 glossary: [
-                    { symbol: "S", name: "Action Integral", dimension: "\\mathsf{M}\\cdot\\mathsf{L}^{2}\\cdot\\mathsf{T}^{-1}", link: "/physics/symbols#action" },
+                    { symbol: "S", name: "Action Integral", dimension: "\\mathsf{M}\\cdot\\mathsf{L}^{2}\\cdot\\mathsf{T}^{-1}", link: "/physics/symbols#action-integral" },
                     { symbol: "R", name: "Ricci Scalar Curvature", dimension: "\\mathsf{L}^{-2}", link: "/physics/symbols#ricci-scalar" },
-                    { symbol: "g", name: "Determinant of Metric Tensor", dimension: "dimensionless", link: "/physics/symbols#metric-determinant" },
+                    { symbol: "g", name: "Determinant of Metric Tensor", dimension: "dimensionless", link: "/physics/symbols#determinant-metric" },
                     { symbol: "G", name: "Newtonian Gravitational Constant", dimension: "\\mathsf{M}^{-1}\\cdot\\mathsf{L}^{3}\\cdot\\mathsf{T}^{-2}", link: "/physics/constants#G" },
                     { symbol: "c", name: "Speed of Light", dimension: "\\mathsf{L}\\cdot\\mathsf{T}^{-1}", link: "/physics/constants#c" },
-                    { symbol: "\\Lambda", name: "Cosmological Constant", dimension: "\\mathsf{L}^{-2}", link: "/physics/symbols#cosmological-constant" }
+                    { symbol: "\\Lambda", name: "Cosmological Constant", dimension: "\\mathsf{L}^{-2}", link: "/physics/symbols#cosmological-constant-lambda" }
                 ]
             },
             {
@@ -159,10 +159,10 @@ const THEORIES = [
                 insight: "Expresses quantum states in terms of momentum coordinates \\(\\mathbf{p}\\). The kinetic energy becomes a simple multiplication term, while potential energy turns into a convolution integral. Represents the Fourier transform of the position space equation.",
                 utility: "Best suited for periodic systems, scattering experiments (e.g. Born approximations), and free-electron field behaviors in solid state physics.",
                 glossary: [
-                    { symbol: "\\phi(\\mathbf{p}, t)", name: "Momentum-space Wave Function", dimension: "\\mathsf{M}^{-3/2}\\cdot\\mathsf{L}^{-3/2}\\cdot\\mathsf{T}^{3/2}", link: "/physics/symbols#momentum-wave-function" },
+                    { symbol: "\\phi(\\mathbf{p}, t)", name: "Momentum-space Wave Function", dimension: "\\mathsf{M}^{-3/2}\\cdot\\mathsf{L}^{-3/2}\\cdot\\mathsf{T}^{3/2}", link: "/physics/symbols#wave-function" },
                     { symbol: "\\hbar", name: "Reduced Planck Constant", dimension: "\\mathsf{M}\\cdot\\mathsf{L}^{2}\\cdot\\mathsf{T}^{-1}", link: "/physics/constants#h-bar" },
                     { symbol: "m", name: "Particle Mass", dimension: "\\mathsf{M}", link: "/physics/symbols#mass" },
-                    { symbol: "\\mathbf{p}", name: "Momentum Coordinates Vector", dimension: "\\mathsf{M}\\cdot\\mathsf{L}\\cdot\\mathsf{T}^{-1}", link: "/physics/symbols#momentum" },
+                    { symbol: "\\mathbf{p}", name: "Momentum Coordinates Vector", dimension: "\\mathsf{M}\\cdot\\mathsf{L}\\cdot\\mathsf{T}^{-1}", link: "/physics/symbols#linear-momentum" },
                     { symbol: "V(\\mathbf{p})", name: "Fourier Transformed Potential", dimension: "dimensionless", link: "/physics/symbols#fourier-potential" }
                 ]
             },
@@ -186,7 +186,7 @@ const THEORIES = [
                 utility: "Central to quantum field theory, particle physics, and statistical mechanics. Elegant for demonstrating the classical limit (when \\(\\hbar \\to 0\\), the classical path of least action dominates).",
                 glossary: [
                     { symbol: "\\mathcal{D}[x(t)]", name: "Functional Path Integration Measure", dimension: "dimensionless", link: "/physics/symbols#path-measure" },
-                    { symbol: "S[x(t)]", name: "Classical Action Functional", dimension: "\\mathsf{M}\\cdot\\mathsf{L}^{2}\\cdot\\mathsf{T}^{-1}", link: "/physics/symbols#action" },
+                    { symbol: "S[x(t)]", name: "Classical Action Functional", dimension: "\\mathsf{M}\\cdot\\mathsf{L}^{2}\\cdot\\mathsf{T}^{-1}", link: "/physics/symbols#action-integral" },
                     { symbol: "\\hbar", name: "Reduced Planck Constant", dimension: "\\mathsf{M}\\cdot\\mathsf{L}^{2}\\cdot\\mathsf{T}^{-1}", link: "/physics/constants#h-bar" },
                     { symbol: "U(t_f, t_i)", name: "Time Evolution Operator", dimension: "dimensionless", link: "/physics/symbols#evolution-operator" }
                 ]

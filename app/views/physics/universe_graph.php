@@ -48,9 +48,9 @@
 
             <!-- 2. Landmark Formula Quick Selector -->
             <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 18px; backdrop-filter: blur(10px);">
-                <h3 style="font-size: 0.82rem; text-transform: uppercase; color: var(--accent-default, #64ffda); margin: 0 0 12px 0; letter-spacing: 0.08em; font-weight: 700;">
+                <h2 style="font-size: 0.82rem; text-transform: uppercase; color: var(--accent-default, #64ffda); margin: 0 0 12px 0; letter-spacing: 0.08em; font-weight: 700;">
                     ⭐ Landmark Physics Hubs
-                </h3>
+                </h2>
                 <div style="display: flex; flex-direction: column; gap: 6px;" id="landmark-hubs-list">
                     <button class="hub-btn is-active" data-id="time-dependent-schrodinger-equation" style="text-align: left; background: rgba(3, 7, 18, 0.6); border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; padding: 8px 10px; color: #f1f5f9; font-size: 0.82rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s;">
                         <span>Schrödinger Wave Equation</span>
@@ -81,9 +81,9 @@
 
             <!-- 3. Mathematical Path Finder Tool -->
             <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(100, 255, 218, 0.2); border-radius: 12px; padding: 18px; backdrop-filter: blur(10px);">
-                <h3 style="font-size: 0.82rem; text-transform: uppercase; color: var(--accent-default, #64ffda); margin: 0 0 8px 0; letter-spacing: 0.08em; font-weight: 700; display: flex; align-items: center; gap: 6px;">
+                <h2 style="font-size: 0.82rem; text-transform: uppercase; color: var(--accent-default, #64ffda); margin: 0 0 8px 0; letter-spacing: 0.08em; font-weight: 700; display: flex; align-items: center; gap: 6px;">
                     🧭 Derivation Route Finder
-                </h3>
+                </h2>
                 <p style="font-size: 0.75rem; color: #94a3b8; margin: 0 0 12px 0; line-height: 1.4;">
                     Trace the shortest derivation path between two formulas (search by name or ID):
                 </p>
@@ -113,7 +113,7 @@
 
             <!-- 4. Domain Color Legend -->
             <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 16px;">
-                <h4 style="font-size: 0.74rem; text-transform: uppercase; color: #94a3b8; margin: 0 0 10px 0; font-weight: 700;">Physics Domains</h4>
+                <h3 style="font-size: 0.74rem; text-transform: uppercase; color: #94a3b8; margin: 0 0 10px 0; font-weight: 700;">Physics Domains</h3>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.72rem;">
                     <span style="display: flex; align-items: center; gap: 5px; color: #cbd5e1;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #c084fc;"></span> Theoretical</span>
                     <span style="display: flex; align-items: center; gap: 5px; color: #cbd5e1;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #60a5fa;"></span> E&amp;M</span>

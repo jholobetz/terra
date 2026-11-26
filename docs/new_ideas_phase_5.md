@@ -51,6 +51,7 @@
 
 ---
 
-### 5. Semantic Keyword Cleanup (`semantic_prose_verifier.py` Warnings) *(~15 min)*
-- [ ] Clean up the `~47` recurring `Missing Keywords` / low-similarity warnings printed during pre-commit Integrity Shield runs (e.g., diacritic mismatches like `perot` vs `Pérot`, `mossbauer` vs `Mössbauer`, `weizsacker` vs `Weizsäcker`, and hyphenated/unmatched keywords in `app/config/ref_data/semantic_references.json`).
-- [ ] Goal: make pre-commit and pre-push Integrity Shield runs noticeably cleaner with near-zero noise.
+### 5. Semantic Keyword Cleanup (`semantic_prose_verifier.py` Warnings) *(Completed 2026-11-25)* ✅
+- [x] Upgraded [`scripts/maintenance/semantic_prose_verifier.py`](../scripts/maintenance/semantic_prose_verifier.py) with `html.unescape()` + `unicodedata.normalize("NFKD")` diacritic folding and typographic dash/apostrophe normalization (`Pérot` ↔ `perot`, `Mössbauer` ↔ `mossbauer`, `Weizsäcker` ↔ `weizsacker`, `Schrödinger` ↔ `schrodinger`, `Poincaré` ↔ `poincare`, `Alfvén` ↔ `alfven`, etc.) without relaxing similarity or keyword thresholds.
+- [x] Cleaned [`app/config/ref_data/semantic_references.json`](../app/config/ref_data/semantic_references.json): pruned 52 unaligned tag/slug-artifact keywords (preserving `>= 6` verified core physics keywords on every entry) and expanded the 4 truncated `reference_prose` stubs (`turing-patterns-reaction-diffusion`, `wkb-semiclassical-approximation`, `angular-momentum-coupling-wigner-eckart`, `pn-junction-diode-physics`).
+- [x] Verified `semantic_prose_verifier.py` sitewide: **`0` errors, `0` warnings** across all `1,704` subtopics (`47 → 0`).

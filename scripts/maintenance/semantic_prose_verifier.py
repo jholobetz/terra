@@ -8,6 +8,8 @@ import os
 import sys
 import json
 import re
+import html
+import unicodedata
 try:
     import nltk
     from nltk.tokenize import word_tokenize
@@ -36,6 +38,21 @@ if HAS_NLTK:
 SIMILARITY_THRESHOLD_WARNING = 0.15
 SIMILARITY_THRESHOLD_ERROR = 0.08
 
+def fold_accents_and_punctuation(text):
+    """
+    Folds Unicode diacritics to ASCII equivalents (e.g. Pérot -> Perot, Mössbauer -> Mossbauer)
+    and normalizes typographic dashes/apostrophes for reliable scientific term matching.
+    """
+    if not text:
+        return ""
+    decomposed = unicodedata.normalize("NFKD", text)
+    ascii_folded = "".join(ch for ch in decomposed if not unicodedata.combining(ch))
+    # Normalize en-dash, em-dash, minus sign, non-breaking hyphen -> ASCII hyphen
+    ascii_folded = re.sub(r"[\u2010-\u2015\u2212]", "-", ascii_folded)
+    # Normalize curly apostrophes/quotes -> ASCII apostrophe
+    ascii_folded = re.sub(r"[\u2018\u2019\u02bc]", "'", ascii_folded)
+    return ascii_folded
+
 def preprocess_html(html_content, lowercase=True):
     """
     Strips HTML tags, math blocks, and extracts clean plain text for semantic analysis.
@@ -55,6 +72,9 @@ def preprocess_html(html_content, lowercase=True):
     
     # Remove all HTML tags
     text = re.sub(r'<[^>]+>', ' ', text)
+    
+    # Decode HTML entities (e.g. &eacute;, &ouml;, &auml;, &ndash;) then fold accents and dashes
+    text = fold_accents_and_punctuation(html.unescape(text))
     
     # Normalize whitespace
     text = re.sub(r'\s+', ' ', text).strip()
@@ -141,6 +161,7 @@ def check_keywords(cms_text, keywords):
     Returns (missing_keywords, found_keywords).
     """
     cms_clean = preprocess_html(cms_text)
+    cms_no_apos = cms_clean.replace("'", "")
     cms_tokens = set(tokenize_and_lemmatize(cms_clean))
     try:
         lemmatizer = WordNetLemmatizer()
@@ -151,10 +172,17 @@ def check_keywords(cms_text, keywords):
     found = []
     
     for kw in keywords:
-        kw_clean = kw.lower().strip()
+        kw_clean = fold_accents_and_punctuation(kw).lower().strip()
+        kw_no_apos = kw_clean.replace("'", "")
         
-        # Check raw text substring match first (handles hyphenated terms & multi-word terms)
-        if kw_clean in cms_clean or kw_clean.replace('-', ' ') in cms_clean or kw_clean.replace(' ', '-') in cms_clean:
+        # Check raw text substring match first (handles hyphenated terms, apostrophes & multi-word terms)
+        if (
+            kw_clean in cms_clean
+            or kw_clean.replace('-', ' ') in cms_clean
+            or kw_clean.replace(' ', '-') in cms_clean
+            or kw_no_apos in cms_no_apos
+            or kw_no_apos.replace('-', ' ') in cms_no_apos
+        ):
             found.append(kw)
             continue
 

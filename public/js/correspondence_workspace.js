@@ -7,6 +7,7 @@
 let activeMode = "ehrenfest"; // "ehrenfest" or "phase"
 let activePotential = "harmonic"; // "harmonic", "double_well", "barrier"
 let simAnimationId = null;
+let simTime = 0;
 
 // Physics parameters
 let hbar = 0.8;
@@ -402,6 +403,7 @@ function stopCorrLoop() {
 function resetSimulation() {
     stopCorrLoop();
 
+    simTime = 0;
     classX = initialX;
     classP = initialP;
 
@@ -774,6 +776,7 @@ function runPhaseSpaceEngine() {
     const squeezeVal = parseFloat(document.getElementById("slide-squeeze")?.value || 1.0);
 
     // Increment phase angles for rotation
+    simTime++;
     let timeScale = 0.02;
     let angle = simTime * timeScale;
 

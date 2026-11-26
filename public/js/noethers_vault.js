@@ -9,7 +9,10 @@ const SYMMETRIES = [
         title: "Time Translation Invariance",
         category: "Spacetime Symmetry",
         description: "The laws of physics do not change from one moment to the next. Invariance under translations in time leads directly to the conservation of energy.",
-        generator: "H = iℏ ∂_t",
+        generator: "H = iℏ ∂ₜ",
+        conservedLabel: "Energy (dE/dt = 0)",
+        demoBreakValue: 70,
+        demoBreakLabel: "⚡ Break Time Symmetry (70%)",
         coordinateShift: "t \\to t + \\epsilon",
         conservedCurrent: "T^{\\mu 0} \\quad \\text{(Energy Flux Tensor component)}",
         conservationLaw: "\\partial_\\mu T^{\\mu 0} = 0 \\quad \\text{(Energy Conservation)}",
@@ -41,7 +44,10 @@ const SYMMETRIES = [
         title: "Spatial Translation Invariance",
         category: "Spacetime Symmetry",
         description: "The laws of physics are homogeneous; they do not depend on where in space they are evaluated. This spatial homogeneity yields the conservation of linear momentum.",
-        generator: "p = -iℏ ∇",
+        generator: "p = −iℏ ∇",
+        conservedLabel: "Linear Momentum (dP/dt = 0)",
+        demoBreakValue: 70,
+        demoBreakLabel: "⚡ Break Space Homogeneity (70%)",
         coordinateShift: "\\mathbf{r} \\to \\mathbf{r} + \\boldsymbol{\\epsilon}",
         conservedCurrent: "T^{\\mu i} \\quad \\text{(Momentum Flux Tensor components)}",
         conservationLaw: "\\partial_\\mu T^{\\mu i} = 0 \\quad \\text{(Momentum Conservation)}",
@@ -72,7 +78,10 @@ const SYMMETRIES = [
         title: "Spatial Rotation Invariance",
         category: "Spacetime Symmetry",
         description: "Space is isotropic; there is no preferred direction in the universe. Invariance under coordinate rotations yields conservation of angular momentum.",
-        generator: "J = \\mathbf{r} \\times \\mathbf{p}",
+        generator: "J = r × p",
+        conservedLabel: "Angular Momentum (dL/dt = 0)",
+        demoBreakValue: 70,
+        demoBreakLabel: "⚡ Break Isotropy (70%)",
         coordinateShift: "\\theta \\to \\theta + \\epsilon",
         conservedCurrent: "M^{\\mu\\nu\\lambda} \\quad \\text{(Angular Momentum current tensor)}",
         conservationLaw: "\\partial_\\mu M^{\\mu\\nu\\lambda} = 0 \\quad \\text{(Angular Momentum Conservation)}",
@@ -103,7 +112,10 @@ const SYMMETRIES = [
         title: "Global U(1) Gauge Invariance",
         category: "Internal Symmetry",
         description: "Invariance of a complex field under global phase transformations (rotating the phasor globally in the complex plane) leads directly to the conservation of electric charge.",
-        generator: "Q = \\int J^0 d^3x",
+        generator: "Q = ∫ J⁰ d³x",
+        conservedLabel: "Electric Charge (dQ/dt = 0)",
+        demoBreakValue: 180,
+        demoBreakLabel: "⚡ Apply Global Phase Shift (180°)",
         coordinateShift: "\\phi \\to e^{i\\alpha}\\phi",
         conservedCurrent: "J^\\mu = iq(\\phi^* \\partial^\\mu \\phi - \\phi \\partial^\\mu \\phi^*)",
         conservationLaw: "\\partial_\\mu J^\\mu = 0 \\quad \\text{(Charge Conservation)}",
@@ -135,16 +147,19 @@ const SYMMETRIES = [
         title: "Lorentz Boost Invariance",
         category: "Spacetime Symmetry",
         description: "Invariance of physical laws under relativistic velocity boosts. This symmetry guarantees that the center of mass moves at a constant velocity.",
-        generator: "K_i = t \\partial_i + x_i \\partial_t",
+        generator: "Kᵢ = t ∂ᵢ + xᵢ ∂ₜ",
+        conservedLabel: "Center-of-Mass Motion",
+        demoBreakValue: 75,
+        demoBreakLabel: "⚡ Apply Lorentz Boost (75% c)",
         coordinateShift: "x^\\mu \\to \\Lambda^\\mu_{\\,\\,\\nu} x^\\nu",
         conservedCurrent: "M^{\\mu 0 i} \\quad \\text{(Boost current components)}",
         conservationLaw: "\\partial_\\mu M^{\\mu 0 i} = 0 \\implies \\mathbf{P}t - E\\mathbf{R}_{cm} = \\text{const}",
         accentColor: "#f97316", // orange
         themeBgColor: "rgba(249, 115, 22, 0.08)",
         themeBorderColor: "rgba(249, 115, 22, 0.35)",
-        derivationDesc: "Under an infinitesimal Lorentz boost, coordinates transform as \\(\\delta x^i = \\epsilon^i t\\) and \\(\\delta t = \\epsilon^j x_j / c^2\\). Noether's theorem associates this with a conserved quantities representing energy-weighted conservation of the relativistic center-of-mass motion.",
+        derivationDesc: "Under an infinitesimal Lorentz boost, coordinates transform as \\(\\delta x^i = \\epsilon^i t\\) and \\(\\delta t = \\epsilon^j x_j / c^2\\). Noether's theorem associates this with a conserved quantity governing the relativistic center-of-mass motion.",
         derivationSteps: [
-            "\\delta x^\\mu = \\epsilon^{\\mu\\nu} x_nu \\implies M^{\\mu\\alpha\\beta} = x^\\alpha T^{\\mu\\beta} - x^\\beta T^{\\mu\\alpha}",
+            "\\delta x^\\mu = \\epsilon^{\\mu\\nu} x_\\nu \\implies M^{\\mu\\alpha\\beta} = x^\\alpha T^{\\mu\\beta} - x^\\beta T^{\\mu\\alpha}",
             "\\text{Boost conserved component: } J^\\mu_{0i} = t T^\\mu_{\\,\\,i} - x_i T^\\mu_{\\,\\,0}",
             "\\text{Divergence is zero: } \\partial_\\mu J^\\mu_{0i} = 0 \\implies \\mathbf{N} = \\mathbf{P}t - E\\mathbf{R}_{cm} = \\text{const}"
         ],
@@ -243,6 +258,7 @@ function renderSymmetryList() {
                 <span>${sym.category}</span>
                 <span class="generator">${sym.generator}</span>
             </div>
+            <span class="sym-conserved-chip">⟹ ${sym.conservedLabel}</span>
         `;
         
         item.addEventListener("click", () => loadSymmetry(sym.id));
@@ -276,32 +292,53 @@ function loadSymmetry(id) {
     card.style.setProperty("--theme-bg-color", sym.themeBgColor);
     card.style.setProperty("--theme-border-color", sym.themeBorderColor);
 
-    // Update texts
+    // Update texts & Noether mapping ribbon
     document.getElementById("active-category").textContent = sym.category;
     document.getElementById("active-symmetry-title").textContent = sym.title;
     document.getElementById("active-symmetry-description").textContent = sym.description;
-    document.getElementById("derivation-description").textContent = sym.derivationDesc;
+    const derivDescEl = document.getElementById("derivation-description");
+    derivDescEl.innerHTML = sym.derivationDesc;
+
+    const shiftEl = document.getElementById("noether-shift-math");
+    if (shiftEl) shiftEl.innerHTML = `\\( ${sym.coordinateShift} \\)`;
+    const conservedEl = document.getElementById("noether-conserved-label");
+    if (conservedEl) conservedEl.textContent = sym.conservedLabel;
 
     // Render MathJax formulas
-    document.getElementById("math-current").innerHTML = `\\[ J^\\mu = ${sym.conservedCurrent} \\]`;
-    document.getElementById("math-conservation").innerHTML = `\\[ ${sym.conservationLaw} \\]`;
+    const mathCurrentEl = document.getElementById("math-current");
+    const mathConsEl = document.getElementById("math-conservation");
+    mathCurrentEl.innerHTML = `\\[ J^\\mu = ${sym.conservedCurrent} \\]`;
+    mathConsEl.innerHTML = `\\[ ${sym.conservationLaw} \\]`;
 
     const stepsHtml = sym.derivationSteps.map((step, idx) => `
-        <div style="margin-bottom:12px; font-size:1.1rem; color:#ffd700;">
-            <span style="color:var(--text-muted); font-size:0.8rem; display:block; margin-bottom:4px;">Step ${idx + 1}</span>
+        <div style="margin-bottom:12px; font-size:1.05rem; color:#ffd700;">
+            <span style="color:var(--text-muted); font-size:0.78rem; display:block; margin-bottom:4px;">Step ${idx + 1}</span>
             \\[ ${step} \\]
         </div>
     `).join("");
-    document.getElementById("derivation-math").innerHTML = stepsHtml;
-
-    // Typeset MathJax
     const derivEl = document.getElementById("derivation-math");
-    if (derivEl) {
+    derivEl.innerHTML = stepsHtml;
+
+    // Typeset all updated MathJax elements together
+    const mjTargets = [shiftEl, mathCurrentEl, mathConsEl, derivEl, derivDescEl].filter(Boolean);
+    if (mjTargets.length) {
         if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
-            window.MathJax.typesetPromise([derivEl]).catch(err => console.warn("MathJax typeset error:", err));
+            window.MathJax.typesetPromise(mjTargets).catch(err => console.warn("MathJax typeset error:", err));
         } else if (typeof window.ensureMathJax === "function") {
-            window.ensureMathJax().then(mj => mj && mj.typesetPromise && mj.typesetPromise([derivEl])).catch(() => {});
+            window.ensureMathJax().then(mj => mj && mj.typesetPromise && mj.typesetPromise(mjTargets)).catch(() => {});
         }
+    }
+
+    // Reset status indicator & 1-click break button
+    const statusEl = document.getElementById("system-status");
+    if (statusEl) {
+        statusEl.textContent = "Symmetric (Conserved)";
+        statusEl.className = "status-value status-conserved";
+    }
+    const breakBtn = document.getElementById("btn-toggle-break");
+    if (breakBtn) {
+        breakBtn.classList.remove("is-active");
+        breakBtn.textContent = sym.demoBreakLabel || "⚡ Break Symmetry (Demo)";
     }
 
     // Render Sliders
@@ -355,16 +392,28 @@ function renderSliders(sliders) {
 }
 
 function setupSliderListeners() {
+    const breakBtn = document.getElementById("btn-toggle-break");
+
+    const syncBreakBtn = (val) => {
+        if (!breakBtn) return;
+        const isActive = parseFloat(val) > 0;
+        breakBtn.classList.toggle("is-active", isActive);
+        breakBtn.textContent = isActive
+            ? "↺ Restore Symmetry (0)"
+            : (activeSymmetry.demoBreakLabel || "⚡ Break Symmetry (Demo)");
+    };
+
     activeSymmetry.sliders.forEach(slider => {
         const el = document.getElementById(slider.id);
         if (el) {
             el.addEventListener("input", (e) => {
                 const val = e.target.value;
                 document.getElementById(`val-${slider.id}`).textContent = `${val}${slider.unit}`;
+                syncBreakBtn(val);
                 
                 // Active symmetry breaks status indicators
                 const statusEl = document.getElementById("system-status");
-                if (parseFloat(val) > 0 && slider.id !== "u1_phase_shift") {
+                if (parseFloat(val) > 0 && slider.id !== "u1_phase_shift" && slider.id !== "boost_velocity") {
                     statusEl.textContent = "Symmetry Broken (Non-Conserved)";
                     statusEl.className = "status-value status-broken";
                 } else {
@@ -374,6 +423,18 @@ function setupSliderListeners() {
             });
         }
     });
+
+    if (breakBtn) {
+        breakBtn.onclick = () => {
+            const firstSlider = activeSymmetry.sliders[0];
+            if (!firstSlider) return;
+            const el = document.getElementById(firstSlider.id);
+            if (!el) return;
+            const nextVal = parseFloat(el.value) > 0 ? 0 : (activeSymmetry.demoBreakValue || 70);
+            el.value = String(nextVal);
+            el.dispatchEvent(new Event("input", { bubbles: true }));
+        };
+    }
 }
 
 // Lifecycle & 30 FPS Throttling State

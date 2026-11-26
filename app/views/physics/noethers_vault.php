@@ -6,27 +6,40 @@
 
     <div class="vault-grid">
         <!-- Left Column: Symmetries Directory -->
-        <div class="vault-panel-left">
+        <aside class="vault-panel-left" aria-label="Continuous Symmetries">
             <div class="glass-card list-card">
-                <h2>Symmetries &amp; Generators</h2>
-                <p class="ref-sub">Select a continuous symmetry transformation to inspect its infinitesimal generator and conserved physical current.</p>
+                <div class="vault-list-head">
+                    <h2>Symmetries &amp; Generators</h2>
+                    <span class="sym-count-pill">5 Laws</span>
+                </div>
                 <div class="symmetry-list" id="symmetry-list">
                     <!-- JS Populated -->
                 </div>
             </div>
-        </div>
+        </aside>
 
         <!-- Right Column: Interactive Vault Console -->
         <div class="vault-panel-right">
             <div class="glass-card main-vault-card" id="vault-card">
                 
-                <!-- Active Header -->
+                <!-- Active Header + Instant Noether Mapping Ribbon -->
                 <div class="vault-header-info">
                     <div class="symmetry-meta">
                         <span id="active-category" class="category-badge">Spacetime Symmetry</span>
                         <h2 id="active-symmetry-title">Time Translation Invariance</h2>
                     </div>
                     <p id="active-symmetry-description" class="symmetry-desc">The laws of physics do not change from one moment to the next. Invariance under translations in time leads directly to the conservation of energy.</p>
+                    <div class="noether-mapping-ribbon">
+                        <span class="ribbon-pill">
+                            <span class="ribbon-label">Symmetry Shift</span>
+                            <span id="noether-shift-math">\( t \to t + \epsilon \)</span>
+                        </span>
+                        <span class="ribbon-arrow" aria-hidden="true">⟹</span>
+                        <span class="ribbon-pill ribbon-pill-conserved">
+                            <span class="ribbon-label">Conserved Quantity</span>
+                            <strong id="noether-conserved-label">Energy</strong>
+                        </span>
+                    </div>
                 </div>
 
                 <!-- Simulation & Interactive Playground -->
@@ -46,6 +59,10 @@
                                 <span class="label">System State:</span>
                                 <span id="system-status" class="status-value status-conserved">Symmetric (Conserved)</span>
                             </div>
+
+                            <button type="button" id="btn-toggle-break" class="btn-break-toggle">
+                                ⚡ Break Symmetry (Demo)
+                            </button>
                             
                             <div id="controls-container" class="sliders-box">
                                 <!-- JS Populated Sliders -->
@@ -103,20 +120,29 @@
 <style>
 /* Page Layout */
 .vault-container {
-    padding-top: 20px;
-    max-width: 1200px;
+    padding-top: 6px;
+    max-width: 1260px;
     margin: 0 auto;
 }
 
 .vault-header {
-    margin-bottom: 30px;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 4px 0 12px 0;
+    margin-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    text-align: left;
 }
 
 .vault-header h1 {
-    font-size: 2.2rem;
+    font-size: 1.65rem;
+    line-height: 1.15;
     color: #ffffff;
-    margin-bottom: 10px;
+    margin: 0;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
     background: linear-gradient(135deg, #ffffff 40%, var(--accent-default));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -124,14 +150,20 @@
 
 .vault-header .tagline {
     color: var(--text-muted);
-    font-size: 1.05rem;
+    font-size: 0.88rem;
+    line-height: 1.4;
+    margin: 0;
 }
 
 .vault-grid {
     display: grid;
-    grid-template-columns: 320px 1fr;
-    gap: 30px;
+    grid-template-columns: 285px minmax(0, 1fr);
+    gap: 20px;
     align-items: start;
+}
+
+.vault-panel-right {
+    min-width: 0;
 }
 
 @media (max-width: 980px) {
@@ -141,24 +173,127 @@
 }
 
 .glass-card {
-    background: rgba(15, 23, 42, 0.35);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 16px;
-    padding: 24px;
+    background: rgba(15, 23, 42, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 14px;
+    padding: 20px;
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
 }
 
 .list-card {
-    max-height: 750px;
-    overflow-y: auto;
+    position: sticky;
+    top: 84px;
+    padding: 16px;
+}
+
+@media (max-width: 980px) {
+    .list-card {
+        position: static;
+    }
+}
+
+.vault-list-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .list-card h2 {
-    margin: 0 0 8px 0;
+    margin: 0;
     font-family: 'Space Grotesk', sans-serif;
     color: #ffffff;
-    font-size: 1.3rem;
+    font-size: 1.02rem;
+}
+
+.sym-count-pill {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 2px 7px;
+    border-radius: 10px;
+}
+
+.noether-mapping-ribbon {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+    padding: 10px 12px;
+    background: rgba(2, 6, 23, 0.55);
+    border: 1px solid var(--theme-border-color, rgba(100, 255, 218, 0.25));
+    border-left: 3px solid var(--theme-color, var(--accent-default));
+    border-radius: 10px;
+}
+
+.ribbon-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: #f8fafc;
+}
+
+.ribbon-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+}
+
+.ribbon-arrow {
+    color: var(--theme-color, var(--accent-default));
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.ribbon-pill-conserved strong {
+    color: var(--theme-color, var(--accent-default));
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+.btn-break-toggle {
+    width: 100%;
+    padding: 8px 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    font-family: 'Space Grotesk', sans-serif;
+    cursor: pointer;
+    background: rgba(244, 63, 94, 0.12);
+    border: 1px solid rgba(244, 63, 94, 0.4);
+    color: #fda4af;
+    transition: all 0.2s ease;
+}
+
+.btn-break-toggle:hover {
+    background: rgba(244, 63, 94, 0.22);
+    color: #ffffff;
+}
+
+.btn-break-toggle.is-active {
+    background: rgba(16, 185, 129, 0.14);
+    border-color: rgba(16, 185, 129, 0.45);
+    color: #6ee7b7;
+}
+
+.sym-conserved-chip {
+    display: inline-block;
+    margin-top: 5px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--theme-color, var(--accent-default));
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2px 7px;
+    border-radius: 8px;
 }
 
 .ref-sub {
@@ -302,8 +437,8 @@
 
 .playground-layout {
     display: grid;
-    grid-template-columns: 1fr 280px;
-    gap: 20px;
+    grid-template-columns: minmax(0, 1fr) 265px;
+    gap: 18px;
 }
 
 @media (max-width: 750px) {

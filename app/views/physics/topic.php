@@ -96,7 +96,7 @@ $totalBridges = !empty($bridges) && is_array($bridges) ? count($bridges) : 0;
             <!-- View Mode Switcher -->
             <div class="view-mode-switch">
                 <button type="button" id="btn-mode-orbit" class="btn-mode-pill active">
-                    <span class="mode-icon">🌌</span> Solar Constellation
+                    <span class="mode-icon">🌌</span> Orbital Menu
                 </button>
                 <button type="button" id="btn-mode-directory" class="btn-mode-pill">
                     <span class="mode-icon">📋</span> Curriculum Directory

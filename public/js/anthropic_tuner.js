@@ -35,7 +35,7 @@ const DIALS = [
 const TUNER_PRESETS = {
     standard: { label: "Standard Universe", G: 1.0, c: 1.0, hbar: 1.0, alpha: 1.0, me: 1.0, mp: 1.0 },
     weak_gravity: { label: "Weak Gravity Universe", G: 0.01, c: 1.0, hbar: 1.0, alpha: 1.0, me: 1.0, mp: 1.0 },
-    collapse: { label: "Gravitational Crunch", G: 100.0, c: 1.0, hbar: 1.0, alpha: 1.0, me: 1.0, mp: 1.0 },
+    collapse: { label: "Gravitational Crunch", G: 250.0, c: 1.0, hbar: 1.0, alpha: 1.0, me: 1.0, mp: 1.0 },
     quantum_realm: { label: "Macroscopic Quantum Realm", G: 1.0, c: 1.0, hbar: 3.5, alpha: 1.0, me: 1.0, mp: 1.0 },
     weak_alpha: { label: "Weak Electromagnetism", G: 1.0, c: 1.0, hbar: 1.0, alpha: 0.2, me: 1.0, mp: 1.0 }
 };

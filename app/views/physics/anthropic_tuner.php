@@ -32,20 +32,10 @@
         <!-- Right Column: Interactive Scaling Console -->
         <div class="tuner-panel-right">
             <div class="glass-card main-tuner-card" id="tuner-card">
-                
-                <!-- Active Header -->
-                <div class="tuner-header-info">
-                    <div class="theory-meta">
-                        <span class="category-badge">Cosmic Scaling</span>
-                        <h2 style="margin: 0; font-size: 1.8rem; color: #ffffff; font-family: 'Space Grotesk', sans-serif;">Cosmological Sandbox</h2>
-                    </div>
-                    <p class="theory-desc">Visualizes the structural impact of fundamental variables across three scales: atomic quantum orbitals, planetary solar systems, and stellar core fusion pressure.</p>
-                </div>
-
                 <!-- Simulation & Interactive Playground -->
                 <div class="playground-section">
                     <div class="playground-header">
-                        <h3>Scale Visualizer (Atomic, Planetary, Stellar)</h3>
+                        <h2>Scale Visualizer (Atomic, Planetary, Stellar)</h2>
                         <span class="sandbox-badge">Multi-Scale Solver</span>
                     </div>
                     <!-- Canvas Container -->
@@ -55,11 +45,11 @@
                 </div>
 
                 <!-- Recalculated Scaling Parameters Table -->
-                <div class="parameters-section" style="margin-bottom: 25px;">
-                    <h3 style="margin: 0 0 12px 0; font-family: 'Space Grotesk', sans-serif; color: #ffffff; font-size: 1.1rem; display: flex; align-items: center; gap: 6px;">
+                <div class="parameters-section" style="margin-bottom: 22px;">
+                    <h2 style="margin: 0 0 12px 0; font-family: 'Space Grotesk', sans-serif; color: #ffffff; font-size: 1.05rem; display: flex; align-items: center; gap: 6px;">
                         <span style="display:inline-block; width:4px; height:14px; background:var(--accent-astrophysics); border-radius:2px;"></span>
                         Recalculated Scaling Metrics
-                    </h3>
+                    </h2>
                     <div class="table-wrapper">
                         <table class="glossary-table">
                             <thead>
@@ -79,10 +69,10 @@
 
                 <!-- Anthropic Warnings Console -->
                 <div class="warnings-console-section" id="warnings-console-box">
-                    <h3 style="margin: 0 0 10px 0; font-family: 'Space Grotesk', sans-serif; color: #ffffff; font-size: 1.1rem; display: flex; align-items: center; gap: 6px;">
+                    <h2 style="margin: 0 0 10px 0; font-family: 'Space Grotesk', sans-serif; color: #ffffff; font-size: 1.05rem; display: flex; align-items: center; gap: 6px;">
                         <span style="display:inline-block; width:4px; height:14px; background:#ef4444; border-radius:2px;"></span>
                         Anthropic Boundaries Console
-                    </h3>
+                    </h2>
                     <div class="console-box" id="console-output">
                         <!-- JS Populated Warning Messages -->
                     </div>
@@ -96,20 +86,29 @@
 <style>
 /* Page Layout */
 .tuner-container {
-    padding-top: 20px;
+    padding-top: 6px;
     max-width: 1200px;
     margin: 0 auto;
 }
 
 .tuner-header {
-    margin-bottom: 30px;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 4px 0 12px 0;
+    margin-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    text-align: left;
 }
 
 .tuner-header h1 {
-    font-size: 2.2rem;
+    font-size: 1.65rem;
+    line-height: 1.15;
     color: #ffffff;
-    margin-bottom: 10px;
+    margin: 0;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
     background: linear-gradient(135deg, #ffffff 40%, var(--accent-astrophysics));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -117,13 +116,15 @@
 
 .tuner-header .tagline {
     color: var(--text-muted);
-    font-size: 1.05rem;
+    font-size: 0.88rem;
+    line-height: 1.4;
+    margin: 0;
 }
 
 .tuner-grid {
     display: grid;
-    grid-template-columns: 320px 1fr;
-    gap: 30px;
+    grid-template-columns: 310px 1fr;
+    gap: 20px;
     align-items: start;
 }
 
@@ -271,7 +272,7 @@
     padding-bottom: 10px;
 }
 
-.playground-header h3 {
+.playground-header h2 {
     margin: 0;
     font-size: 1rem;
     color: #ffffff;

@@ -8,10 +8,12 @@
         <!-- Left Column: Universe Constant Dials -->
         <div class="tuner-panel-left">
             <div class="glass-card list-card">
-                <h2>Universe Dials</h2>
-                <p class="ref-sub">Adjust these sliders to vary the fundamental constants of nature relative to our standard universe value.</p>
+                <div class="dials-header-row">
+                    <h2>Universe Dials</h2>
+                    <button id="reset-dials-btn" class="btn-reset-mini" title="Reset all dials to 1.00× Standard Universe">Reset</button>
+                </div>
                 
-                <div class="preset-buttons" style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px;">
+                <div class="preset-buttons" style="display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px;">
                     <button class="tuner-preset-btn active" data-preset="standard">Standard</button>
                     <button class="tuner-preset-btn" data-preset="weak_gravity">Weak Gravity</button>
                     <button class="tuner-preset-btn" data-preset="collapse">Crunch</button>
@@ -23,8 +25,8 @@
                     <!-- JS Populated Sliders -->
                 </div>
 
-                <div style="margin-top: 20px; display: flex; gap: 8px;">
-                    <button id="reset-dials-btn" class="btn btn-secondary" style="width: 100%; font-size: 0.8rem; padding: 10px;">Reset to Standard Universe</button>
+                <div class="dial-context-bar" id="dial-context-readout" aria-live="polite">
+                    Hover or drag any dial to inspect its physical role.
                 </div>
             </div>
         </div>
@@ -160,42 +162,82 @@
     overflow-y: auto;
 }
 
-.list-card h2 {
-    margin: 0 0 8px 0;
-    font-family: 'Space Grotesk', sans-serif;
-    color: #ffffff;
-    font-size: 1.3rem;
+.dials-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
 }
 
-.ref-sub {
-    font-size: 0.8rem;
+.list-card h2 {
+    margin: 0;
+    font-family: 'Space Grotesk', sans-serif;
+    color: #ffffff;
+    font-size: 1.1rem;
+}
+
+.btn-reset-mini {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     color: var(--text-muted);
-    margin-top: 0;
-    margin-bottom: 20px;
-    line-height: 1.4;
+    padding: 3px 9px;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn-reset-mini:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.25);
 }
 
 .sliders-list {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 8px;
 }
 
 .control-group {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    background: rgba(255,255,255,0.01);
-    border: 1px solid rgba(255,255,255,0.03);
+    gap: 5px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
     border-radius: 8px;
-    padding: 12px;
+    padding: 8px 10px;
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.control-group:hover,
+.control-group:focus-within {
+    background: rgba(255,255,255,0.04);
+    border-color: rgba(249, 115, 22, 0.35);
 }
 
 .control-group label {
-    font-size: 0.82rem;
+    font-size: 0.79rem;
     color: var(--text-color);
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.dial-context-bar {
+    margin-top: 12px;
+    padding: 9px 11px;
+    background: rgba(2, 6, 23, 0.55);
+    border: 1px solid rgba(249, 115, 22, 0.22);
+    border-left: 3px solid var(--accent-astrophysics);
+    border-radius: 8px;
+    font-size: 0.76rem;
+    color: #cbd5e1;
+    line-height: 1.4;
+    min-height: 36px;
 }
 
 .control-group input[type="range"] {

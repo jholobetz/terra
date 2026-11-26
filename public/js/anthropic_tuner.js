@@ -36,12 +36,21 @@ const DIALS = [
 ];
 
 const TUNER_PRESETS = {
-    standard: { label: "Standard Universe", G: 1.0, c: 1.0, hbar: 1.0, alpha: 1.0, me: 1.0, mp: 1.0 },
-    weak_gravity: { label: "Weak Gravity Universe", G: 0.01, c: 1.0, hbar: 1.0, alpha: 1.0, me: 1.0, mp: 1.0 },
-    collapse: { label: "Gravitational Crunch", G: 250.0, c: 1.0, hbar: 1.0, alpha: 1.0, me: 1.0, mp: 1.0 },
-    quantum_realm: { label: "Macroscopic Quantum Realm", G: 1.0, c: 1.0, hbar: 3.5, alpha: 1.0, me: 1.0, mp: 1.0 },
-    weak_alpha: { label: "Weak Electromagnetism", G: 1.0, c: 1.0, hbar: 1.0, alpha: 0.2, me: 1.0, mp: 1.0 }
+    standard: { label: "Standard Universe", summary: "Observed physical constants (1.00×) supporting stable atoms, planetary orbits, and long-lived stars.", G: 1.0, c: 1.0, hbar: 1.0, alpha: 1.0, me: 1.0, mp: 1.0 },
+    weak_gravity: { label: "Weak Gravity Universe", summary: "G reduced 100×: planets drift outward and gas clouds struggle to ignite stellar fusion.", G: 0.01, c: 1.0, hbar: 1.0, alpha: 1.0, me: 1.0, mp: 1.0 },
+    collapse: { label: "Gravitational Crunch", summary: "G amplified 250×: planetary orbits spiral inward and stellar cores collapse into black holes.", G: 250.0, c: 1.0, hbar: 1.0, alpha: 1.0, me: 1.0, mp: 1.0 },
+    quantum_realm: { label: "Macroscopic Quantum Realm", summary: "ℏ amplified 3.5×: atomic orbitals swell and macroscopic wave-packet fuzziness dominates.", G: 1.0, c: 1.0, hbar: 3.5, alpha: 1.0, me: 1.0, mp: 1.0 },
+    weak_alpha: { label: "Weak Electromagnetism", summary: "α reduced 5×: atomic binding weakens sharply and chemistry expands to fragile oversized shells.", G: 1.0, c: 1.0, hbar: 1.0, alpha: 0.2, me: 1.0, mp: 1.0 }
 };
+
+let activePresetSummary = TUNER_PRESETS.standard.summary;
+
+function setDialContext(text) {
+    const readout = document.getElementById("dial-context-readout");
+    if (readout) {
+        readout.textContent = text;
+    }
+}
 
 document.addEventListener("DOMContentLoaded", () => {
     atomicCanvas = document.getElementById("tuner-canvas-atomic");
@@ -119,19 +128,25 @@ function renderDials() {
             displayVal = dial.value.toFixed(2);
         }
 
+        group.title = dial.description;
         group.innerHTML = `
             <label for="${dial.id}">
                 <span>${dial.label}</span>
                 <strong id="val-${dial.id}" style="color: var(--accent-astrophysics);">${displayVal}×</strong>
             </label>
             <input type="range" id="${dial.id}" min="${dial.min}" max="${dial.max}" value="${dial.value}" step="${dial.step}">
-            <p style="font-size:0.7rem; color:var(--text-muted); margin: 2px 0 0 0; line-height: 1.3;">${dial.description}</p>
         `;
         
         container.appendChild(group);
 
+        const showDialInfo = () => setDialContext(`${dial.label}: ${dial.description}`);
+        group.addEventListener("mouseenter", showDialInfo);
+        group.addEventListener("focusin", showDialInfo);
+        group.addEventListener("mouseleave", () => setDialContext(activePresetSummary));
+
         // Slider listeners
         document.getElementById(dial.id).addEventListener("input", (e) => {
+            showDialInfo();
             let val = parseFloat(e.target.value);
             let absoluteVal = val;
             
@@ -187,6 +202,9 @@ function applyPreset(presetKey, updateURL = true) {
     document.querySelectorAll(".tuner-preset-btn").forEach(btn => {
         btn.classList.toggle("active", btn.dataset.preset === presetKey);
     });
+
+    activePresetSummary = `${p.label}: ${p.summary}`;
+    setDialContext(activePresetSummary);
 
     if (updateURL) {
         try {

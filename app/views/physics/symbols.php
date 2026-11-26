@@ -181,8 +181,8 @@ document.addEventListener('DOMContentLoaded', () => {
         cards.forEach(card => {
             try {
                 const cardType = card.getAttribute('data-type') || '';
-                const h3 = card.querySelector('h3');
-                const cardName = h3 ? h3.textContent.toLowerCase() : '';
+                const heading = card.querySelector('h2, h3');
+                const cardName = heading ? heading.textContent.toLowerCase() : '';
                 const cardSymbol = (card.getAttribute('data-symbol') || '').toLowerCase();
                 const p = card.querySelector('p');
                 const cardDesc = p ? p.textContent.toLowerCase() : '';

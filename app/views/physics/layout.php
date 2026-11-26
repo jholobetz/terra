@@ -15,6 +15,10 @@ if (!empty($body_content) && is_string($body_content) && stripos($body_content, 
         $body_content
     ) ?? $body_content;
 }
+$reqUrl = parse_url(Flight::request()->url ?? '', PHP_URL_PATH) ?: '';
+$isMathFreeLanding = (bool)preg_match('#^(?:/|/physics/?|/physics/topic/[^/]+/?|/physics/simulations/?)$#', $reqUrl);
+$eagerMathJax = isset($load_mathjax) ? (bool)$load_mathjax : !$isMathFreeLanding;
+$mathJaxSrc = '/js/lib/tex-svg-full.js?v=' . (@filemtime(PROJECT_ROOT . '/public/js/lib/tex-svg-full.js') ?: 1);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -49,10 +53,12 @@ if (!empty($body_content) && is_string($body_content) && stripos($body_content, 
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- MathJax Static-Safe Configuration -->
-    <script src="/js/mathjax_config.js?v=<?= @filemtime(PROJECT_ROOT . '/public/js/mathjax_config.js') ?: 1 ?>" nonce="<?= $nonce ?>"></script>
+    <!-- MathJax Static-Safe Configuration (deferred; tex-svg-full.js lazy-loaded on math-free landing routes) -->
+    <script src="/js/mathjax_config.js?v=<?= @filemtime(PROJECT_ROOT . '/public/js/mathjax_config.js') ?: 1 ?>" id="mathjax-config-script" data-mathjax-src="<?= htmlspecialchars($mathJaxSrc, ENT_QUOTES, 'UTF-8') ?>" nonce="<?= $nonce ?>" defer></script>
     <script src="/js/math_prose_formatter.js?v=<?= @filemtime(PROJECT_ROOT . '/public/js/math_prose_formatter.js') ?: 1 ?>" nonce="<?= $nonce ?>" defer></script>
-    <script src="/js/lib/tex-svg-full.js?v=<?= @filemtime(PROJECT_ROOT . '/public/js/lib/tex-svg-full.js') ?: 1 ?>" id="MathJax-script" nonce="<?= $nonce ?>" defer></script>
+    <?php if ($eagerMathJax): ?>
+    <script src="<?= htmlspecialchars($mathJaxSrc, ENT_QUOTES, 'UTF-8') ?>" id="MathJax-script" nonce="<?= $nonce ?>" defer></script>
+    <?php endif; ?>
     <script src="/js/hub_interactions.js?v=<?= @filemtime(PROJECT_ROOT . '/public/js/hub_interactions.js') ?: 1 ?>" nonce="<?= $nonce ?>" defer></script>
     <link rel="stylesheet" href="/css/physics.css?v=<?= @filemtime(PROJECT_ROOT . '/public/css/physics.css') ?: 1 ?>">
     <?php if (!empty($extra_css) && is_array($extra_css)): ?>

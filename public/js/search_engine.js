@@ -174,13 +174,24 @@ document.addEventListener('DOMContentLoaded', () => {
             highlightedIndex = 0;
             updateHighlight();
 
-            if (window.MathJax && window.MathJax.typesetPromise) {
-                window.MathJax.typesetPromise([results]).catch(err => console.warn('MathJax preview error:', err));
-            }
+            typesetSearchResults();
         } else {
             results.innerHTML = '<div class="search-placeholder"><p>No matches in the manifold...</p><small>Try searching another physical concept or symbol.</small></div>';
             resultItems = [];
             highlightedIndex = -1;
+        }
+    }
+
+    function typesetSearchResults() {
+        if (window.hasUnrenderedMath && !window.hasUnrenderedMath(results)) return;
+        if (window.MathJax && window.MathJax.typesetPromise) {
+            window.MathJax.typesetPromise([results]).catch(err => console.warn('MathJax preview error:', err));
+        } else if (typeof window.ensureMathJax === 'function') {
+            window.ensureMathJax().then(mj => {
+                if (mj && mj.typesetPromise) {
+                    mj.typesetPromise([results]).catch(err => console.warn('MathJax preview error:', err));
+                }
+            }).catch(() => {});
         }
     }
 
@@ -224,9 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 highlightedIndex = 0;
                 updateHighlight();
 
-                if (window.MathJax && window.MathJax.typesetPromise) {
-                    window.MathJax.typesetPromise([results]).catch(err => console.warn('MathJax preview error:', err));
-                }
+                typesetSearchResults();
             } else {
                 // Try AI Semantic Vector Search Fallback
                 try {
@@ -253,9 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             highlightedIndex = 0;
                             updateHighlight();
 
-                            if (window.MathJax && window.MathJax.typesetPromise) {
-                                window.MathJax.typesetPromise([results]).catch(err => console.warn('MathJax preview error:', err));
-                            }
+                            typesetSearchResults();
                             return;
                         }
                     }

@@ -43,11 +43,11 @@
 
 ---
 
-### 4. Front-End Render-Blocking & Asset Performance Polish *(~15 min)*
-- [ ] Defer synchronous `mathjax_config.js` in `app/views/physics/layout.php` (currently loaded without `defer` in `<head>`).
-- [ ] Audit whether static pre-rendered SVG subtopic pages even need to eagerly download the `~1.2 MB` `tex-svg-full.js` bundle on initial paint, or whether it can be lazy-loaded only when dynamic MathJax typesetting is needed (e.g., Formula Inspector / Equation Explainer / interactive tools).
-- [ ] Benchmark raw load performance (FCP, LCP, TBT, CLS) locally against `http://localhost:8000` without Anubis challenge overhead.
-- [ ] *(Optional Server Config)* Add `Header always setifempty` for the 5 universal security headers (`HSTS`, `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`) on the outer Apache `<VirtualHost *:443>` so Anubis challenge pages and static assets also pass external scanners like SecurityHeaders.com.
+### 4. Front-End Render-Blocking & Asset Performance Polish *(Completed 2026-11-25)* ✅
+- [x] Deferred [`mathjax_config.js`](../public/js/mathjax_config.js) in [`app/views/physics/layout.php`](../app/views/physics/layout.php) (`0` render-blocking `<script>` tags in `<head>` across all routes).
+- [x] Implemented route-aware MathJax loading + CSP-nonce-safe `window.ensureMathJax()` lazy loader: skips eager `2.2 MB` `tex-svg-full.js` on math-free landing routes (`/`, `/physics`, `/physics/topic/*`, `/physics/simulations`) while preserving eager `defer` loading on math-bearing routes (`/physics/subtopic/*`, `/physics/constants`, `/physics/equation-explainer`, `/physics/lab-tools`, etc.) and wiring on-demand typesetting into [`public/js/search_engine.js`](../public/js/search_engine.js).
+- [x] Benchmarked rendered routes locally (`0` blocking head scripts across all 5 flagship routes; `tex-svg-full.js` omitted on Home, Hub, and Simulations Gallery) and verified `composer test` (`32/32`).
+- [ ] *(Optional Server Config — outside repo)* Add `Header always setifempty` for the 5 universal security headers on the outer Apache `<VirtualHost *:443>` if you want external scanners to see them on Anubis challenge pages.
 
 ---
 

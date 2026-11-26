@@ -38,9 +38,17 @@
                         <h2>Scale Visualizer (Atomic, Planetary, Stellar)</h2>
                         <span class="sandbox-badge">Multi-Scale Solver</span>
                     </div>
-                    <!-- Canvas Container -->
-                    <div class="canvas-container" style="aspect-ratio: 16 / 8;">
-                        <canvas id="tuner-canvas"></canvas>
+                    <!-- Tiled Multi-Scale Canvas Grid -->
+                    <div class="scale-tiles-grid">
+                        <div class="scale-tile">
+                            <canvas id="tuner-canvas-atomic"></canvas>
+                        </div>
+                        <div class="scale-tile">
+                            <canvas id="tuner-canvas-planetary"></canvas>
+                        </div>
+                        <div class="scale-tile scale-tile-wide">
+                            <canvas id="tuner-canvas-stellar"></canvas>
+                        </div>
                     </div>
                 </div>
 
@@ -123,9 +131,13 @@
 
 .tuner-grid {
     display: grid;
-    grid-template-columns: 310px 1fr;
+    grid-template-columns: 310px minmax(0, 1fr);
     gap: 20px;
     align-items: start;
+}
+
+.tuner-panel-right {
+    min-width: 0;
 }
 
 @media (max-width: 980px) {
@@ -290,18 +302,36 @@
     border-radius: 4px;
 }
 
-.canvas-container {
+.scale-tiles-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.scale-tile {
     width: 100%;
+    height: 230px;
     background: #020617;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 10px;
     overflow: hidden;
 }
 
-.canvas-container canvas {
+.scale-tile-wide {
+    grid-column: 1 / -1;
+    height: 220px;
+}
+
+.scale-tile canvas {
     width: 100%;
     height: 100%;
     display: block;
+}
+
+@media (max-width: 680px) {
+    .scale-tiles-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* Table design */
@@ -309,7 +339,7 @@
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 8px;
     background: rgba(3, 7, 18, 0.2);
-    overflow: hidden;
+    overflow-x: auto;
 }
 
 .glossary-table {

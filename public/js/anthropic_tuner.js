@@ -14,8 +14,11 @@ let dialMp = 1.0;
 let simAnimationId = null;
 let simTime = 0;
 
-// Canvas details
+// Canvas details (3 tiled scale viewports)
 let canvas, ctx;
+let atomicCanvas, atomicCtx;
+let planetaryCanvas, planetaryCtx;
+let stellarCanvas, stellarCtx;
 
 // Orbit Angles for Visualizers
 let atomAngle = 0;
@@ -41,8 +44,14 @@ const TUNER_PRESETS = {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-    canvas = document.getElementById("tuner-canvas");
-    ctx = canvas.getContext("2d");
+    atomicCanvas = document.getElementById("tuner-canvas-atomic");
+    planetaryCanvas = document.getElementById("tuner-canvas-planetary");
+    stellarCanvas = document.getElementById("tuner-canvas-stellar");
+    atomicCtx = atomicCanvas ? atomicCanvas.getContext("2d") : null;
+    planetaryCtx = planetaryCanvas ? planetaryCanvas.getContext("2d") : null;
+    stellarCtx = stellarCanvas ? stellarCanvas.getContext("2d") : null;
+    canvas = atomicCanvas || document.getElementById("tuner-canvas");
+    ctx = atomicCtx || (canvas ? canvas.getContext("2d") : null);
 
     // UI actions
     document.getElementById("reset-dials-btn").addEventListener("click", resetToStandard);
@@ -86,10 +95,12 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function resizeCanvas() {
-    if (canvas) {
-        canvas.width = canvas.parentElement.clientWidth;
-        canvas.height = canvas.parentElement.clientHeight;
-    }
+    [atomicCanvas, planetaryCanvas, stellarCanvas].forEach(c => {
+        if (c && c.parentElement) {
+            c.width = c.parentElement.clientWidth;
+            c.height = c.parentElement.clientHeight;
+        }
+    });
 }
 
 function renderDials() {
@@ -398,43 +409,33 @@ function stopTunerLoop() {
 }
 
 function renderTunerFrame() {
-    if (!ctx || !canvas) return;
-    
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Multi-viewport dividers
-    const W = canvas.width;
-    const H = canvas.height;
-    const paneW = W / 3;
-
-    // Background panes
-    ctx.fillStyle = "rgba(15, 23, 42, 0.15)";
-    ctx.fillRect(0, 0, paneW - 2, H);
-    ctx.fillRect(paneW + 2, 0, paneW - 4, H);
-    ctx.fillRect(paneW * 2 + 2, 0, paneW, H);
-
-    ctx.strokeStyle = "rgba(255,255,255,0.06)";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(paneW, 0);
-    ctx.lineTo(paneW, H);
-    ctx.moveTo(paneW * 2, 0);
-    ctx.lineTo(paneW * 2, H);
-    ctx.stroke();
+    if (!atomicCtx || !planetaryCtx || !stellarCtx) return;
 
     // Orbit incrementers
     atomAngle += 0.05 * (dialC * dialAlpha * dialMe / dialHbar); // Speed scales with constants
     planetAngle += 0.02 * Math.sqrt(dialG * dialMp);
     simTime++;
 
-    // 1. ATOMIC VIEWPORT (Left Pane)
-    drawAtomicViewport(0, 0, paneW, H);
+    // 1. ATOMIC VIEWPORT (Tile I)
+    ctx = atomicCtx;
+    ctx.clearRect(0, 0, atomicCanvas.width, atomicCanvas.height);
+    ctx.fillStyle = "rgba(15, 23, 42, 0.2)";
+    ctx.fillRect(0, 0, atomicCanvas.width, atomicCanvas.height);
+    drawAtomicViewport(0, 0, atomicCanvas.width, atomicCanvas.height);
 
-    // 2. PLANETARY SYSTEM VIEWPORT (Middle Pane)
-    drawPlanetaryViewport(paneW, 0, paneW, H);
+    // 2. PLANETARY SYSTEM VIEWPORT (Tile II)
+    ctx = planetaryCtx;
+    ctx.clearRect(0, 0, planetaryCanvas.width, planetaryCanvas.height);
+    ctx.fillStyle = "rgba(15, 23, 42, 0.2)";
+    ctx.fillRect(0, 0, planetaryCanvas.width, planetaryCanvas.height);
+    drawPlanetaryViewport(0, 0, planetaryCanvas.width, planetaryCanvas.height);
 
-    // 3. STELLAR FUSION VIEWPORT (Right Pane)
-    drawStellarViewport(paneW * 2, 0, paneW, H);
+    // 3. STELLAR FUSION VIEWPORT (Tile III)
+    ctx = stellarCtx;
+    ctx.clearRect(0, 0, stellarCanvas.width, stellarCanvas.height);
+    ctx.fillStyle = "rgba(15, 23, 42, 0.2)";
+    ctx.fillRect(0, 0, stellarCanvas.width, stellarCanvas.height);
+    drawStellarViewport(0, 0, stellarCanvas.width, stellarCanvas.height);
 }
 
 // Master Loop (Capped at 30 FPS)

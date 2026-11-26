@@ -29,12 +29,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const latexInvertedVel = document.getElementById('latex-inverted-vel');
     const latexHessian = document.getElementById('latex-hessian');
     const latexHamiltonian = document.getElementById('latex-hamiltonian');
-    const latexEqVelocity = document.getElementById('latex-eq-velocity');
-    const latexEqForce = document.getElementById('latex-eq-force');
     const equationsContainer = document.getElementById('equations-container');
     const copyLatexBtn = document.getElementById('copy-latex-btn');
     const conservationText = document.getElementById('conservation-text');
     const dofText = document.getElementById('dof-text');
+    const regularityBadge = document.getElementById('cas-regularity-badge');
 
     let activeHamiltonianLatex = ''; // Stored clean LaTeX for copying
 
@@ -157,14 +156,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 4. Utility to render math nicely with MathJax 3.x
+    function typesetTargets(els) {
+        const list = (Array.isArray(els) ? els : [els]).filter(Boolean);
+        if (!list.length) return;
+        if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
+            window.MathJax.typesetPromise(list).catch(err => console.warn("MathJax typesetting error: ", err));
+        } else if (typeof window.ensureMathJax === 'function') {
+            window.ensureMathJax().then(mj => mj && mj.typesetPromise && mj.typesetPromise(list)).catch(() => {});
+        }
+    }
+
     function renderMathField(el, latexStr) {
         if (!el) return;
         el.textContent = `\\[ ${latexStr} \\]`;
-        if (window.MathJax && window.MathJax.typesetPromise) {
-            window.MathJax.typesetPromise([el]).catch(err => {
-                console.warn("MathJax typesetting error: ", err);
-            });
-        }
+        typesetTargets(el);
     }
 
     // 5. Compute Legendre Transformation via SymPy CAS API
@@ -223,6 +228,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.is_singular) {
                 showError(data.error || "Singular Lagrangian (det W = 0): primary Dirac constraints detected.");
                 outputContent.style.display = 'block';
+                if (regularityBadge) {
+                    regularityBadge.className = 'regularity-badge is-singular';
+                    regularityBadge.textContent = '⚠️ Singular · det(W) = 0 (Dirac Constraint)';
+                }
 
                 // Still render what we have: Lagrangian and Hessian
                 renderMathField(latexLagrangian, `L = ${data.lagrangian_latex}`);
@@ -231,11 +240,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (latexHessian && data.hessian) {
                     renderMathField(latexHessian, `W = ${data.hessian.matrix_latex}, \\quad \\det(W) = 0 \\implies \\text{Primary Constraints}`);
                 }
-                renderMathField(latexHamiltonian, `\\text{Requires Dirac-Bergmann Constraint Analysis}`);
+                renderMathField(latexHamiltonian, `\\text{Requires Dirac–Bergmann Constraint Analysis}`);
+                activeHamiltonianLatex = '';
                 return;
             }
 
             // Case B: Non-singular Lagrangian (Standard Legendre transformation)
+            if (regularityBadge) {
+                regularityBadge.className = 'regularity-badge is-regular';
+                regularityBadge.textContent = '✓ Non-Singular · det(W) ≠ 0';
+            }
             
             // 1. Render Input Lagrangian
             renderMathField(latexLagrangian, `L = ${data.lagrangian_latex}`);
@@ -262,36 +276,26 @@ document.addEventListener('DOMContentLoaded', () => {
             renderMathField(latexHamiltonian, hLatex);
             activeHamiltonianLatex = hLatex;
 
-            // 6. Render Equations of Motion
-            if (data.equations_of_motion && data.equations_of_motion.length > 0) {
-                if (equationsContainer && data.equations_of_motion.length > 1) {
-                    // Multi-variable: render dedicated card for each pair
-                    equationsContainer.innerHTML = '';
-                    data.equations_of_motion.forEach(eq => {
-                        const pairContainer = document.createElement('div');
-                        pairContainer.className = 'math-display-container';
-                        pairContainer.innerHTML = `
-                            <div class="math-label-bar">
-                                <span class="math-label">Coordinate \\(${eq.coord}\\) Canonical Flow:</span>
-                            </div>
-                            <div class="math-box" style="margin-bottom: 8px;">
-                                <div class="math-render-field">\\[ ${eq.dq_dt_latex} \\]</div>
-                            </div>
-                            <div class="math-box">
-                                <div class="math-render-field">\\[ ${eq.dp_dt_latex} \\]</div>
-                            </div>
-                        `;
-                        equationsContainer.appendChild(pairContainer);
-                    });
-                    if (window.MathJax && window.MathJax.typesetPromise) {
-                        window.MathJax.typesetPromise([equationsContainer]);
-                    }
-                } else {
-                    // Single degree of freedom
-                    const eq = data.equations_of_motion[0];
-                    renderMathField(latexEqVelocity, eq.dq_dt_latex);
-                    renderMathField(latexEqForce, eq.dp_dt_latex);
-                }
+            // 6. Render Equations of Motion (unified for both 1-DOF and multi-DOF)
+            if (equationsContainer && data.equations_of_motion && data.equations_of_motion.length > 0) {
+                equationsContainer.innerHTML = '';
+                data.equations_of_motion.forEach(eq => {
+                    const pairContainer = document.createElement('div');
+                    pairContainer.className = 'math-display-container';
+                    pairContainer.innerHTML = `
+                        <div class="math-label-bar">
+                            <span class="math-label">Coordinate \\(${eq.coord}\\) Canonical Flow:</span>
+                        </div>
+                        <div class="math-box" style="margin-bottom: 8px;">
+                            <div class="math-render-field">\\[ ${eq.dq_dt_latex} \\]</div>
+                        </div>
+                        <div class="math-box">
+                            <div class="math-render-field">\\[ ${eq.dp_dt_latex} \\]</div>
+                        </div>
+                    `;
+                    equationsContainer.appendChild(pairContainer);
+                });
+                typesetTargets(equationsContainer);
             }
 
             // 7. Render Phase Space Topology & Conservation Laws
@@ -406,6 +410,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (customParams) parameterVarsInput.value = customParams;
             lagrangianExprInput.value = customLagrangian;
             if (autorun) computeBtn.click();
+        } else {
+            // Auto-compute default Harmonic Oscillator so live SymPy output appears immediately
+            applyPreset('sho', autorun);
         }
     }
 

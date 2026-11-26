@@ -7,7 +7,6 @@
     <header class="lab-command-header">
         <div class="lab-command-title-group">
             <h1 class="lab-command-title">The Unified Physics Laboratory</h1>
-            <span class="arena-pill-badge">Experimental &amp; CAS Crucible</span>
         </div>
         <p class="lab-command-tagline">
             60fps mechanical &amp; quantum simulations coupled to live SymPy Computer Algebra proofs.

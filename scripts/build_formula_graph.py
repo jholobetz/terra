@@ -116,15 +116,17 @@ def build_ground_truth_domain_map(categories):
     return formula_to_domain, subtopic_to_domain
 
 
-def resolve_all_domains(formulas, formula_to_domain, subtopic_to_domain):
+def resolve_all_domains(formulas, formula_to_domain, subtopic_to_domain, categories=None):
     """
     Resolves domain for all formulas using:
-    1. Direct ground-truth topic mapping.
+    1. Direct ground-truth topic mapping (majority-vote + core-domain precedence).
     2. Multi-pass graph lineage inheritance (parents, subcomponents, prerequisites).
     3. Subtopic prefix resolution.
-    4. Controlled unmapped fallback (flagged explicitly).
+    4. Core-Subtree Refinement for philosophy-tagged equations deriving core physics subtrees.
+    5. Controlled unmapped fallback (flagged explicitly).
     """
     resolved = dict(formula_to_domain)
+    cat_rank = {cid: idx for idx, cid in enumerate((categories or {}).keys())}
 
     # 0. Direct subtopics list or category field on the formula record itself
     for fid, fval in formulas.items():
@@ -196,6 +198,44 @@ def resolve_all_domains(formulas, formula_to_domain, subtopic_to_domain):
     if orphan_count > 0:
         print(f"[WARN] {orphan_count} orphan formulas could not be mapped and were marked as 'unmapped'.")
 
+    # 4. Core-Subtree Domain Refinement for meta-domain ('philosophy-of-physics') nodes:
+    #    Equations coined inside philosophy essays (e.g. Einstein Field Equations, First Friedmann,
+    #    Classical Kinetic Energy, TDSE) that derive core-physics subtrees belong to their core domain.
+    children_map = defaultdict(list)
+    parents_map = defaultdict(list)
+    for fid, f_data in formulas.items():
+        p_id = f_data.get("parent_formula_id")
+        if p_id and p_id in formulas and p_id != fid:
+            children_map[p_id].append(fid)
+            parents_map[fid].append(p_id)
+
+    refined_count = 0
+    for fid in list(resolved.keys()):
+        if resolved[fid] not in META_DOMAINS:
+            continue
+        child_doms = [resolved.get(c) for c in children_map.get(fid, []) if resolved.get(c) and resolved.get(c) != "unmapped"]
+        core_child_doms = [d for d in child_doms if d not in META_DOMAINS]
+        meta_child_count = sum(1 for d in child_doms if d in META_DOMAINS)
+        parent_doms = [resolved.get(p) for p in parents_map.get(fid, []) if resolved.get(p) and resolved.get(p) != "unmapped"]
+        core_parent_doms = [d for d in parent_doms if d not in META_DOMAINS]
+
+        candidates = None
+        if len(core_child_doms) >= 2 and len(core_child_doms) > meta_child_count:
+            candidates = core_child_doms
+        elif len(core_child_doms) >= 1 and core_parent_doms and core_parent_doms[0] in core_child_doms:
+            candidates = [core_parent_doms[0]]
+        elif len(core_child_doms) == 1 and meta_child_count == 0 and core_parent_doms:
+            candidates = core_child_doms + core_parent_doms
+
+        if candidates:
+            counts = Counter(candidates)
+            best_dom = sorted(counts.keys(), key=lambda d: (-counts[d], cat_rank.get(d, 999), d))[0]
+            resolved[fid] = best_dom
+            refined_count += 1
+
+    if refined_count > 0:
+        print(f"[INFO] Core-subtree refinement re-homed {refined_count} philosophy-tagged physics equations to core domains.")
+
     return resolved
 
 
@@ -230,7 +270,7 @@ def main():
 
     print(f"[INFO] Loaded {len(formulas):,} total formulas from shards.")
 
-    resolved_domains = resolve_all_domains(formulas, formula_to_domain, subtopic_to_domain)
+    resolved_domains = resolve_all_domains(formulas, formula_to_domain, subtopic_to_domain, categories)
 
     nodes = {}
     links = []

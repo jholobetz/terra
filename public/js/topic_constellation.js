@@ -170,12 +170,13 @@
             if (!data) return;
 
             const initialAngle = (sIdx / count) * Math.PI * 2 + (pIdx * 0.55);
-            const nodeG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            const nodeG = document.createElementNS('http://www.w3.org/2000/svg', 'a');
+            const subtopicUrl = `/physics/subtopic/${slug}`;
+            nodeG.setAttribute('href', subtopicUrl);
+            nodeG.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', subtopicUrl);
             nodeG.setAttribute('class', 'celestial-node');
             nodeG.setAttribute('data-slug', slug);
             nodeG.setAttribute('data-pillar-idx', pIdx);
-            nodeG.setAttribute('role', 'link');
-            nodeG.setAttribute('tabindex', '0');
             nodeG.setAttribute('aria-label', `${data.title} (Open treatise)`);
             nodeG.style.cursor = 'pointer';
 
@@ -269,10 +270,6 @@
             n.textBg.setAttribute('opacity', labelOpacity);
             n.text.setAttribute('opacity', labelOpacity);
         });
-        // Keep active node rendered above neighbors so its capsule label is never obscured
-        if (activeNodeRef && activeNodeRef.element && svgNodesGroup) {
-            svgNodesGroup.appendChild(activeNodeRef.element);
-        }
     }
 
     function getTierColor(level) {
@@ -373,26 +370,14 @@
         return n < 10 ? '0' + n : '' + n;
     }
 
-    // 6. Bind Node Hover and Click Events
+    // 6. Bind Node Hover and Focus Events (Navigation handled natively by SVG <a href>)
     nodes.forEach(n => {
         n.element.addEventListener('mouseenter', () => {
             updateHUD(n.slug);
         });
 
-        n.element.addEventListener('click', (e) => {
+        n.element.addEventListener('focus', () => {
             updateHUD(n.slug);
-            if (e.metaKey || e.ctrlKey || e.button === 1) {
-                window.open(`/physics/subtopic/${n.slug}`, '_blank');
-            } else {
-                window.location.href = `/physics/subtopic/${n.slug}`;
-            }
-        });
-
-        n.element.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                window.location.href = `/physics/subtopic/${n.slug}`;
-            }
         });
     });
 

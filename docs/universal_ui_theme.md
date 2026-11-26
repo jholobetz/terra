@@ -142,7 +142,7 @@ Before marking any individual workbench or simulation complete, verify all 6 gat
 | 5 | **Anthropic Constant Tuner** | `/physics/anthropic-tuner` | ✅ Aligned (`c3e3509e7`) | Compact header + 3 tiled scale viewports + 2-line Universe Dials + live context readout |
 | 6 | **Classical-to-Quantum Correspondence Workspace** | `/physics/correspondence-workspace` | ✅ Aligned | Compact header + Correspondence ribbon + 1-click Classical/Quantum toggle + slider context bar |
 | 7 | **Equation Explainer & Dissection Suite** | `/physics/equation-explainer` | ⬜ Queued | Individual review |
-| 8 | **Universe Derivation Graph (Lineage Map)** | `/physics/universe-graph` | ⬜ Queued | Individual review |
+| 8 | **Universe Derivation Graph (Lineage Map)** | `/physics/universe-graph` | ✅ Aligned | Compact header + Depth 1/2/3 toggle + 2-card sticky rail + sample routes + Copy LaTeX |
 | 9 | **Fundamental Physical Constants (CODATA 2022)** | `/physics/constants` | ⬜ Reference Page | 24 CODATA 2022 constants (single source of truth) |
 | 10 | **Symbols & Manifold Lexicon** | `/physics/symbols` | ⬜ Reference Page | 371+ symbols + CODATA 2022 overlay |
 

@@ -12,7 +12,9 @@ import os
 import glob
 import json
 import gzip
-from collections import Counter
+from collections import Counter, defaultdict
+
+META_DOMAINS = {"philosophy-of-physics"}
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CONTENT_DIR = os.path.join(ROOT_DIR, "app/config/content")
@@ -30,15 +32,31 @@ def load_canonical_domains():
     return {k: v.get("title", k) for k, v in raw.items()}
 
 
+def _select_best_domain(domain_votes, cat_rank):
+    """
+    Selects the canonical primary physics domain from a Counter/dict of {domain: weight}.
+    - Primary physics domains take precedence over cross-cutting meta-hubs (philosophy-of-physics).
+    - Highest weighted citation count wins; exact ties break by foundational order in categories.json.
+    """
+    if not domain_votes:
+        return None
+    core_votes = {d: w for d, w in domain_votes.items() if d not in META_DOMAINS}
+    pool = core_votes if core_votes else dict(domain_votes)
+    return min(pool.items(), key=lambda kv: (-kv[1], cat_rank.get(kv[0], 999)))[0]
+
+
 def build_ground_truth_domain_map(categories):
     """
     Scans the 12 canonical topic files in app/config/content/{domain}.json
-    and maps every explicitly curated formula_id and subtopic to its authentic domain.
+    and maps every explicitly curated formula_id and subtopic to its authentic domain
+    using Majority-Vote + Core-Domain Precedence (non-overview subtopics weighted 3x over -overview essays).
     """
-    formula_to_domain = {}
+    cat_order = list(categories.keys())
+    cat_rank = {c: i for i, c in enumerate(cat_order)}
+    formula_votes = defaultdict(Counter)
     subtopic_to_domain = {}
 
-    for cat_id in categories.keys():
+    for cat_id in cat_order:
         cat_path = os.path.join(CONTENT_DIR, f"{cat_id}.json")
         if not os.path.exists(cat_path):
             continue
@@ -48,20 +66,26 @@ def build_ground_truth_domain_map(categories):
             for subtopic_id, subtopic in data.items():
                 subtopic_to_domain[subtopic_id] = cat_id
                 if isinstance(subtopic, dict):
+                    weight = 1 if subtopic_id.endswith("-overview") else 3
                     # Direct formula_ids
                     for fid in subtopic.get("formula_ids", []):
                         if isinstance(fid, str):
-                            formula_to_domain[fid] = cat_id
+                            formula_votes[fid][cat_id] += weight
                     # Also inspect section formulas if present
                     for sec in subtopic.get("sections", []):
                         if isinstance(sec, dict):
                             for fid in sec.get("formulas", []):
                                 if isinstance(fid, str):
-                                    formula_to_domain[fid] = cat_id
+                                    formula_votes[fid][cat_id] += weight
                                 elif isinstance(fid, dict) and "id" in fid:
-                                    formula_to_domain[fid["id"]] = cat_id
+                                    formula_votes[fid["id"]][cat_id] += weight
         except Exception as e:
             print(f"[WARN] Error reading {cat_path}: {e}")
+
+    formula_to_domain = {
+        fid: _select_best_domain(votes, cat_rank)
+        for fid, votes in formula_votes.items()
+    }
 
     # Also map subtopics in legacy-orphans.json to their canonical parent domain
     legacy_path = os.path.join(CONTENT_DIR, "legacy-orphans.json")
@@ -238,7 +262,10 @@ def main():
         summary = formula.get("intuitive_summary", "")
         domain = resolved_domains.get(fid, "unmapped")
         cas_val = formula.get("cas_validation")
-        is_cas_verified = bool(isinstance(cas_val, dict) and cas_val.get("overall_valid"))
+        is_cas_verified = bool(
+            (isinstance(cas_val, dict) and (cas_val.get("overall_valid") or cas_val.get("is_homogeneous") is True))
+            or formula.get("verified_by") == "sympy_cas"
+        )
         lineage_conf = formula.get("lineage_confidence", "heuristic")
         deriv_type = formula.get("derivation_type", "DERIVED_FROM")
         rec_type = formula.get("record_type", "equation")

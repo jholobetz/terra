@@ -36,10 +36,10 @@
 
 ---
 
-### 3. Expand External Scientific Ground-Truth Audits (NIST CODATA 2022 + PDG 2024) *(~15 min)*
-- [ ] Currently `integrity_shield.py` only audits **8 CODATA constants** and **8 PDG particles**.
-- [ ] Audit *every* constant and particle value on `/physics/constants` and in `app/config/content/entities.json` against official **NIST CODATA 2022** and **PDG 2024** reference values (Avogadro, Rydberg, Bohr magneton, elementary charge, Planck units, proton/electron mass ratio, quarks, mesons, etc.).
-- [ ] Expand the automated auditor tables in `integrity_shield.py` so regressions are caught automatically.
+### 3. Expand External Scientific Ground-Truth Audits (NIST CODATA 2022 + PDG 2024) *(Completed 2026-11-25)* ✅
+- [x] Upgraded [`app/config/content/constants.json`](../app/config/content/constants.json) & [`app/config/ref_data/codata_2022.json`](../app/config/ref_data/codata_2022.json) from `8 → 24` fundamental constants with true **NIST CODATA 2022** values (fixing CODATA 2018 drift on $\alpha$, $\varepsilon_0$, and $\mu_0$, and adding $h, e, N_A, R, m_e, m_p, m_n, m_u, R_\infty, a_0, \mu_B, \mu_N, F, \ell_P, t_P, m_P$ directly to `/physics/constants`).
+- [x] Upgraded [`app/config/content/particles.json`](../app/config/content/particles.json) & [`app/config/ref_data/pdg_2024.json`](../app/config/ref_data/pdg_2024.json) from `8 → 20` Standard Model + composite hadron particles with true **PDG 2024** values (fixing PDG 2022 drift on Higgs, $W$, $Z$, and $\tau$, and adding all 6 quarks, 3 neutrinos, photon, gluon, and charged pion $\pi^\pm$).
+- [x] Fixed `<h1> → <h3>` heading skip in [`app/views/physics/constants.php`](../app/views/physics/constants.php) and verified 14 cross-constant physical identities (`rel_diff < 1e-8`) alongside `nist_constants_verifier.py` (`24/24`) and `pdg_particle_verifier.py` (`20/20`).
 
 ---
 

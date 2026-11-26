@@ -181,8 +181,8 @@ const THEORIES = [
             {
                 id: "path_integral",
                 name: "Path Integral (Feynman)",
-                equation: "\\[ \\langle x_f | U(t_f, t_i) | x_i \\rangle = \\int \\mathcal{D}[x(t)] e^{\\frac{i}{\hbar} S[x(t)]} \\]",
-                insight: "Formulates quantum transitions as a sum over histories. The probability amplitude is calculated by integrating over all possible spatial paths connecting the initial and final states, weighted by the exponent of the classical action action phase \\(e^{iS/\\hbar}\\).",
+                equation: "\\[ \\langle x_f | U(t_f, t_i) | x_i \\rangle = \\int \\mathcal{D}[x(t)] e^{\\frac{i}{\\hbar} S[x(t)]} \\]",
+                insight: "Formulates quantum transitions as a sum over histories. The probability amplitude is calculated by integrating over all possible spatial paths connecting the initial and final states, weighted by the exponent of the classical action phase \\(e^{iS/\\hbar}\\).",
                 utility: "Central to quantum field theory, particle physics, and statistical mechanics. Elegant for demonstrating the classical limit (when \\(\\hbar \\to 0\\), the classical path of least action dominates).",
                 glossary: [
                     { symbol: "\\mathcal{D}[x(t)]", name: "Functional Path Integration Measure", dimension: "dimensionless", link: "/physics/symbols#path-measure" },
@@ -302,7 +302,7 @@ function populateTheoryList() {
 /**
  * Handles switching the active theory.
  */
-function selectTheory(index) {
+function selectTheory(index, updateURL = true) {
     activeTheoryIndex = index;
     activeRepIndex = 0;
 
@@ -416,14 +416,16 @@ function renderActiveRepresentation() {
     mathRender.innerHTML = rep.equation;
 
     // Update description texts
-    document.getElementById("active-rep-insight").innerHTML = rep.insight;
-    document.getElementById("active-rep-utility").innerHTML = rep.utility;
+    const insightEl = document.getElementById("active-rep-insight");
+    const utilityEl = document.getElementById("active-rep-utility");
+    insightEl.innerHTML = rep.insight;
+    utilityEl.innerHTML = rep.utility;
 
     // Render glossary table
     populateGlossaryTable(rep.glossary);
 
-    // Run MathJax typesetting on changed elements
-    typesetMath(mathRender);
+    // Run MathJax typesetting on equation, insight, and utility elements
+    typesetMath([mathRender, insightEl, utilityEl]);
 }
 
 /**

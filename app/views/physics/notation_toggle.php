@@ -8,7 +8,7 @@
         <!-- Left Column: Equation Selector List -->
         <div class="toggle-panel-left">
             <div class="glass-card list-card">
-                <h3>Physical Theories</h3>
+                <h2>Physical Theories</h2>
                 <p class="ref-sub">Select a fundamental law to toggle between its representations.</p>
                 <div class="theory-list" id="theory-list">
                     <!-- JS Populated -->
@@ -138,7 +138,7 @@
     overflow-y: auto;
 }
 
-.list-card h3 {
+.list-card h2 {
     margin: 0 0 8px 0;
     font-family: 'Space Grotesk', sans-serif;
     color: #ffffff;

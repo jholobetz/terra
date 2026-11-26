@@ -582,23 +582,20 @@ class PhysicsController
     }
 
     /**
-     * View action rendering physical constants.
+     * View action rendering physical constants from the single-source-of-truth CODATA 2022 registry (constants.json).
      */
     public function constants()
     {
-        $notation = $this->service()->getNotation();
-        
-        // Filter notation where type is 'constant'
-        $constants = array_filter($notation, function($item) {
-            return ($item['type'] ?? '') === 'constant';
-        });
-        
-        // Fallback to legacy constants if notation is empty
+        $content = $this->service()->getPhysicsContent();
+        $constants = $content['constants'] ?? [];
+
         if (empty($constants)) {
-            $content = $this->service()->getPhysicsContent();
-            $constants = $content['constants'] ?? [];
+            $notation = $this->service()->getNotation();
+            $constants = array_filter($notation, function($item) {
+                return ($item['type'] ?? '') === 'constant';
+            });
         }
-        
+
         $this->renderWithLayout('physics/constants', [
             'title' => 'Fundamental Physical Constants',
             'constants' => $constants
@@ -609,6 +606,21 @@ class PhysicsController
     {
         $content = $this->service()->getPhysicsContent();
         $notation = $this->service()->getNotation();
+        $constants = $content['constants'] ?? [];
+
+        // Overlay authoritative CODATA 2022 constants.json onto $notation (single source of truth)
+        foreach ($constants as $slug => $c) {
+            $existing = $notation[$slug] ?? [];
+            $notation[$slug] = array_merge($existing, [
+                'symbol' => $c['symbol'] ?? ($existing['symbol'] ?? $slug),
+                'name' => $c['name'] ?? ($existing['name'] ?? $slug),
+                'type' => 'constant',
+                'value' => $c['value'] ?? ($existing['value'] ?? null),
+                'unit' => $c['unit'] ?? ($existing['unit'] ?? ''),
+                'description' => $c['description'] ?? ($existing['description'] ?? ''),
+            ]);
+        }
+
         $searchIndex = $content['search_index'] ?? [];
         $topics = $content['topics'] ?? [];
         

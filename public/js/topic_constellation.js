@@ -10,6 +10,7 @@
 
     const concepts = constData.concepts || {};
     const pillars = constData.pillars || [];
+    const svgPlane = document.getElementById('constellation-svg');
     const svgTracksGroup = document.getElementById('svg-orbital-tracks-group');
     const svgNodesGroup = document.getElementById('svg-planetary-nodes-group');
     const gravityRay = document.getElementById('svg-gravitational-ray');
@@ -37,17 +38,22 @@
     const btnOrbitPause = document.getElementById('btn-orbit-pause');
     const orbitPauseIcon = document.getElementById('orbit-pause-icon');
 
-    // 2. Orbital Geometry Setup
+    // 2. Adaptive Bounded Orbital Geometry Setup
     // Center point of the solar sun in SVG viewBox (1100 x 580)
-    const cx = 550;
-    const cy = 290;
+    const VIEW_W = 1100;
+    const VIEW_H = 580;
+    const cx = VIEW_W / 2;
+    const cy = VIEW_H / 2;
 
-    // Define elliptical radii for each pillar track
-    // (Tilted perspective gives depth: rx is wide, ry is squashed)
-    const baseRx = 150;
-    const stepRx = 80;
-    const baseRy = 85;
-    const stepRy = 45;
+    // Dynamically scale elliptical radii so ALL pillar tracks fit cleanly inside 1100x580
+    // with margin for planetary nodes and capsule labels (zero viewport clipping on dense hubs).
+    const orbitCount = pillars.length;
+    const baseRx = orbitCount <= 4 ? 145 : 108;
+    const maxRx = 450;
+    const baseRy = orbitCount <= 4 ? 82 : 62;
+    const maxRy = 248;
+    const stepRx = orbitCount <= 1 ? 0 : Math.min(80, (maxRx - baseRx) / (orbitCount - 1));
+    const stepRy = orbitCount <= 1 ? 0 : Math.min(45, (maxRy - baseRy) / (orbitCount - 1));
 
     const orbitConfigs = pillars.map((p, idx) => ({
         rx: baseRx + idx * stepRx,
@@ -57,6 +63,67 @@
         slugs: p.slugs || [],
         speed: 0.0012 / (1 + idx * 0.4) // Keplerian: inner orbits move faster
     }));
+
+    // Smooth SVG viewBox camera state for Track-Focus framing
+    let currentVB = { x: 0, y: 0, w: VIEW_W, h: VIEW_H };
+    let vbAnimId = null;
+    let activeOrbitFilter = 'all';
+
+    function animateViewBox(targetVB) {
+        if (!svgPlane) return;
+        if (vbAnimId !== null) {
+            cancelAnimationFrame(vbAnimId);
+            vbAnimId = null;
+        }
+        const startVB = { ...currentVB };
+        const duration = 320;
+        const startTime = performance.now();
+
+        function step(now) {
+            const t = Math.min(1, (now - startTime) / duration);
+            const ease = 1 - Math.pow(1 - t, 3); // cubic ease-out
+            currentVB = {
+                x: startVB.x + (targetVB.x - startVB.x) * ease,
+                y: startVB.y + (targetVB.y - startVB.y) * ease,
+                w: startVB.w + (targetVB.w - startVB.w) * ease,
+                h: startVB.h + (targetVB.h - startVB.h) * ease
+            };
+            svgPlane.setAttribute(
+                'viewBox',
+                `${currentVB.x.toFixed(1)} ${currentVB.y.toFixed(1)} ${currentVB.w.toFixed(1)} ${currentVB.h.toFixed(1)}`
+            );
+            if (t < 1) {
+                vbAnimId = requestAnimationFrame(step);
+            } else {
+                vbAnimId = null;
+            }
+        }
+        vbAnimId = requestAnimationFrame(step);
+    }
+
+    function frameOrbitTrack(target) {
+        if (target === 'all') {
+            animateViewBox({ x: 0, y: 0, w: VIEW_W, h: VIEW_H });
+            return;
+        }
+        const idx = parseInt(target, 10);
+        const cfg = orbitConfigs[idx];
+        if (!cfg) {
+            animateViewBox({ x: 0, y: 0, w: VIEW_W, h: VIEW_H });
+            return;
+        }
+        const aspect = VIEW_W / VIEW_H;
+        const neededW = Math.max(540, (cfg.rx + 135) * 2);
+        const neededH = Math.max(285, (cfg.ry + 55) * 2);
+        const targetW = Math.min(VIEW_W, Math.max(neededW, neededH * aspect));
+        const targetH = targetW / aspect;
+        animateViewBox({
+            x: cx - targetW / 2,
+            y: cy - targetH / 2,
+            w: targetW,
+            h: targetH
+        });
+    }
 
     // 3. Render Orbital Tracks in SVG
     if (svgTracksGroup) {
@@ -78,9 +145,11 @@
             const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
             label.setAttribute('x', cx - cfg.rx + 10);
             label.setAttribute('y', cy - 6);
+            label.setAttribute('class', 'orbit-track-label');
+            label.setAttribute('data-orbit-idx', idx);
             label.setAttribute('fill', 'rgba(148, 163, 184, 0.6)');
             label.setAttribute('font-family', "'Space Grotesk', sans-serif");
-            label.setAttribute('font-size', '8');
+            label.setAttribute('font-size', orbitCount >= 7 ? '7' : '8');
             label.setAttribute('font-weight', '600');
             label.setAttribute('letter-spacing', '1');
             label.textContent = `ORBIT ${idx + 1}`;
@@ -100,7 +169,7 @@
             const data = concepts[slug];
             if (!data) return;
 
-            const initialAngle = (sIdx / count) * Math.PI * 2;
+            const initialAngle = (sIdx / count) * Math.PI * 2 + (pIdx * 0.55);
             const nodeG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
             nodeG.setAttribute('class', 'celestial-node');
             nodeG.setAttribute('data-slug', slug);
@@ -188,6 +257,23 @@
         }
         n.textBg.setAttribute('width', Math.max(50, Math.round(labelWidth + 12)));
     });
+
+    const isDenseHub = orbitCount >= 6 || nodes.length >= 40;
+
+    function applyLabelDensity() {
+        const denseAllMode = isDenseHub && activeOrbitFilter === 'all';
+        nodes.forEach(n => {
+            const isActive = n.slug === activeSlug;
+            const onFocusedTrack = activeOrbitFilter !== 'all' && String(n.pillarIdx) === activeOrbitFilter;
+            const labelOpacity = (isActive || onFocusedTrack || !denseAllMode) ? '1' : '0.28';
+            n.textBg.setAttribute('opacity', labelOpacity);
+            n.text.setAttribute('opacity', labelOpacity);
+        });
+        // Keep active node rendered above neighbors so its capsule label is never obscured
+        if (activeNodeRef && activeNodeRef.element && svgNodesGroup) {
+            svgNodesGroup.appendChild(activeNodeRef.element);
+        }
+    }
 
     function getTierColor(level) {
         const l = (level || '').toLowerCase();
@@ -279,6 +365,8 @@
             gravityRay.setAttribute('y2', activeNodeRef.currentY || cy);
             gravityRay.setAttribute('opacity', '0.75');
         }
+
+        applyLabelDensity();
     }
 
     function sprintf2(n) {
@@ -426,7 +514,7 @@
         });
     }
 
-    // 9. Orbit Filter Chips (Focus on specific orbital track)
+    // 9. Orbit Filter Chips (Focus & smoothly frame specific orbital track)
     const filterChips = document.querySelectorAll('.orbit-filter-chip');
     filterChips.forEach(chip => {
         chip.addEventListener('click', function() {
@@ -434,12 +522,14 @@
             this.classList.add('active');
 
             const target = this.getAttribute('data-orbit-target');
+            activeOrbitFilter = target;
+
             nodes.forEach(n => {
                 if (target === 'all' || target === String(n.pillarIdx)) {
                     n.element.style.opacity = '1';
                     n.element.style.pointerEvents = 'auto';
                 } else {
-                    n.element.style.opacity = '0.15';
+                    n.element.style.opacity = '0.12';
                     n.element.style.pointerEvents = 'none';
                 }
             });
@@ -447,14 +537,27 @@
             const rings = document.querySelectorAll('.orbit-track-ring');
             rings.forEach(r => {
                 const idx = r.getAttribute('data-orbit-idx');
-                if (target === 'all' || target === idx) {
-                    r.setAttribute('stroke', 'rgba(100, 255, 218, 0.45)');
+                if (target === 'all') {
+                    r.setAttribute('stroke', 'rgba(255, 255, 255, 0.12)');
+                    r.setAttribute('stroke-width', '1.2');
+                } else if (target === idx) {
+                    r.setAttribute('stroke', 'rgba(100, 255, 218, 0.5)');
                     r.setAttribute('stroke-width', '1.8');
                 } else {
-                    r.setAttribute('stroke', 'rgba(255, 255, 218, 0.05)');
+                    r.setAttribute('stroke', 'rgba(255, 255, 255, 0.04)');
                     r.setAttribute('stroke-width', '0.8');
                 }
             });
+
+            const trackLabels = document.querySelectorAll('.orbit-track-label');
+            trackLabels.forEach(lbl => {
+                const idx = lbl.getAttribute('data-orbit-idx');
+                lbl.setAttribute('opacity', (target === 'all' || target === idx) ? '1' : '0.15');
+            });
+
+            // Smoothly frame the selected orbit (or pull back to full constellation on 'all')
+            frameOrbitTrack(target);
+            applyLabelDensity();
         });
     });
 

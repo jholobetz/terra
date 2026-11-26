@@ -410,5 +410,84 @@ def test_cas_blocks_code_injection_vectors():
     assert res_penrose["is_homogeneous"] is True
 
 
+def test_cas_dimensional_parser_upgrades():
+    from lib.cas.cas_engine import evaluate_formula_invariance
+
+    # 1. Square brackets \left[ ... \right] normalized to parentheses
+    res_brackets = evaluate_formula_invariance(
+        "test-binding",
+        {
+            "equation": r"B(Z, A) = \left[ Z m_p + (A - Z) m_n - M(Z, A) \right] c^2",
+            "semantic_variables": {
+                "B(Z, A)": {"unit": "J"},
+                "Z": {"unit": "dimensionless"},
+                "A": {"unit": "dimensionless"},
+                "m_p": {"unit": "kg"},
+                "m_n": {"unit": "kg"},
+                "M(Z, A)": {"unit": "kg"},
+                "c": {"unit": "m/s"},
+            },
+        },
+    )
+    assert res_brackets["status"] == "HOMOGENEOUS"
+    assert res_brackets["is_homogeneous"] is True
+
+    # 2. Coordinate function-call notation V(r) / T(\delta) stripped in dimensional mode
+    res_fn = evaluate_formula_invariance(
+        "test-woods-saxon",
+        {
+            "equation": r"V(r) = -\frac{V_0}{1 + \exp\left(\frac{r - R}{a}\right)}",
+            "semantic_variables": {
+                "V(r)": {"unit": "J"},
+                "V_0": {"unit": "J"},
+                "r": {"unit": "m"},
+                "R": {"unit": "m"},
+                "a": {"unit": "m"},
+            },
+        },
+    )
+    assert res_fn["status"] == "HOMOGENEOUS"
+    assert res_fn["is_homogeneous"] is True
+
+    # 3. Comma-separated multi-equation lines isolate the primary identity
+    res_multi = evaluate_formula_invariance(
+        "test-multi",
+        {
+            "equation": r"n_c = \sqrt{n_1 n_2}, \quad d = \frac{\lambda_0}{4 n_c}",
+            "semantic_variables": {
+                "n_c": {"unit": "dimensionless"},
+                "n_1": {"unit": "dimensionless"},
+                "n_2": {"unit": "dimensionless"},
+            },
+        },
+    )
+    assert res_multi["status"] == "HOMOGENEOUS"
+
+    # 4. Matrix equations classify cleanly as OPERATOR_OR_TENSOR rather than PARSE_ERROR
+    res_mat = evaluate_formula_invariance(
+        "test-abcd",
+        {
+            "equation": r"\begin{pmatrix} y_2 \\ \theta_2 \end{pmatrix} = \begin{pmatrix} A & B \\ C & D \end{pmatrix} \begin{pmatrix} y_1 \\ \theta_1 \end{pmatrix}",
+        },
+    )
+    assert res_mat["status"] == "OPERATOR_OR_TENSOR"
+
+    # 5. True dimensional mismatch is still strictly caught as INHOMOGENEOUS
+    res_bad = evaluate_formula_invariance(
+        "test-bad-velocity",
+        {
+            "equation": r"E = m v^3",
+            "semantic_variables": {
+                "E": {"unit": "J"},
+                "m": {"unit": "kg"},
+                "v": {"unit": "m/s"},
+            },
+        },
+    )
+    assert res_bad["status"] == "INHOMOGENEOUS"
+    assert res_bad["is_homogeneous"] is False
+
+
+
 
 

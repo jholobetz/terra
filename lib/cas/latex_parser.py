@@ -573,8 +573,81 @@ def clean_latex_equation(latex: str, mode: str = "dimensional") -> str:
         )
         s = re.sub(r"(?:\\eta|g|h|\\gamma)_\{?\\mu\\nu\}?", " 1 ", s)
 
-        # Normalize explicit time-argument notation: x(t) -> x, a(t) -> a
-        s = re.sub(r"([a-zA-Z0-9_]+)\s*\([t]\)", r"\1", s)
+        # Normalize explicit function-argument notation in dimensional mode:
+        #   - Any simple coordinate/parameter argument list on the LHS: I(\theta) = -> I =, V(r) = -> V =, B(Z, A) = -> B =
+        #   - Common coordinate/field arguments anywhere: x(t) -> x, V(r) -> V, f(\mathbf{G}) -> f, P(x, t) -> P
+        # Never strips math functions (sin, cos, exp, log, sqrt, ...) or expressions containing +, -, *, /, =.
+        _MATH_FUNCS = {
+            "sin", "cos", "tan", "sec", "csc", "cot", "arcsin", "arccos", "arctan",
+            "sinh", "cosh", "tanh", "sech", "csch", "coth",
+            "exp", "log", "ln", "sqrt", "abs", "Abs", "sinc", "erf", "erfc", "sgn", "sign",
+            "det", "Tr", "Re", "Im", "Var", "Cov",
+        }
+        def _strip_fn_args_in_side(side: str, aggressive_lhs: bool = False) -> str:
+            out_chars: List[str] = []
+            pos = 0
+            n = len(side)
+            # Match a symbol token (possibly with \cmd, _{...}, or decorator) immediately followed by '('
+            fn_re = re.compile(
+                r"(\\[a-zA-Z]+|[a-zA-Z][a-zA-Z0-9_]*)(?:_\{[^{}]*\}|_[a-zA-Z0-9]+)?\s*\("
+            )
+            while pos < n:
+                m = fn_re.search(side, pos)
+                if not m:
+                    out_chars.append(side[pos:])
+                    break
+                base_tok = m.group(1).lstrip("\\")
+                open_paren = m.end() - 1
+                ext = extract_delimited_arg(side, open_paren, "(", ")")
+                if ext is None or base_tok in _MATH_FUNCS:
+                    out_chars.append(side[pos : m.end()])
+                    pos = m.end()
+                    continue
+                inner, end_pos = ext
+                inner_clean = inner.strip()
+                has_arith = bool(re.search(r"[+\-*/=<>^]", inner_clean))
+                is_coord_list = bool(
+                    inner_clean
+                    and not has_arith
+                    and (
+                        aggressive_lhs
+                        or "," in inner_clean
+                        or ";" in inner_clean
+                        or re.match(
+                            r"^(?:\\(?:mathbf|boldsymbol|vec)\{[a-zA-Z0-9_]+\}|\\(?:theta|phi|delta|tau|omega|Omega|Phi|Psi|xi|eta|lambda)|[rtTxypEdQGk]|x_n|r_0)$",
+                            inner_clean,
+                        )
+                    )
+                )
+                if is_coord_list:
+                    out_chars.append(side[pos : open_paren].rstrip())
+                    pos = end_pos
+                else:
+                    out_chars.append(side[pos : m.end()])
+                    pos = m.end()
+            return "".join(out_chars)
+
+        # Isolate primary equation when ", \quad" or ", \qquad" separates two independent equations
+        m_multi = re.search(r",\s*\\q?quad\b", s)
+        if m_multi:
+            left_part = s[: m_multi.start()].strip()
+            right_part = s[m_multi.end() :].strip()
+            if "=" in left_part and "=" in right_part:
+                s = left_part
+
+        # Strip function-call arguments (aggressively on LHS, conservatively on RHS)
+        eq_parts_fn = split_top_level_equals(s)
+        if len(eq_parts_fn) >= 2:
+            eq_parts_fn[0] = _strip_fn_args_in_side(eq_parts_fn[0], aggressive_lhs=True)
+            for idx_p in range(1, len(eq_parts_fn)):
+                eq_parts_fn[idx_p] = _strip_fn_args_in_side(eq_parts_fn[idx_p], aggressive_lhs=False)
+            s = " = ".join(eq_parts_fn)
+        else:
+            s = _strip_fn_args_in_side(s, aggressive_lhs=False)
+
+        # Normalize dimensionless trig-like physics functions so SymPy evaluates them cleanly
+        s = re.sub(r"\\(?:mathrm|operatorname)\{(?:sinc|sech|csch|coth|erfc|erf|sgn)\}", r"\\sin", s)
+        s = re.sub(r"\\(?:sech|csch|coth|sinc|erfc|erf|sgn)(?![a-zA-Z])", r"\\sin", s)
 
         # Lower pure numeric power towers (e.g., Penrose's 10^{-10^{123}}) to dimensionless 1
         s = re.sub(r"\b\d+\s*\^\s*\{\s*-?\s*\d+\s*\^\s*\{?\s*\d+\s*\}?\s*\}", " 1 ", s)
@@ -661,8 +734,8 @@ def latex_to_sympy_str(latex: str) -> str:
     # Strip any remaining LaTeX control sequences (e.g. \neq, \sim, \approx)
     s = re.sub(r"\\[a-zA-Z]+", " ", s)
 
-    # Replace remaining grouping braces with parentheses
-    s = s.replace("{", "(").replace("}", ")")
+    # Replace remaining grouping braces and square brackets with parentheses
+    s = s.replace("{", "(").replace("}", ")").replace("[", "(").replace("]", ")")
     return s
 
 

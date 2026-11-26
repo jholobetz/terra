@@ -519,6 +519,7 @@ def _identify_physical_quantity(dim_powers: Dict[str, Any]) -> str:
 
 RESERVED_MATH_TOKENS = {
     "sqrt", "sin", "cos", "tan", "exp", "log", "ln", "sinh", "cosh", "tanh",
+    "sech", "csch", "coth", "sinc", "erf", "erfc", "sgn",
     "pi", "E", "I", "abs", "Abs", "diff", "Derivative",
 }
 
@@ -610,6 +611,12 @@ def _parse_custom_var_dimension(expr_or_unit: str, natural_units: bool = False) 
     return (DIM_NATURAL_ENERGY ** d) if d != 0 else 1
 
 
+def _normalize_sem_var_key(raw_sym: str) -> str:
+    """Normalizes a semantic_variables key (stripping trailing coordinate args like V(r) -> V)."""
+    base = re.sub(r"\([^()]*\)\s*$", "", str(raw_sym).strip())
+    return re.sub(r"[^a-zA-Z0-9_]", "", latex_to_sympy_str(base).strip())
+
+
 def build_entry_dimensions(
     entry: Dict[str, Any],
     natural_units: bool = False,
@@ -632,7 +639,7 @@ def build_entry_dimensions(
         candidate_syms.update(re.findall(r"\b[a-zA-Z][a-zA-Z0-9_]*\b", sympy_preview))
     if isinstance(semantic_vars, dict):
         for raw_sym in semantic_vars:
-            clean_sym = re.sub(r"[^a-zA-Z0-9_]", "", latex_to_sympy_str(raw_sym).strip())
+            clean_sym = _normalize_sem_var_key(raw_sym)
             if clean_sym:
                 candidate_syms.add(clean_sym)
 
@@ -641,11 +648,11 @@ def build_entry_dimensions(
         if isinstance(semantic_vars, dict):
             for raw_sym, var_meta in semantic_vars.items():
                 if isinstance(var_meta, dict):
-                    unit_str = var_meta.get("unit")
+                    unit_str = var_meta.get("unit") or var_meta.get("units")
                     if unit_str:
                         dim_expr = parse_unit_string(unit_str)
                         if dim_expr is not None:
-                            clean_sym = re.sub(r"[^a-zA-Z0-9_]", "", latex_to_sympy_str(raw_sym).strip())
+                            clean_sym = _normalize_sem_var_key(raw_sym)
                             if clean_sym:
                                 local_dims[clean_sym] = dim_expr
 
@@ -664,11 +671,11 @@ def build_entry_dimensions(
         if isinstance(semantic_vars, dict):
             for raw_sym, var_meta in semantic_vars.items():
                 if isinstance(var_meta, dict):
-                    unit_str = var_meta.get("unit")
+                    unit_str = var_meta.get("unit") or var_meta.get("units")
                     if unit_str:
                         nat_dim = parse_unit_string_natural(unit_str)
                         if nat_dim is not None:
-                            clean_sym = re.sub(r"[^a-zA-Z0-9_]", "", latex_to_sympy_str(raw_sym).strip())
+                            clean_sym = _normalize_sem_var_key(raw_sym)
                             if clean_sym:
                                 local_dims[clean_sym] = nat_dim
 
@@ -978,7 +985,7 @@ def evaluate_formula_invariance(
             return nat_result
 
         if re.search(
-            r"\\langle|\\rangle|\|[a-zA-Z0-9\s]+\\rangle|\\nabla|\\partial_\{\\mu\}|\^\\mu|\^\\nu|_\{\\mu\\nu\}|\\dagger",
+            r"\\langle|\\rangle|\|[a-zA-Z0-9\s]+\\rangle|\\nabla|\\partial_\{\\mu\}|\^\\mu|\^\\nu|_\{\\mu\\nu\}|\\dagger|\\begin\{[pbvBV]?matrix\}",
             clean_eq,
         ):
             return {

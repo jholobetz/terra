@@ -6,10 +6,12 @@
 
     <div class="workspace-grid">
         <!-- Left Column: Simulation Modes & Config -->
-        <div class="workspace-panel-left">
+        <aside class="workspace-panel-left" aria-label="Simulation Modes and Potentials">
             <div class="glass-card list-card">
-                <h2>Simulation Modes</h2>
-                <p class="ref-sub">Choose a correspondence playground to analyze trajectory alignments and divergences.</p>
+                <div class="list-head-row">
+                    <h2>Simulation Modes</h2>
+                    <span class="mode-count-pill">2 Modes</span>
+                </div>
                 
                 <div class="mode-select-box">
                     <button class="mode-btn active" id="mode-btn-ehrenfest">
@@ -23,7 +25,7 @@
                 </div>
 
                 <div class="potential-select-section" id="potential-selector-box">
-                    <h3 style="margin: 20px 0 10px 0; font-family: 'Space Grotesk', sans-serif; color: #ffffff; font-size: 0.95rem;">Potential Landscape V(x)</h3>
+                    <h3 style="margin: 14px 0 8px 0; font-family: 'Space Grotesk', sans-serif; color: #ffffff; font-size: 0.9rem;">Potential Landscape \(V(x)\)</h3>
                     <div class="potential-list">
                         <button class="pot-btn active" data-pot="harmonic">Harmonic Oscillator</button>
                         <button class="pot-btn" data-pot="double_well">Anharmonic Double Well</button>
@@ -31,19 +33,30 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </aside>
 
         <!-- Right Column: Interactive Console -->
         <div class="workspace-panel-right">
             <div class="glass-card main-workspace-card" id="workspace-card">
                 
-                <!-- Active Header -->
+                <!-- Active Header + Correspondence Ribbon -->
                 <div class="workspace-header-info">
                     <div class="theory-meta">
                         <span id="active-category" class="category-badge">Quantum Dynamics</span>
                         <h2 id="active-mode-title">Ehrenfest's Sandbox</h2>
                     </div>
                     <p id="active-mode-description" class="theory-desc">Visualizes the classical trajectory of a point particle alongside the expectation values of position and momentum for a quantum wave packet.</p>
+                    <div class="correspondence-ribbon">
+                        <span class="ribbon-side">
+                            <span class="ribbon-tag">Classical</span>
+                            <span id="corr-ribbon-left">\( x_{\text{class}}(t),\; p_{\text{class}}(t) \)</span>
+                        </span>
+                        <span class="ribbon-bridge" aria-hidden="true">⟺</span>
+                        <span class="ribbon-side ribbon-side-quantum">
+                            <span class="ribbon-tag">Quantum</span>
+                            <span id="corr-ribbon-right">\( \langle \hat{x} \rangle(t),\; \langle \hat{p} \rangle(t) \)</span>
+                        </span>
+                    </div>
                 </div>
 
                 <!-- Simulation Block -->
@@ -63,13 +76,21 @@
                                 <span class="label">Quantum State:</span>
                                 <span id="coherence-status" class="status-value status-coherent">Coherent (Phase Lock)</span>
                             </div>
+
+                            <button type="button" id="btn-regime-toggle" class="btn-regime-toggle">
+                                ⚡ Classical Limit (ℏ → 0.15)
+                            </button>
                             
                             <div id="sliders-container" class="sliders-box">
                                 <!-- JS Populated Sliders -->
                             </div>
+
+                            <div class="corr-context-bar" id="correspondence-context-readout" aria-live="polite">
+                                Hover or drag any slider to inspect its role in the classical–quantum transition.
+                            </div>
                             
                             <div style="margin-top: 10px; display: flex; gap: 8px;">
-                                <button id="restart-btn" class="btn btn-secondary" style="flex: 1; font-size: 0.8rem; padding: 8px;">Reset Wave</button>
+                                <button id="restart-btn" class="btn btn-secondary" style="flex: 1; font-size: 0.78rem; padding: 7px 10px;">↺ Reset Wave</button>
                             </div>
                         </div>
                     </div>
@@ -108,20 +129,29 @@
 <style>
 /* Page Layout */
 .workspace-container {
-    padding-top: 20px;
-    max-width: 1200px;
+    padding-top: 6px;
+    max-width: 1260px;
     margin: 0 auto;
 }
 
 .workspace-header {
-    margin-bottom: 30px;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 4px 0 12px 0;
+    margin-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    text-align: left;
 }
 
 .workspace-header h1 {
-    font-size: 2.2rem;
+    font-size: 1.65rem;
+    line-height: 1.15;
     color: #ffffff;
-    margin-bottom: 10px;
+    margin: 0;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
     background: linear-gradient(135deg, #ffffff 40%, var(--accent-quantum));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -129,14 +159,20 @@
 
 .workspace-header .tagline {
     color: var(--text-muted);
-    font-size: 1.05rem;
+    font-size: 0.88rem;
+    line-height: 1.4;
+    margin: 0;
 }
 
 .workspace-grid {
     display: grid;
-    grid-template-columns: 320px 1fr;
-    gap: 30px;
+    grid-template-columns: 280px minmax(0, 1fr);
+    gap: 20px;
     align-items: start;
+}
+
+.workspace-panel-right {
+    min-width: 0;
 }
 
 @media (max-width: 980px) {
@@ -146,24 +182,128 @@
 }
 
 .glass-card {
-    background: rgba(15, 23, 42, 0.35);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 16px;
-    padding: 24px;
+    background: rgba(15, 23, 42, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 14px;
+    padding: 20px;
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
 }
 
 .list-card {
-    max-height: 750px;
-    overflow-y: auto;
+    position: sticky;
+    top: 84px;
+    padding: 16px;
+}
+
+@media (max-width: 980px) {
+    .list-card {
+        position: static;
+    }
+}
+
+.list-head-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .list-card h2 {
-    margin: 0 0 8px 0;
+    margin: 0;
     font-family: 'Space Grotesk', sans-serif;
     color: #ffffff;
-    font-size: 1.3rem;
+    font-size: 1.02rem;
+}
+
+.mode-count-pill {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 2px 7px;
+    border-radius: 10px;
+}
+
+.correspondence-ribbon {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+    padding: 9px 12px;
+    background: rgba(2, 6, 23, 0.55);
+    border: 1px solid rgba(255, 78, 136, 0.25);
+    border-left: 3px solid var(--accent-quantum);
+    border-radius: 10px;
+}
+
+.ribbon-side {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: #f8fafc;
+}
+
+.ribbon-tag {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+}
+
+.ribbon-bridge {
+    color: var(--accent-quantum);
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.ribbon-side-quantum {
+    color: #fda4af;
+}
+
+.btn-regime-toggle {
+    width: 100%;
+    padding: 8px 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    font-family: 'Space Grotesk', sans-serif;
+    cursor: pointer;
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    color: #7dd3fc;
+    transition: all 0.2s ease;
+}
+
+.btn-regime-toggle:hover {
+    background: rgba(56, 189, 248, 0.22);
+    color: #ffffff;
+}
+
+.btn-regime-toggle.is-quantum {
+    background: rgba(255, 78, 136, 0.14);
+    border-color: rgba(255, 78, 136, 0.45);
+    color: #fda4af;
+}
+
+.corr-context-bar {
+    margin-top: 10px;
+    padding: 8px 10px;
+    background: rgba(2, 6, 23, 0.55);
+    border: 1px solid rgba(255, 78, 136, 0.22);
+    border-left: 3px solid var(--accent-quantum);
+    border-radius: 8px;
+    font-size: 0.74rem;
+    color: #cbd5e1;
+    line-height: 1.4;
+    min-height: 34px;
 }
 
 .ref-sub {
@@ -335,8 +475,8 @@
 
 .playground-layout {
     display: grid;
-    grid-template-columns: 1fr 280px;
-    gap: 20px;
+    grid-template-columns: minmax(0, 1fr) 265px;
+    gap: 18px;
 }
 
 @media (max-width: 800px) {

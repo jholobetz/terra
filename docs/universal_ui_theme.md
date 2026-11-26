@@ -140,7 +140,7 @@ Before marking any individual workbench or simulation complete, verify all 6 gat
 | 3 | **Noether's Vault (Symmetry → Conservation)** | `/physics/noethers-vault` | ✅ Aligned (`dbd8e9790`) | Compact header + Noether mapping ribbon + 1-click Break/Restore toggle + fixed LaTeX |
 | 4 | **The Physics Rosetta Stone (Notation Toggle)** | `/physics/notation-toggle` | ✅ Aligned (`a1368b8dc`) | Side-by-Side Compare (`⟺`) + Translation Key + Copy LaTeX + 5 laws |
 | 5 | **Anthropic Constant Tuner** | `/physics/anthropic-tuner` | ✅ Aligned (`c3e3509e7`) | Compact header + 3 tiled scale viewports + 2-line Universe Dials + live context readout |
-| 6 | **Classical-to-Quantum Correspondence Workspace** | `/physics/correspondence-workspace` | ⬜ Queued | Next individual workbench candidate |
+| 6 | **Classical-to-Quantum Correspondence Workspace** | `/physics/correspondence-workspace` | ✅ Aligned | Compact header + Correspondence ribbon + 1-click Classical/Quantum toggle + slider context bar |
 | 7 | **Equation Explainer & Dissection Suite** | `/physics/equation-explainer` | ⬜ Queued | Individual review |
 | 8 | **Universe Derivation Graph (Lineage Map)** | `/physics/universe-graph` | ⬜ Queued | Individual review |
 | 9 | **Fundamental Physical Constants (CODATA 2022)** | `/physics/constants` | ⬜ Reference Page | 24 CODATA 2022 constants (single source of truth) |

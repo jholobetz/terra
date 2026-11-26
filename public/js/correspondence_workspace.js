@@ -9,7 +9,7 @@ let activePotential = "harmonic"; // "harmonic", "double_well", "barrier"
 let simAnimationId = null;
 
 // Physics parameters
-let hbar = 1.0;
+let hbar = 0.8;
 let mass = 1.0;
 let initialX = -2.5;
 let initialP = 2.0;
@@ -47,16 +47,23 @@ const numPhaseParticles = 120;
 
 // Slider definitions
 const SLIDERS_EHRENFEST = [
-    { id: "slide-hbar", label: "Planck's Constant (ℏ)", min: 0.1, max: 2.0, value: 0.8, step: 0.05, unit: "" },
-    { id: "slide-mass", label: "Particle Mass (m)", min: 0.5, max: 3.0, value: 1.0, step: 0.1, unit: "" },
-    { id: "slide-p0", label: "Initial Momentum (p₀)", min: -4.0, max: 4.0, value: 2.0, step: 0.2, unit: "" },
-    { id: "slide-v0", label: "Potential Scale (V₀)", min: 1.0, max: 8.0, value: 4.0, step: 0.5, unit: "" }
+    { id: "slide-hbar", label: "Planck's Constant (ℏ)", min: 0.1, max: 2.0, value: 0.8, step: 0.05, unit: "", desc: "Smaller ℏ shrinks wave dispersion so ⟨x̂⟩ tracks the classical particle; larger ℏ amplifies tunneling and spreading." },
+    { id: "slide-mass", label: "Particle Mass (m)", min: 0.5, max: 3.0, value: 1.0, step: 0.1, unit: "", desc: "Heavier mass suppresses kinetic dispersion and reduces quantum barrier penetration." },
+    { id: "slide-p0", label: "Initial Momentum (p₀)", min: -4.0, max: 4.0, value: 2.0, step: 0.2, unit: "", desc: "Sets the initial launch velocity of both the classical point particle and the Gaussian wave packet." },
+    { id: "slide-v0", label: "Potential Scale (V₀)", min: 1.0, max: 8.0, value: 4.0, step: 0.5, unit: "", desc: "Scales the restoring well depth or tunneling barrier height V(x)." }
 ];
 
 const SLIDERS_PHASE = [
-    { id: "slide-cat-dist", label: "Schrödinger Cat Separation", min: 1.0, max: 4.0, value: 2.5, step: 0.1, unit: "σ" },
-    { id: "slide-squeeze", label: "Phase Squeezing Factor", min: 0.5, max: 2.0, value: 1.0, step: 0.05, unit: "" }
+    { id: "slide-cat-dist", label: "Schrödinger Cat Separation", min: 1.0, max: 4.0, value: 2.5, step: 0.1, unit: "σ", desc: "Separates two coherent phase-space lobes; wider separation produces rapid negative Wigner interference fringes." },
+    { id: "slide-squeeze", label: "Phase Squeezing Factor", min: 0.5, max: 2.0, value: 1.0, step: 0.05, unit: "", desc: "Compresses uncertainty along position while expanding momentum spread, conserving Heisenberg area." }
 ];
+
+let activeModeSummary = "Ehrenfest's Sandbox: lower ℏ toward 0.15 to watch the quantum packet lock onto the classical dot.";
+
+function setCorrespondenceContext(text) {
+    const el = document.getElementById("correspondence-context-readout");
+    if (el) el.textContent = text;
+}
 
 // Initialize
 document.addEventListener("DOMContentLoaded", () => {
@@ -125,6 +132,46 @@ function setupUIHandlers() {
     document.getElementById("restart-btn").addEventListener("click", () => {
         resetSimulation();
     });
+
+    // 1-click Classical Limit <-> Deep Quantum demo toggle
+    const regimeBtn = document.getElementById("btn-regime-toggle");
+    if (regimeBtn) {
+        regimeBtn.addEventListener("click", () => {
+            if (activeMode === "ehrenfest") {
+                const el = document.getElementById("slide-hbar");
+                if (!el) return;
+                const isClassical = parseFloat(el.value) <= 0.25;
+                el.value = isClassical ? "1.8" : "0.15";
+                el.dispatchEvent(new Event("input", { bubbles: true }));
+                resetSimulation();
+            } else {
+                const el = document.getElementById("slide-cat-dist");
+                if (!el) return;
+                const isWide = parseFloat(el.value) >= 3.2;
+                el.value = isWide ? "1.2" : "3.6";
+                el.dispatchEvent(new Event("input", { bubbles: true }));
+            }
+        });
+    }
+}
+
+function syncRegimeButton() {
+    const regimeBtn = document.getElementById("btn-regime-toggle");
+    if (!regimeBtn) return;
+    if (activeMode === "ehrenfest") {
+        const isClassical = hbar <= 0.25;
+        regimeBtn.classList.toggle("is-quantum", isClassical);
+        regimeBtn.textContent = isClassical
+            ? "⚛ Deep Quantum Regime (ℏ = 1.80)"
+            : "⚡ Classical Limit (ℏ → 0.15)";
+    } else {
+        const el = document.getElementById("slide-cat-dist");
+        const isWide = el && parseFloat(el.value) >= 3.2;
+        regimeBtn.classList.toggle("is-quantum", !isWide);
+        regimeBtn.textContent = isWide
+            ? "⚡ Merge to Classical Gaussian (1.2σ)"
+            : "⚛ Amplify Cat Interference (3.6σ)";
+    }
 }
 
 function setMode(mode, updateURL = true) {
@@ -144,10 +191,16 @@ function setMode(mode, updateURL = true) {
     
     const potSelector = document.getElementById("potential-selector-box");
     
+    const ribbonLeft = document.getElementById("corr-ribbon-left");
+    const ribbonRight = document.getElementById("corr-ribbon-right");
+
     if (mode === "ehrenfest") {
         potSelector.style.display = "block";
         document.getElementById("active-mode-title").textContent = "Ehrenfest's Sandbox";
         document.getElementById("active-mode-description").textContent = "Visualizes classical particle trajectories alongside quantum expectation values (⟨x⟩, ⟨p⟩) to demonstrate where classical and quantum mechanics correspond.";
+        if (ribbonLeft) ribbonLeft.innerHTML = "\\( x_{\\text{class}}(t),\\; p_{\\text{class}}(t) \\)";
+        if (ribbonRight) ribbonRight.innerHTML = "\\( \\langle \\hat{x} \\rangle(t),\\; \\langle \\hat{p} \\rangle(t) \\)";
+        activeModeSummary = "Ehrenfest's Sandbox: lower ℏ toward 0.15 to watch the quantum packet lock onto the classical dot.";
         
         document.getElementById("math-box-title-1").textContent = "Ehrenfest's Equations";
         document.getElementById("math-formula-1").innerHTML = `
@@ -156,17 +209,20 @@ function setMode(mode, updateURL = true) {
         `;
         document.getElementById("math-desc-1").textContent = "Quantum expectation values trace classical paths exactly when the potential derivative (force) is linear. For non-linear potentials, the quantum wave packet diverges.";
         
-        document.getElementById("math-box-title-2").textContent = "Classical Limit (h-bar → 0)";
+        document.getElementById("math-box-title-2").textContent = "Classical Limit (ℏ → 0)";
         document.getElementById("math-formula-2").innerHTML = `
             \\[ \\lim_{\\hbar \\to 0} \\langle \\hat{x} \\rangle(t) = x_{\\text{class}}(t) \\]
         `;
-        document.getElementById("math-desc-2").textContent = "As the effective Planck constant is reduced, quantum fluctuations decrease, and the wave packet expectation value matches the classical path.";
+        document.getElementById("math-desc-2").textContent = "As the effective Planck constant ℏ is reduced, quantum fluctuations decrease, and the wave packet expectation value matches the classical path.";
 
         renderSliders(SLIDERS_EHRENFEST);
     } else {
         potSelector.style.display = "none";
         document.getElementById("active-mode-title").textContent = "Phase Space Flows";
         document.getElementById("active-mode-description").textContent = "Compares a classical ensemble density flow (Liouville theorem) with the quantum Wigner quasi-probability distribution showing negative interference fringes.";
+        if (ribbonLeft) ribbonLeft.innerHTML = "\\( \\text{Liouville Fluid } \\rho(x, p) \\ge 0 \\)";
+        if (ribbonRight) ribbonRight.innerHTML = "\\( \\text{Wigner Function } W(x, p) \\lessgtr 0 \\)";
+        activeModeSummary = "Phase Space Flows: increase cat separation to intensify negative quantum Wigner fringes.";
         
         document.getElementById("math-box-title-1").textContent = "Classical Liouville Equation";
         document.getElementById("math-formula-1").innerHTML = `
@@ -178,12 +234,17 @@ function setMode(mode, updateURL = true) {
         document.getElementById("math-formula-2").innerHTML = `
             \\[ \\frac{\\partial W}{\\partial t} = -\\{W, H\\}_M \\]
         `;
-        document.getElementById("math-desc-2").textContent = "The Wigner function represents quantum states in phase space. The quantum Moyal brackets include h-bar corrections, leading to negative probability density regions.";
+        document.getElementById("math-desc-2").textContent = "The Wigner function represents quantum states in phase space. Quantum Moyal brackets include ℏ corrections, creating negative probability density regions.";
 
         renderSliders(SLIDERS_PHASE);
     }
 
+    setCorrespondenceContext(activeModeSummary);
+    syncRegimeButton();
+
     const mathTargets = [
+        ribbonLeft,
+        ribbonRight,
         document.getElementById("math-formula-1"),
         document.getElementById("math-formula-2")
     ].filter(Boolean);
@@ -222,6 +283,7 @@ function renderSliders(sliders) {
         const group = document.createElement("div");
         group.className = "control-group";
         
+        group.title = slider.desc || "";
         group.innerHTML = `
             <label for="${slider.id}">
                 ${slider.label}: <strong id="val-${slider.id}" style="color: var(--accent-quantum);">${slider.value}${slider.unit}</strong>
@@ -231,8 +293,16 @@ function renderSliders(sliders) {
         
         container.appendChild(group);
 
+        const showSliderInfo = () => {
+            if (slider.desc) setCorrespondenceContext(`${slider.label}: ${slider.desc}`);
+        };
+        group.addEventListener("mouseenter", showSliderInfo);
+        group.addEventListener("focusin", showSliderInfo);
+        group.addEventListener("mouseleave", () => setCorrespondenceContext(activeModeSummary));
+
         // Add event listener
         document.getElementById(slider.id).addEventListener("input", (e) => {
+            showSliderInfo();
             const val = parseFloat(e.target.value);
             document.getElementById(`val-${slider.id}`).textContent = `${val}${slider.unit}`;
             
@@ -247,6 +317,7 @@ function renderSliders(sliders) {
                 potentialScale = val;
                 updatePotential();
             }
+            syncRegimeButton();
         });
     });
 }

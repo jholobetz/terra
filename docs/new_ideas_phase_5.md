@@ -29,9 +29,10 @@
 
 ---
 
-### 2. SymPy CAS Verification Sweep on Option B Formulas (`Batches 16–24`) *(~10 min)*
-- [ ] Run `scripts/cascheck` specifically across the **`315` newly authored formulas** from Batches 16–24.
-- [ ] Inspect any dimensional homogeneity flags, unit-string inconsistencies, or algebraic edge cases caught by the local SymPy CAS engine and tighten definitions where helpful.
+### 2. SymPy CAS Verification Sweep on Option B Formulas (`Batches 16–24`) *(Completed 2026-11-25)* ✅
+- [x] Upgraded [`lib/cas/latex_parser.py`](../lib/cas/latex_parser.py) & [`lib/cas/cas_engine.py`](../lib/cas/cas_engine.py) (`1e2e0f875`): normalized square brackets `[...]` → `(...)`, generalized coordinate function-argument stripping (`V(r)` → `V`, `B(Z, A)` → `B`), isolated primary equations on `, \quad` multi-equation lines, classified matrices as `OPERATOR_OR_TENSOR`, and handled dimensionless trig-like functions (`HOMOGENEOUS`: `114 → 171`, `PARSE_ERROR`: `109 → 54`, `22/22` tests passing).
+- [x] Wired automatic SymPy CAS pre-flight (`[WARN]` by default + `--strict-cas` opt-in hard gate) and authoritative `"verified_by": "sympy_cas"` stamping directly into [`scripts/expand_hub.py`](../scripts/expand_hub.py).
+- [x] Executed one-time authoritative SymPy CAS stamp across all `188` SymPy-verified Option B formulas (`171 HOMOGENEOUS` + `17 OPERATOR_OR_TENSOR`) and synchronized shard hashes + MariaDB.
 
 ---
 

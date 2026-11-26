@@ -378,10 +378,117 @@ def export_slugs_to_manifest(slugs: List[str], out_path: Optional[str] = None) -
     return manifest
 
 
+def _is_clean_scalar_cas_mismatch(raw_eq: str, res: Dict[str, Any]) -> bool:
+    """
+    Returns True only for high-confidence scalar dimensional mismatches (e.g. `E = m v^3` or a
+    wrong SI unit string) while keeping proportionalities, integrals, trig-power parser quirks,
+    and empirical numerical prefactor formulas as non-blocking [WARN].
+    """
+    if res.get("status") != "INHOMOGENEOUS":
+        return False
+    lhs_p = res.get("lhs_powers") or {}
+    rhs_p = res.get("rhs_powers") or {}
+    if not lhs_p and not rhs_p:
+        return False
+    if re.search(r"\\propto|\\approx|\\sim|\\ge|\\le|\\int|\\oint|\\sum|\\nabla|\\partial|\\mathrm\{sinc\}|\\(?:sin|cos|tan|sinh|cosh|tanh)\^", raw_eq):
+        return False
+    # Empirical formulas with dimensional numeric prefactors (e.g. 84, 13.6, 0.31, 6.07)
+    if re.search(r"(?<![A-Za-z0-9_])(?:\d+\.\d+|[1-9]\d+)(?![A-Za-z0-9_])", raw_eq):
+        return False
+    return True
+
+
+def run_cas_preflight(
+    formulas: List[Dict[str, Any]],
+    strict_cas: bool = False,
+) -> Tuple[List[str], List[str], Dict[str, int], Dict[str, Dict[str, Any]]]:
+    """
+    Runs the local SymPy CAS dimensional prover (`lib.cas.cas_engine.evaluate_formula_invariance`)
+    over every formula in a batch manifest.
+    - Reports INHOMOGENEOUS mismatches as [WARN] by default; promotes clean scalar mismatches to
+      hard [FAIL] when `strict_cas=True` (`--strict-cas`).
+    - Returns authoritative `cas_stamps` for every SymPy-verified formula (HOMOGENEOUS,
+      DIMENSIONAL_EXPRESSION, OPERATOR_OR_TENSOR) so `--apply` stamps real CAS proofs.
+    """
+    cas_errors: List[str] = []
+    cas_warnings: List[str] = []
+    counts: Dict[str, int] = {}
+    stamps: Dict[str, Dict[str, Any]] = {}
+
+    if not formulas:
+        return cas_errors, cas_warnings, counts, stamps
+
+    try:
+        import signal
+        import warnings as _warnings
+        from lib.cas.cas_engine import evaluate_formula_invariance, TimeoutException
+    except Exception as exc:
+        cas_warnings.append(f"[cas] SymPy CAS prover unavailable ({exc}); skipping automatic CAS gate.")
+        return cas_errors, cas_warnings, counts, stamps
+
+    def _timeout_handler(signum, frame):
+        raise TimeoutException("Per-formula CAS pre-flight timeout")
+
+    use_alarm = hasattr(signal, "SIGALRM") and hasattr(signal, "setitimer")
+
+    with _warnings.catch_warnings():
+        _warnings.simplefilter("ignore")
+        for fobj in formulas:
+            if not isinstance(fobj, dict):
+                continue
+            fid = str(fobj.get("id", "")).strip()
+            raw_eq = str(fobj.get("equation", "")).strip()
+            if not fid or not raw_eq:
+                continue
+            if use_alarm:
+                signal.signal(signal.SIGALRM, _timeout_handler)
+                signal.setitimer(signal.ITIMER_REAL, 2.0)
+            try:
+                res = evaluate_formula_invariance(fid, fobj)
+            except TimeoutException:
+                res = {"id": fid, "status": "TIMEOUT", "is_homogeneous": False}
+            except Exception as exc:
+                res = {"id": fid, "status": "PARSE_ERROR", "is_homogeneous": False, "error": str(exc)}
+            finally:
+                if use_alarm:
+                    signal.setitimer(signal.ITIMER_REAL, 0)
+
+            st = res.get("status", "UNKNOWN")
+            counts[st] = counts.get(st, 0) + 1
+
+            if st in ("HOMOGENEOUS", "DIMENSIONAL_EXPRESSION", "OPERATOR_OR_TENSOR"):
+                stamp: Dict[str, Any] = {
+                    "status": st,
+                    "is_homogeneous": res.get("is_homogeneous"),
+                    "verified_by": "sympy_cas",
+                }
+                if res.get("framework"):
+                    stamp["framework"] = res["framework"]
+                if res.get("quantity"):
+                    stamp["quantity"] = res["quantity"]
+                if res.get("dimension_latex"):
+                    stamp["dimension_latex"] = res["dimension_latex"]
+                if res.get("note"):
+                    stamp["note"] = res["note"]
+                stamps[fid] = stamp
+            elif st == "INHOMOGENEOUS":
+                msg = (
+                    f"[cas:{fid}] Dimensional mismatch: LHS={res.get('lhs_powers')} "
+                    f"vs RHS={res.get('rhs_powers')} | eq='{raw_eq[:70]}'"
+                )
+                if strict_cas and _is_clean_scalar_cas_mismatch(raw_eq, res):
+                    cas_errors.append(msg + " (strict CAS gate; fix equation/units or omit --strict-cas)")
+                else:
+                    cas_warnings.append(msg)
+
+    return cas_errors, cas_warnings, counts, stamps
+
+
 def validate_manifest(
     manifest: Dict[str, Any],
     force_large_batch: bool = False,
     allow_update_existing: bool = False,
+    strict_cas: bool = False,
 ) -> Tuple[List[str], List[str], Dict[str, Any]]:
     """
     Runs all 6 pre-flight gates with zero disk writes.
@@ -699,11 +806,20 @@ def validate_manifest(
             "citations": len(citations),
         }
 
+    cas_errors, cas_warnings, cas_counts, cas_stamps = run_cas_preflight(
+        formulas if isinstance(formulas, list) else [],
+        strict_cas=strict_cas,
+    )
+    errors.extend(cas_errors)
+    warnings.extend(cas_warnings)
+
     stats = {
         "domain": domain,
         "subtopic_count": n_subtopics,
         "formula_count": len(batch_formulas_by_id),
         "subtopics": subtopic_stats,
+        "cas_counts": cas_counts,
+        "cas_stamps": cas_stamps,
     }
     return errors, warnings, stats
 
@@ -843,11 +959,13 @@ def apply_manifest(
     allow_update_existing: bool = False,
     sync_db: bool = False,
     ledger_path: Optional[str] = None,
+    strict_cas: bool = False,
 ) -> None:
     errors, warnings, stats = validate_manifest(
         manifest,
         force_large_batch=force_large_batch,
         allow_update_existing=allow_update_existing,
+        strict_cas=strict_cas,
     )
     if warnings:
         for w in warnings:
@@ -921,6 +1039,8 @@ def apply_manifest(
         with open(LATEX_INDEX_PATH, "r", encoding="utf-8") as f:
             latex_index = json.load(f)
 
+        cas_stamps = stats.get("cas_stamps", {})
+        stamped_count = 0
         for fobj in formulas:
             fid = fobj["id"].strip()
             sp = get_shard_path(fid)
@@ -929,6 +1049,9 @@ def apply_manifest(
             record = {k: v for k, v in fobj.items() if k != "id"}
             record.setdefault("status", "platinum")
             record.setdefault("lineage_confidence", "curated")
+            if fid in cas_stamps:
+                record["cas_validation"] = cas_stamps[fid]
+                stamped_count += 1
             record["subcomponents"] = existing_subs
             sd[fid] = record
 
@@ -953,7 +1076,7 @@ def apply_manifest(
         with open(LATEX_INDEX_PATH, "w", encoding="utf-8") as f:
             json.dump(dict(sorted(latex_index.items())), f, indent=2, ensure_ascii=False)
             f.write("\n")
-        print(f"[2/6] Wrote {len(formulas)} formulas to {len(shard_cache)} nested shards & updated 1-to-1 latex index.")
+        print(f"[2/6] Wrote {len(formulas)} formulas to {len(shard_cache)} nested shards ({stamped_count} SymPy CAS-stamped) & updated 1-to-1 latex index.")
 
         # 3. Compile subtopics + weave incoming links into domain shard
         with open(domain_content_path, "r", encoding="utf-8") as f:
@@ -1143,6 +1266,7 @@ def main() -> None:
     parser.add_argument("--sync-db", action="store_true", help="Also run php cli_sync.php after --apply")
     parser.add_argument("--ledger", default=None, help="Optional Markdown expansion ledger path (overrides manifest 'ledger_path')")
     parser.add_argument("--no-ledger", action="store_true", help="Skip updating any expansion ledger even if 'ledger_path' is set in manifest")
+    parser.add_argument("--strict-cas", action="store_true", help="Promote clean scalar SymPy CAS INHOMOGENEOUS mismatches from [WARN] to hard [FAIL]")
     args = parser.parse_args()
 
     if args.context:
@@ -1172,6 +1296,7 @@ def main() -> None:
             manifest,
             force_large_batch=args.force_large_batch,
             allow_update_existing=args.update_existing,
+            strict_cas=args.strict_cas,
         )
         print("=" * 72)
         print(f"DRY-RUN PRE-FLIGHT REPORT: {os.path.basename(args.manifest)}")
@@ -1179,6 +1304,10 @@ def main() -> None:
         if stats:
             print(f"  Domain:    {stats['domain']}")
             print(f"  Subtopics: {stats['subtopic_count']} | New Formulas: {stats['formula_count']}")
+            cas_c = stats.get("cas_counts") or {}
+            if cas_c:
+                cas_line = " | ".join(f"{k}={v}" for k, v in sorted(cas_c.items()))
+                print(f"  CAS Gate:  {cas_line} (SymPy-stamped: {len(stats.get('cas_stamps', {}))})")
             for slug, st in stats.get("subtopics", {}).items():
                 print(
                     f"    - {slug:32s} | words={st['shield_words']:3d} | math={st['math_tokens']:2d} "
@@ -1202,6 +1331,7 @@ def main() -> None:
         allow_update_existing=args.update_existing,
         sync_db=args.sync_db,
         ledger_path=resolved_ledger,
+        strict_cas=args.strict_cas,
     )
 
 

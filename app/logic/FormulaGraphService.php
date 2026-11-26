@@ -53,7 +53,7 @@ class FormulaGraphService {
      * Extract a local subgraph centered around a specific formula ID
      * Upstream (Foundations) -> Target Node -> Downstream (Applications/Limits)
      */
-    public static function getFormulaSubgraph(string $formulaId, int $depth = 2): array {
+    public static function getFormulaSubgraph(string $formulaId, int $depth = 2, bool $verifiedOnly = false): array {
         $graph = self::loadGraph();
         $nodes = $graph['nodes'] ?? [];
         $upstream = $graph['upstream'] ?? [];
@@ -73,10 +73,18 @@ class FormulaGraphService {
             ];
         }
 
+        $isAllowedEdge = static function (array $edge) use ($verifiedOnly): bool {
+            if (!$verifiedOnly) {
+                return true;
+            }
+            $conf = (string) ($edge['confidence'] ?? '');
+            return $conf === 'curated' || $conf === 'cas_verified';
+        };
+
         $visitedNodes = [$formulaId => 0]; // id => distance/depth
         $subgraphLinks = [];
         $seenLinks = [];
-        $directChildren = $downstream[$formulaId] ?? [];
+        $directChildren = array_values(array_filter($downstream[$formulaId] ?? [], $isAllowedEdge));
         $isSparseLeaf = count($directChildren) < 3;
         $upstreamDepth = ($isSparseLeaf && empty($directChildren)) ? max($depth, 3) : $depth;
 
@@ -87,6 +95,7 @@ class FormulaGraphService {
             foreach ($currentLayer as $currId) {
                 $parents = $upstream[$currId] ?? [];
                 foreach ($parents as $p) {
+                    if (!$isAllowedEdge($p)) continue;
                     $pid = $p['id'];
                     $edgeKey = "$pid->$currId";
                     if (!isset($seenLinks[$edgeKey])) {
@@ -125,6 +134,7 @@ class FormulaGraphService {
                 $parentAdded = 0;
                 foreach ($children as $c) {
                     if ($layerAddedCount >= $maxPerLayer || $parentAdded >= $maxPerParent) break;
+                    if (!$isAllowedEdge($c)) continue;
                     $cid = $c['id'];
                     $edgeKey = "$currId->$cid";
                     if (!isset($seenLinks[$edgeKey])) {
@@ -153,7 +163,7 @@ class FormulaGraphService {
         }
 
         // 2b. Leaf & Sparse Neighborhood Expansion (Co-Derived Siblings & Parallel Branches)
-        if ($isSparseLeaf) {
+        if ($isSparseLeaf && !$verifiedOnly) {
             $directParentIds = array_keys(array_filter($visitedNodes, fn($v) => $v === -1));
             $grandparentIds = array_keys(array_filter($visitedNodes, fn($v) => $v === -2));
 

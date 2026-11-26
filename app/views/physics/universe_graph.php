@@ -15,6 +15,10 @@
                 <button type="button" class="ug-depth-btn active" data-depth="2">2</button>
                 <button type="button" class="ug-depth-btn" data-depth="3">3</button>
             </div>
+            <button type="button" id="btn-verified-only" class="ug-action-btn ug-verified-toggle" aria-pressed="false" title="Show only curated and CAS-verified derivations (hide heuristic links)">
+                <span class="ug-verified-dot"></span>
+                <span>Verified Only</span>
+            </button>
             <button type="button" id="btn-universe-fullscreen" class="ug-action-btn ug-action-primary">
                 ⛶ Full Screen Map
             </button>
@@ -133,6 +137,10 @@
                 <span class="ug-legend-item"><span class="ug-dot" style="background: #818cf8;"></span>Math Methods</span>
                 <span class="ug-legend-item"><span class="ug-dot" style="background: #2dd4bf;"></span>Fluids</span>
                 <span class="ug-legend-item"><span class="ug-dot" style="background: #a78bfa;"></span>Condensed</span>
+                <span class="ug-edge-key" aria-label="Edge Provenance Key">
+                    <span class="ug-legend-item" title="Curated or CAS-verified derivation"><span class="ug-line ug-line-solid"></span>Verified</span>
+                    <span class="ug-legend-item" title="Heuristic / inferred connection"><span class="ug-line ug-line-dashed"></span>Heuristic</span>
+                </span>
             </div>
 
             <!-- Active Node Inspector Card -->
@@ -246,6 +254,31 @@ document.addEventListener('DOMContentLoaded', () => {
             universeGraph.loadFormula(currentFormulaId);
         });
     });
+
+    // Verified Only Toggle (curated + cas_verified edges only)
+    const verifiedBtn = document.getElementById('btn-verified-only');
+    if (verifiedBtn) {
+        const initVerified = new URLSearchParams(window.location.search).get('verified') === '1';
+        if (initVerified) {
+            universeGraph.options.verifiedOnly = true;
+            verifiedBtn.classList.add('is-active');
+            verifiedBtn.setAttribute('aria-pressed', 'true');
+        }
+        verifiedBtn.addEventListener('click', () => {
+            const next = !universeGraph.options.verifiedOnly;
+            universeGraph.options.verifiedOnly = next;
+            verifiedBtn.classList.toggle('is-active', next);
+            verifiedBtn.setAttribute('aria-pressed', next ? 'true' : 'false');
+            const url = new URL(window.location);
+            if (next) {
+                url.searchParams.set('verified', '1');
+            } else {
+                url.searchParams.delete('verified');
+            }
+            window.history.replaceState({}, '', url);
+            universeGraph.loadFormula(currentFormulaId);
+        });
+    }
 
     // Fullscreen button
     const fsBtn = document.getElementById('btn-universe-fullscreen');
@@ -557,6 +590,26 @@ document.addEventListener('DOMContentLoaded', () => {
     font-weight: 700;
 }
 
+.ug-verified-toggle .ug-verified-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #64748b;
+    transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ug-verified-toggle.is-active {
+    background: rgba(52, 211, 153, 0.16);
+    border-color: rgba(52, 211, 153, 0.55);
+    color: #34d399;
+    font-weight: 700;
+}
+
+.ug-verified-toggle.is-active .ug-verified-dot {
+    background: #34d399;
+    box-shadow: 0 0 8px rgba(52, 211, 153, 0.75);
+}
+
 /* Split-Rail Workspace Grid */
 .universe-workspace-grid {
     display: grid;
@@ -802,6 +855,29 @@ document.addEventListener('DOMContentLoaded', () => {
     height: 8px;
     border-radius: 50%;
     display: inline-block;
+}
+
+.ug-edge-key {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding-left: 12px;
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.ug-line {
+    width: 18px;
+    height: 0;
+    display: inline-block;
+}
+
+.ug-line-solid {
+    border-top: 2px solid #64ffda;
+}
+
+.ug-line-dashed {
+    border-top: 2px dashed rgba(148, 163, 184, 0.75);
 }
 
 /* Active Node Inspector Card */

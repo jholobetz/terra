@@ -9,6 +9,7 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
         this.container = document.getElementById(containerId);
         this.options = Object.assign({
             depth: 2,
+            verifiedOnly: false,
             width: 800,
             height: 400,
             onNodeClick: null,
@@ -545,7 +546,8 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
         if (badge) badge.innerText = 'Traversing...';
 
         try {
-            const resp = await fetch(`/physics/api/formula-graph/${encodeURIComponent(formulaId)}?depth=${this.options.depth}`);
+            const verifiedQuery = this.options.verifiedOnly ? '&verified=1' : '';
+            const resp = await fetch(`/physics/api/formula-graph/${encodeURIComponent(formulaId)}?depth=${this.options.depth}${verifiedQuery}`);
             if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
             const res = await resp.json();
 
@@ -560,7 +562,8 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
                 }
                 this.renderGraph(res.data);
                 if (badge) {
-                    badge.innerText = `${res.data.stats.total_nodes} nodes • ${res.data.stats.total_links} links`;
+                    const linkWord = this.options.verifiedOnly ? 'verified links' : 'links';
+                    badge.innerText = `${res.data.stats.total_nodes} nodes • ${res.data.stats.total_links} ${linkWord}`;
                 }
                 if (typeof this.options.onRootLoaded === 'function' && res.data.root_node) {
                     this.options.onRootLoaded(res.data.root_node);
@@ -656,13 +659,24 @@ window.FormulaLineageGraph = class FormulaLineageGraph {
             path.setAttribute('d', `M ${src.x} ${src.y} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${tgt.x} ${tgt.y}`);
             path.setAttribute('fill', 'none');
             const isSiblingLink = link.direction === 'sibling' || link.type === 'sibling';
-            const strokeColor = isSiblingLink
-                ? 'rgba(167, 139, 250, 0.48)'
-                : (link.direction === 'upstream' ? 'rgba(56, 189, 248, 0.55)' : 'rgba(100, 255, 218, 0.45)');
+            const isVerifiedDerivation = link.type === 'derivation' && (link.confidence === 'curated' || link.confidence === 'cas_verified');
+            const isHeuristicDerivation = link.type === 'derivation' && !isVerifiedDerivation;
+            let strokeColor;
+            if (isSiblingLink) {
+                strokeColor = 'rgba(167, 139, 250, 0.42)';
+            } else if (isHeuristicDerivation) {
+                strokeColor = 'rgba(148, 163, 184, 0.36)';
+            } else {
+                strokeColor = link.direction === 'upstream'
+                    ? 'rgba(56, 189, 248, 0.80)'
+                    : 'rgba(100, 255, 218, 0.74)';
+            }
             path.setAttribute('stroke', strokeColor);
-            path.setAttribute('stroke-width', this.isFullscreen ? '2' : '1.6');
-            const isHeuristicDerivation = link.type === 'derivation' && link.confidence === 'heuristic';
-            path.setAttribute('stroke-dasharray', isSiblingLink ? '4,3' : (link.type === 'subcomponent' ? '3,3' : (isHeuristicDerivation ? '5,3' : 'none')));
+            const strokeWidth = isVerifiedDerivation
+                ? (this.isFullscreen ? '2.3' : '1.9')
+                : (this.isFullscreen ? '1.5' : '1.3');
+            path.setAttribute('stroke-width', strokeWidth);
+            path.setAttribute('stroke-dasharray', isSiblingLink ? '3,3' : (link.type === 'subcomponent' ? '3,3' : (isHeuristicDerivation ? '5,4' : 'none')));
             linkGroup.appendChild(path);
         });
 

@@ -1216,8 +1216,10 @@ class PhysicsController
             $depth = (int) (Flight::request()->query->depth ?? 2);
             if ($depth < 1) $depth = 1;
             if ($depth > 4) $depth = 4;
+            $verifiedParam = strtolower((string) (Flight::request()->query->verified ?? '0'));
+            $verifiedOnly = in_array($verifiedParam, ['1', 'true', 'yes'], true);
             require_once __DIR__ . '/../logic/FormulaGraphService.php';
-            $subgraph = \app\logic\FormulaGraphService::getFormulaSubgraph($id, $depth);
+            $subgraph = \app\logic\FormulaGraphService::getFormulaSubgraph($id, $depth, $verifiedOnly);
             echo json_encode([
                 'success' => true,
                 'data' => $subgraph

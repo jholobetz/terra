@@ -408,24 +408,89 @@
 }
 
 /* =========================================================================
-   THE CRUCIBLE & MULTI-PRISM COCKPIT STYLING (PHASE 2.3)
+   COMPACT COMMAND HEADER & SPLIT-RAIL COCKPIT STYLING (OPTION 2)
    ========================================================================= */
+
+.lab-command-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px 20px;
+    padding: 4px 0 14px 0;
+    margin-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.lab-command-title-group {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.lab-command-title {
+    font-size: 1.65rem;
+    line-height: 1.15;
+    margin: 0;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    background: linear-gradient(135deg, #ffffff 40%, var(--accent-default) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.lab-command-header .arena-pill-badge {
+    background: rgba(56, 189, 248, 0.12);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+}
+
+.lab-command-tagline {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.88rem;
+    line-height: 1.4;
+}
+
+.cockpit-split-layout {
+    display: grid;
+    grid-template-columns: 248px minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+}
+
+.cockpit-stage-col {
+    min-width: 0;
+}
 
 .crucible-bar {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    margin-bottom: 14px;
-    background: rgba(15, 23, 42, 0.45);
+    margin-bottom: 0;
+    background: rgba(15, 23, 42, 0.5);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 14px;
-    padding: 12px 18px;
+    padding: 12px;
+    position: sticky;
+    top: 84px;
 }
 
 .crucible-label-group {
     display: flex;
     align-items: center;
-    gap: 10px;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 0 2px 6px 2px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .crucible-badge {
@@ -434,50 +499,86 @@
     border: 1px solid rgba(56, 189, 248, 0.3);
     padding: 3px 8px;
     border-radius: 6px;
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
 }
 
 .crucible-hint {
-    font-size: 0.82rem;
+    font-size: 0.75rem;
     color: var(--text-muted);
 }
 
 .crucible-systems-container {
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+    flex-direction: column;
+    gap: 6px;
 }
 
 .crucible-system-pill {
     display: flex;
     align-items: center;
-    gap: 8px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 20px;
-    padding: 6px 14px;
+    gap: 10px;
+    width: 100%;
+    text-align: left;
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-left: 3px solid transparent;
+    border-radius: 10px;
+    padding: 9px 11px;
     color: var(--text-muted);
-    font-size: 0.85rem;
+    font-size: 0.84rem;
     font-family: inherit;
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.crucible-system-pill .pill-icon {
+    font-size: 1.05rem;
+    flex-shrink: 0;
+}
+
+.crucible-system-pill .pill-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.crucible-system-pill .pill-text {
+    font-weight: 600;
+    color: #e2e8f0;
+    font-size: 0.84rem;
+    line-height: 1.2;
+}
+
+.crucible-system-pill .pill-sub {
+    align-self: flex-start;
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1px 6px;
+    border-radius: 8px;
+}
+
 .crucible-system-pill:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.07);
     color: #ffffff;
-    border-color: rgba(255, 255, 255, 0.2);
-    transform: translateY(-1px);
+    border-color: rgba(255, 255, 255, 0.16);
+    transform: translateX(2px);
 }
 
 .crucible-system-pill.active {
     background: rgba(56, 189, 248, 0.12);
     color: #ffffff;
-    border-color: #38bdf8;
-    box-shadow: 0 0 14px rgba(56, 189, 248, 0.25);
+    border-color: rgba(56, 189, 248, 0.45);
+    border-left-color: #38bdf8;
+    box-shadow: 0 0 14px rgba(56, 189, 248, 0.18);
+}
+
+.crucible-system-pill.active .pill-text {
+    color: #ffffff;
 }
 
 .crucible-system-pill.active .pill-sub {
@@ -487,22 +588,20 @@
 
 /* Multi-Prism Selector Bar */
 .prism-selector-bar {
-    margin-bottom: 14px;
+    margin-bottom: 12px;
 }
 
 .prism-tabs {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 8px;
 }
 
 .prism-tab {
-    flex: 1 1 auto;
-    min-width: 140px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    padding: 10px 14px;
+    padding: 8px 10px;
     background: rgba(15, 23, 42, 0.6);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 10px;
@@ -510,6 +609,7 @@
     transition: all 0.2s ease;
     text-align: left;
     color: var(--text-muted);
+    min-width: 0;
 }
 
 .prism-tab:hover {
@@ -526,13 +626,14 @@
 }
 
 .prism-title {
-    font-size: 0.86rem;
+    font-size: 0.78rem;
     font-weight: 700;
     color: #e2e8f0;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
     margin-bottom: 2px;
+    line-height: 1.2;
 }
 
 .prism-tab.active .prism-title {
@@ -540,8 +641,31 @@
 }
 
 .prism-sub {
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     color: var(--text-muted);
+    line-height: 1.25;
+}
+
+@media (max-width: 1120px) {
+    .prism-tabs {
+        grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+    }
+}
+
+@media (max-width: 960px) {
+    .cockpit-split-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .crucible-bar {
+        position: static;
+    }
+
+    .crucible-systems-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+        gap: 8px;
+    }
 }
 
 /* CAS Console Inset */

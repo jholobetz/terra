@@ -2,101 +2,105 @@
 // Lab Tools Landing Page view - Unified Physics Laboratory & Cosmic Arena
 ?>
 
-<div class="lab-tools-container" style="padding: 10px 0 60px 0;">
-    <!-- Premium Header Section -->
-    <header class="simulations-header" style="margin-bottom: 30px; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 25px;">
-        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
-            <span class="arena-pill-badge" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">
-                Experimental &amp; CAS Crucible
-            </span>
-            <span style="color: var(--text-muted); font-size: 0.85rem;">•</span>
-            <span style="color: var(--text-muted); font-size: 0.85rem;">Interactive Manifold v2.4</span>
+<div class="lab-tools-container" style="padding: 6px 0 60px 0;">
+    <!-- Compact Command Header -->
+    <header class="lab-command-header">
+        <div class="lab-command-title-group">
+            <h1 class="lab-command-title">The Unified Physics Laboratory</h1>
+            <span class="arena-pill-badge">Experimental &amp; CAS Crucible</span>
         </div>
-        <h1 style="font-size: 3rem; margin: 0 0 12px 0; font-family: 'Space Grotesk', sans-serif; font-weight: 700; background: linear-gradient(135deg, #ffffff 40%, var(--accent-default) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-            The Unified Physics Laboratory
-        </h1>
-        <p style="color: var(--text-muted); font-size: 1.15rem; line-height: 1.6; margin: 0; max-width: 820px;">
-            From visceral 60fps mechanical simulations to exact SymPy Computer Algebra proofs, explore the mathematical symmetries, phase space flows, and quantum transitions governing the physical universe.
+        <p class="lab-command-tagline">
+            60fps mechanical &amp; quantum simulations coupled to live SymPy Computer Algebra proofs.
         </p>
     </header>
 
     <!-- ================================================================= -->
-    <!-- HERO STAGE: THE UNIFIED PHYSICS COCKPIT & TRANSFORMATION CHAMBER  -->
+    <!-- HERO STAGE: SPLIT-RAIL PHYSICS COCKPIT & TRANSFORMATION CHAMBER   -->
     <!-- ================================================================= -->
-    <section class="cockpit-crucible-section" style="margin-bottom: 50px;">
-        <!-- 1. Crucible Active Physical System Bar -->
-        <div class="crucible-bar">
-            <div class="crucible-label-group">
-                <span class="crucible-badge">System Crucible</span>
-                <span class="crucible-hint">Select Active Physical System:</span>
-            </div>
-            <div class="crucible-systems-container">
-                <button class="crucible-system-pill active" data-system="sho">
-                    <span class="pill-icon">🌀</span>
-                    <span class="pill-text">Harmonic Oscillator</span>
-                    <span class="pill-sub">Quadratic V(q)</span>
-                </button>
-                <button class="crucible-system-pill" data-system="relativistic">
-                    <span class="pill-icon">🪐</span>
-                    <span class="pill-text">Relativistic Particle</span>
-                    <span class="pill-sub">Lorentz Boost</span>
-                </button>
-                <button class="crucible-system-pill" data-system="chaos">
-                    <span class="pill-icon">⏳</span>
-                    <span class="pill-text">Double Pendulum</span>
-                    <span class="pill-sub">RK4 Chaos</span>
-                </button>
-                <button class="crucible-system-pill" data-system="em_field">
-                    <span class="pill-icon">⚡</span>
-                    <span class="pill-text">Charged Particle</span>
-                    <span class="pill-sub">Gauge Vector A</span>
-                </button>
-                <button class="crucible-system-pill" data-system="quantum_barrier">
-                    <span class="pill-icon">👻</span>
-                    <span class="pill-text">Quantum Tunneling</span>
-                    <span class="pill-sub">Wave Packet</span>
-                </button>
-                <button class="crucible-system-pill" data-system="central_force">
-                    <span class="pill-icon">🌌</span>
-                    <span class="pill-text">Schwarzschild Orbit</span>
-                    <span class="pill-sub">ISCO Collapse</span>
-                </button>
-            </div>
-        </div>
+    <section class="cockpit-crucible-section" style="margin-bottom: 44px;">
+        <div class="cockpit-split-layout">
+            <!-- Left Rail: Crucible Active Physical System Selector -->
+            <aside class="crucible-bar" aria-label="Physical System Selector">
+                <div class="crucible-label-group">
+                    <span class="crucible-badge">System Crucible</span>
+                    <span class="crucible-hint">6 Systems</span>
+                </div>
+                <div class="crucible-systems-container">
+                    <button class="crucible-system-pill active" data-system="sho">
+                        <span class="pill-icon">🌀</span>
+                        <span class="pill-body">
+                            <span class="pill-text">Harmonic Oscillator</span>
+                            <span class="pill-sub">Quadratic V(q)</span>
+                        </span>
+                    </button>
+                    <button class="crucible-system-pill" data-system="relativistic">
+                        <span class="pill-icon">🪐</span>
+                        <span class="pill-body">
+                            <span class="pill-text">Relativistic Particle</span>
+                            <span class="pill-sub">Lorentz Boost</span>
+                        </span>
+                    </button>
+                    <button class="crucible-system-pill" data-system="chaos">
+                        <span class="pill-icon">⏳</span>
+                        <span class="pill-body">
+                            <span class="pill-text">Double Pendulum</span>
+                            <span class="pill-sub">RK4 Chaos</span>
+                        </span>
+                    </button>
+                    <button class="crucible-system-pill" data-system="em_field">
+                        <span class="pill-icon">⚡</span>
+                        <span class="pill-body">
+                            <span class="pill-text">Charged Particle</span>
+                            <span class="pill-sub">Gauge Vector A</span>
+                        </span>
+                    </button>
+                    <button class="crucible-system-pill" data-system="quantum_barrier">
+                        <span class="pill-icon">👻</span>
+                        <span class="pill-body">
+                            <span class="pill-text">Quantum Tunneling</span>
+                            <span class="pill-sub">Wave Packet</span>
+                        </span>
+                    </button>
+                    <button class="crucible-system-pill" data-system="central_force">
+                        <span class="pill-icon">🌌</span>
+                        <span class="pill-body">
+                            <span class="pill-text">Schwarzschild Orbit</span>
+                            <span class="pill-sub">ISCO Collapse</span>
+                        </span>
+                    </button>
+                </div>
+            </aside>
 
-        <!-- 2. Multi-Prism Selector Bar (Transformation Chamber) -->
-        <div class="prism-selector-bar">
-            <div class="prism-tabs">
-                <button class="prism-tab active" data-prism="variational">
-                    <span class="prism-icon">🧮</span>
-                    <span class="prism-title">Variational &amp; Phase</span>
-                    <span class="prism-sub">Lagrangian ↔ Hamiltonian</span>
-                </button>
-                <button class="prism-tab" data-prism="noether">
-                    <span class="prism-icon">🏛️</span>
-                    <span class="prism-title">Symmetries &amp; Currents</span>
-                    <span class="prism-sub">Noether Invariants</span>
-                </button>
-                <button class="prism-tab" data-prism="quantum">
-                    <span class="prism-icon">⚛️</span>
-                    <span class="prism-title">Quantum Correspondence</span>
-                    <span class="prism-sub">Ehrenfest Transition</span>
-                </button>
-                <button class="prism-tab" data-prism="rosetta">
-                    <span class="prism-icon">📐</span>
-                    <span class="prism-title">Rosetta Formalisms</span>
-                    <span class="prism-sub">Vectors ↔ Tensors ↔ Forms</span>
-                </button>
-                <button class="prism-tab" data-prism="dimensions">
-                    <span class="prism-icon">📏</span>
-                    <span class="prism-title">Dimensional Homogeneity</span>
-                    <span class="prism-sub">SI Balance &amp; Units</span>
-                </button>
-            </div>
-        </div>
+            <!-- Right Stage: Multi-Prism Tabs + Cosmic Arena Canvas + Console -->
+            <div class="cockpit-stage-col">
+                <!-- Multi-Prism Selector Bar (Transformation Chamber) -->
+                <div class="prism-selector-bar">
+                    <div class="prism-tabs">
+                        <button class="prism-tab active" data-prism="variational">
+                            <span class="prism-title"><span class="prism-icon">🧮</span> Variational &amp; Phase</span>
+                            <span class="prism-sub">Lagrangian ↔ Hamiltonian</span>
+                        </button>
+                        <button class="prism-tab" data-prism="noether">
+                            <span class="prism-title"><span class="prism-icon">🏛️</span> Symmetries &amp; Currents</span>
+                            <span class="prism-sub">Noether Invariants</span>
+                        </button>
+                        <button class="prism-tab" data-prism="quantum">
+                            <span class="prism-title"><span class="prism-icon">⚛️</span> Quantum Correspondence</span>
+                            <span class="prism-sub">Ehrenfest Transition</span>
+                        </button>
+                        <button class="prism-tab" data-prism="rosetta">
+                            <span class="prism-title"><span class="prism-icon">📐</span> Rosetta Formalisms</span>
+                            <span class="prism-sub">Vectors ↔ Tensors ↔ Forms</span>
+                        </button>
+                        <button class="prism-tab" data-prism="dimensions">
+                            <span class="prism-title"><span class="prism-icon">📏</span> Dimensional Homogeneity</span>
+                            <span class="prism-sub">SI Balance &amp; Units</span>
+                        </button>
+                    </div>
+                </div>
 
-        <!-- 3. The Cockpit Stage Viewport Card -->
-        <div class="cosmic-stage-card cockpit-stage-card">
+                <!-- The Cockpit Stage Viewport Card -->
+                <div class="cosmic-stage-card cockpit-stage-card">
             <div class="arena-canvas-container">
                 <canvas id="cosmic-arena-canvas"></canvas>
                 
@@ -175,6 +179,8 @@
                         </a>
                     </div>
                 </div>
+            </div>
+        </div>
             </div>
         </div>
     </section>

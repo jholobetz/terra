@@ -312,6 +312,6 @@ Physics Lab serves as the flagship domain module for **Project Terra**. With the
 | **Phase 4** | 4.2 | Debian 13 Packaging, `/healthz` & Cache Warmer | `requirements.txt`<br/>`PhysicsController.php`<br/>`cli_sync.php` | 🔴 **P1** | 🟢 Completed |
 | **Phase 4** | 4.3 | Branded Error Views, CSP Hygiene & SEO/Sitemap | `error_404.php`<br/>`error_500.php`<br/>`layout.php` | 🔴 **P1** | 🟢 Completed |
 | **Phase 4** | 4.4 | Apache/MariaDB Provisioning & Git Deploy Pipeline | `public/.htaccess`<br/>`ShardSyncService.php`<br/>`scripts/update_prod.sh` | 🔴 **P1** | 🟢 Completed (Live on `physicslab.ca`) |
-| **Phase 5** | 5.1–5.3 | Physics Lab Curriculum Completion & Curatorial Polish | `scripts/expand_hub.py`<br/>`docs/new_expansion_phase_5.md`<br/>`hub_manifests/*.json` | 🔴 **P1** | 🟢 Completed (Batches 1–15, +75 Subtopics) |
+| **Phase 5** | 5.1–5.3 | Physics Lab Curriculum Completion & Curatorial Polish | `scripts/expand_hub.py`<br/>`docs/new_expansion_phase_5.md`<br/>`hub_manifests/*.json` | 🔴 **P1** | 🟢 Completed (Batches 1–24, +120 Subtopics) |
 | **Phase 6** | 6.1 | OPS 2.0 Upgrade | `docs/OPS 2.0 (The Qualitative Rubric).md`<br/>`gqs.py` | 🟡 **P2** | 📋 Planned |
 | **Phase 7** | 7.1 | Project Terra Multi-Science Expansion | Chemistry, Mathematics, Earth Sciences | 🟢 **P3** | 🔭 Strategic |

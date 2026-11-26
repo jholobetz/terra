@@ -606,7 +606,7 @@ def audit_roadmap_realization(heal_hashes: bool = False, arch_data=None):
     p5_3_ok = (WORKSPACE_ROOT / "archive" / "post_launch_eval-2026-11-19.md").exists()
     phase5_items = [
         ("5.1 Hub Gateway Curation", f"{total_gateway_cards} Curated Roadmap Cards Across 12 Hubs", p5_1_ok),
-        ("5.2 Curriculum Completion", f"{total_articles:,} Platinum Subtopics (+75 Phase 5, {legacy_orphans_count} Legacy Orphans)", p5_2_ok),
+        ("5.2 Curriculum Completion", f"{total_articles:,} Platinum Subtopics (+{max(0, total_articles - 1584)} Phase 5, {legacy_orphans_count} Legacy Orphans)", p5_2_ok),
         ("5.3 Post-Launch Hygiene", "58/58 Post-Launch Findings Resolved & Archived", p5_3_ok),
     ]
     completed_p5 = sum(1 for _, _, ok in phase5_items if ok)

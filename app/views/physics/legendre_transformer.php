@@ -9,7 +9,7 @@
         <div class="transformer-panel-left">
             <!-- Presets Card -->
             <div class="glass-card presets-card">
-                <h3>Physical Presets</h3>
+                <h2>Physical Presets</h2>
                 <p class="ref-sub">Select a classical configuration to populate its Lagrangian.</p>
                 <div class="preset-buttons">
                     <button class="preset-btn" data-preset="sho">Harmonic Oscillator</button>
@@ -27,7 +27,7 @@
 
             <!-- Configuration Card -->
             <div class="glass-card config-card">
-                <h3>Configuration Parameters</h3>
+                <h2>Configuration Parameters</h2>
                 
                 <div class="input-group-row">
                     <div class="input-field-wrapper">
@@ -66,7 +66,7 @@
                 <!-- Welcome/Placeholder State -->
                 <div id="output-placeholder" class="output-placeholder">
                     <div class="placeholder-icon">🧮</div>
-                    <h3>Duality Solver Ready</h3>
+                    <h2>Duality Solver Ready</h2>
                     <p>Configure a Lagrangian system on the left and click <strong>Compute Legendre Duality</strong> to perform the symbolic transformation.</p>
                 </div>
 
@@ -249,6 +249,7 @@
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
 }
 
+.glass-card h2,
 .glass-card h3 {
     font-family: 'Space Grotesk', sans-serif;
     font-size: 1.25rem;
@@ -400,6 +401,7 @@
     50% { transform: scale(1.05); opacity: 0.55; }
 }
 
+.output-placeholder h2,
 .output-placeholder h3 {
     font-family: 'Space Grotesk', sans-serif;
     color: #ffffff;

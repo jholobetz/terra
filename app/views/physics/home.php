@@ -111,7 +111,7 @@ $topicCubes = [
                     <div class="cube-face cube-face-front">
                         <div class="cube-badge" style="border-color: <?= $themeColor ?>; color: <?= $themeColor ?>;"><?= htmlspecialchars($badgeText) ?></div>
                         <div class="cube-icon-wrapper"><?= $meta['svg'] ?></div>
-                        <h4 class="cube-title"><?= htmlspecialchars($topic['title']) ?></h4>
+                        <h2 class="cube-title"><?= htmlspecialchars($topic['title']) ?></h2>
                         <?php if (!empty($cube['equation'])): ?>
                             <div class="cube-equation-core">
                                 <span>$$<?= $cube['equation'] ?>$$</span>
